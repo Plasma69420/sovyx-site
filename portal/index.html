@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Sovyx — Portal</title>
+<title>Sovyx â€” Portal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
@@ -98,7 +98,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:48px;display:flex;ali
 <body>
 
 <nav>
-  <a class="logo" href="index.html">
+  <a class="logo" href="/">
     <img class="logo-mark" src="logo.webp?v=3" alt=""/>
     sovyx
   </a>
@@ -108,7 +108,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:48px;display:flex;ali
   </div>
 </nav>
 
-<div id="loading">Loading…</div>
+<div id="loading">Loadingâ€¦</div>
 
 <div id="app">
 
@@ -119,7 +119,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:48px;display:flex;ali
       <h2 id="welcome-name">Welcome back</h2>
       <p id="plan-desc">You're on the free plan.</p>
     </div>
-    <a href="index.html#pricing" class="btn btn-ghost" id="upgrade-btn">Upgrade plan →</a>
+    <a href="/#pricing" class="btn btn-ghost" id="upgrade-btn">Upgrade plan â†’</a>
   </div>
 
   <!-- STATS -->
@@ -131,12 +131,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:48px;display:flex;ali
     </div>
     <div class="scard">
       <div class="scard-label">Plan expires</div>
-      <div class="scard-num" id="stat-expiry" style="font-size:16px;padding-top:5px">—</div>
+      <div class="scard-num" id="stat-expiry" style="font-size:16px;padding-top:5px">â€”</div>
       <div class="scard-sub" id="stat-expiry-sub">no active plan</div>
     </div>
     <div class="scard">
       <div class="scard-label">Member since</div>
-      <div class="scard-num" id="stat-joined" style="font-size:16px;padding-top:5px">—</div>
+      <div class="scard-num" id="stat-joined" style="font-size:16px;padding-top:5px">â€”</div>
       <div class="scard-sub">account created</div>
     </div>
   </div>
@@ -146,11 +146,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:48px;display:flex;ali
     <h3>Account</h3>
     <div class="info-row">
       <span class="info-label">Username</span>
-      <span class="info-val" id="info-username">—</span>
+      <span class="info-val" id="info-username">â€”</span>
     </div>
     <div class="info-row">
       <span class="info-label">Email</span>
-      <span class="info-val mono" id="info-email">—</span>
+      <span class="info-val mono" id="info-email">â€”</span>
     </div>
     <div class="info-row">
       <span class="info-label">License key</span>
@@ -223,7 +223,7 @@ const db   = getFirestore(app);
 let currentUser = null, userData = null;
 
 onAuthStateChanged(auth, async u => {
-  if (!u) { location.href = 'login.html'; return; }
+  if (!u) { location.href = '/login'; return; }
   currentUser = u;
   document.getElementById('nav-email').textContent = u.email;
   document.getElementById('info-email').textContent = u.email;
@@ -235,7 +235,7 @@ onAuthStateChanged(auth, async u => {
 async function loadUser(uid) {
   const snap = await getDoc(doc(db, 'users', uid));
   if (!snap.exists()) {
-    // First-time user (signed up via admin or directly) — create minimal doc
+    // First-time user (signed up via admin or directly) â€” create minimal doc
     await setDoc(doc(db, 'users', uid), {
       uid, email: currentUser.email, username: currentUser.email.split('@')[0],
       plan: 'free', credits: 0, licenseKey: null, hwid: null,
@@ -253,7 +253,7 @@ function renderUser() {
 
   // Welcome
   document.getElementById('welcome-name').textContent = `Welcome back, ${username || 'reseller'}`;
-  document.getElementById('info-username').textContent = username || '—';
+  document.getElementById('info-username').textContent = username || 'â€”';
 
   // Plan badge
   const badgeEl = document.getElementById('plan-badge');
@@ -296,11 +296,11 @@ function renderUser() {
   if (licenseKey) document.getElementById('activate-section').style.display = 'none';
 
   // HWID status
-  if (hwid) document.getElementById('hwid-status').textContent = `Current HWID: ${hwid.substring(0,16)}…`;
+  if (hwid) document.getElementById('hwid-status').textContent = `Current HWID: ${hwid.substring(0,16)}â€¦`;
 }
 
 function planDesc(p) {
-  const d = { free: 'You\'re on the free plan.', basic: 'Basic plan — 5 orders/month.', pro: 'Pro plan — 50 orders/month.', ultimate: 'Ultimate plan — unlimited orders.' };
+  const d = { free: 'You\'re on the free plan.', basic: 'Basic plan â€” 5 orders/month.', pro: 'Pro plan â€” 50 orders/month.', ultimate: 'Ultimate plan â€” unlimited orders.' };
   return d[p] || 'Active plan.';
 }
 
@@ -311,7 +311,7 @@ window.activateKey = async () => {
   const msg = document.getElementById('key-msg');
   msg.style.display = 'none';
   if (!key) { showMsg(msg, 'err', 'Enter a license key.'); return; }
-  btn.disabled = true; btn.textContent = 'Checking…';
+  btn.disabled = true; btn.textContent = 'Checkingâ€¦';
   try {
     const q = query(collection(db, 'licenseKeys'), where('key', '==', key), where('assigned', '==', false));
     const snap = await getDocs(q);
@@ -336,7 +336,7 @@ window.requestHwid = async () => {
   const btn = document.getElementById('hwid-btn');
   const msg = document.getElementById('hwid-msg');
   msg.style.display = 'none';
-  btn.disabled = true; btn.textContent = 'Submitting…';
+  btn.disabled = true; btn.textContent = 'Submittingâ€¦';
   try {
     // Check for recent pending request
     const q = query(collection(db, 'hwid_resets'), where('uid', '==', currentUser.uid), where('status', '==', 'pending'));
@@ -353,7 +353,7 @@ window.requestHwid = async () => {
   } finally { btn.disabled = false; btn.textContent = 'Request HWID reset'; }
 };
 
-window.doLogout = () => signOut(auth).then(() => location.href = 'login.html');
+window.doLogout = () => signOut(auth).then(() => location.href = '/login');
 
 function planFromKey(k) {
   if (k.startsWith('SVX-BSC')) return 'basic';

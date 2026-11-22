@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Sovyx — Sign in</title>
+<title>Sovyx â€” Sign in</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
@@ -80,7 +80,7 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
 <body>
 
 <nav>
-  <a class="logo" href="index.html">
+  <a class="logo" href="/">
     <img class="logo-mark" src="logo.webp?v=3" alt=""/>
     sovyx
   </a>
@@ -105,7 +105,7 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
     </div>
     <div class="field">
       <label>Password</label>
-      <input type="password" id="in-pass" placeholder="••••••••" autocomplete="current-password"/>
+      <input type="password" id="in-pass" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="current-password"/>
     </div>
     <div class="forgot"><a onclick="doForgot()">Forgot password?</a></div>
     <button class="btn-full btn-red-full" id="in-btn" onclick="doSignIn()">Sign in</button>
@@ -133,12 +133,12 @@ h1{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
     </div>
     <div class="field">
       <label>Confirm password</label>
-      <input type="password" id="up-pass2" placeholder="••••••••" autocomplete="new-password"/>
+      <input type="password" id="up-pass2" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="new-password"/>
     </div>
     <div class="field">
-      <label>License key <span style="color:var(--dim);font-size:10px;text-transform:none;letter-spacing:0">(optional — activate later in portal)</span></label>
+      <label>License key <span style="color:var(--dim);font-size:10px;text-transform:none;letter-spacing:0">(optional â€” activate later in portal)</span></label>
       <input type="text" id="up-key" placeholder="SVX-PRO-XXXX-XXXX-XXXX" autocomplete="off" oninput="this.value=this.value.toUpperCase()"/>
-      <div class="key-hint">Get a key from your reseller. Format: <code>SVX-BSC-…</code> / <code>SVX-PRO-…</code> / <code>SVX-ULT-…</code></div>
+      <div class="key-hint">Get a key from your reseller. Format: <code>SVX-BSC-â€¦</code> / <code>SVX-PRO-â€¦</code> / <code>SVX-ULT-â€¦</code></div>
     </div>
     <button class="btn-full btn-red-full" id="up-btn" onclick="doSignUp()">Create account</button>
     <div class="msg err" id="up-err"></div>
@@ -163,7 +163,7 @@ import { getFirestore, collection, doc, setDoc, getDocs, updateDoc,
 
 // ============================================================
 //  PASTE YOUR DISCORD CLIENT ID HERE
-//  discord.com/developers/applications → your app → OAuth2
+//  discord.com/developers/applications â†’ your app â†’ OAuth2
 // ============================================================
 const DISCORD_CLIENT_ID = 'PASTE_YOUR_DISCORD_CLIENT_ID';
 // ============================================================
@@ -183,7 +183,7 @@ const db   = getFirestore(app);
 
 // If already signed in, go straight to portal
 onAuthStateChanged(auth, u => {
-  if (u && !window._discordHandling) location.href = 'portal.html';
+  if (u && !window._discordHandling) location.href = '/portal';
 });
 
 // ---- Discord OAuth (implicit / token flow) ----
@@ -200,7 +200,7 @@ onAuthStateChanged(auth, u => {
   // Show loading state on whichever Discord button is visible
   ['dc-in-btn','dc-up-btn'].forEach(id => {
     const b = document.getElementById(id);
-    if (b) { b.disabled = true; b.textContent = 'Connecting Discord…'; }
+    if (b) { b.disabled = true; b.textContent = 'Connecting Discordâ€¦'; }
   });
 
   try {
@@ -266,10 +266,10 @@ onAuthStateChanged(auth, u => {
 // ---- Start Discord OAuth flow ----
 window.doDiscordLogin = () => {
   if (DISCORD_CLIENT_ID === 'PASTE_YOUR_DISCORD_CLIENT_ID') {
-    alert('Discord Client ID not configured yet. Set DISCORD_CLIENT_ID in login.html.');
+    alert('Discord Client ID not configured yet. Set DISCORD_CLIENT_ID in /login.');
     return;
   }
-  const redirect = encodeURIComponent(location.origin + '/login.html');
+  const redirect = encodeURIComponent(location.origin + '//login');
   const scope    = encodeURIComponent('identify email');
   location.href  = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${redirect}&response_type=token&scope=${scope}`;
 };
@@ -289,7 +289,7 @@ window.doSignIn = async () => {
   const btn   = document.getElementById('in-btn');
   const err   = document.getElementById('in-err');
   if (!email || !pass) { showMsg(err, 'Please fill in all fields.'); return; }
-  btn.disabled = true; btn.textContent = 'Signing in…'; err.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'Signing inâ€¦'; err.style.display = 'none';
   try {
     await signInWithEmailAndPassword(auth, email, pass);
     // onAuthStateChanged will redirect
@@ -314,7 +314,7 @@ window.doSignUp = async () => {
   if (pass.length < 8) { showMsg(err, 'Password must be at least 8 characters.'); return; }
   if (pass !== pass2)  { showMsg(err, 'Passwords do not match.'); return; }
 
-  btn.disabled = true; btn.textContent = 'Creating account…';
+  btn.disabled = true; btn.textContent = 'Creating accountâ€¦';
   try {
     // 1. Validate license key if provided
     let keyDoc = null, keyPlan = 'free';
