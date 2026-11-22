@@ -160,6 +160,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:48px;display:flex;ali
       <span class="info-label">HWID</span>
       <span class="info-val mono dim" id="info-hwid">Not registered</span>
     </div>
+    <div class="info-row" id="discord-row" style="display:none">
+      <span class="info-label">Discord</span>
+      <span class="info-val" id="info-discord" style="display:flex;align-items:center;gap:8px"></span>
+    </div>
   </div>
 
   <!-- ACTIVATE KEY (shown only when no key) -->
@@ -276,6 +280,17 @@ function renderUser() {
   // Info
   document.getElementById('info-key').textContent = licenseKey || 'None';
   document.getElementById('info-hwid').textContent = hwid || 'Not registered';
+
+  // Discord
+  if (userData.discordUsername) {
+    document.getElementById('discord-row').style.display = '';
+    const el = document.getElementById('info-discord');
+    if (userData.discordAvatar) {
+      el.innerHTML = `<img src="${userData.discordAvatar}" style="width:20px;height:20px;border-radius:50%"/> ${userData.discordUsername}`;
+    } else {
+      el.textContent = userData.discordUsername;
+    }
+  }
 
   // Hide activate section if already has a key
   if (licenseKey) document.getElementById('activate-section').style.display = 'none';
