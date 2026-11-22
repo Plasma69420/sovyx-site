@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Updates — Sovyx</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#07070b;--s1:#0d0d14;--s2:#131320;--b:rgba(255,255,255,.055);--b2:rgba(255,255,255,.11);--red:#e11d48;--red-h:#f43f5e;--pink:#fb7185;--text:#ededf0;--muted:#6b6b80;--dim:#35354a;--green:#3ecf8e;--blue:#60a5fa;--yellow:#fbbf24}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;font-feature-settings:'ss01';-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--text);line-height:1}
+a{text-decoration:none;color:inherit}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:rgba(7,7,11,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--b)}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;letter-spacing:-.3px}
+.logo-mark{display:block;width:30px;height:30px;flex-shrink:0;object-fit:contain;mix-blend-mode:screen}
+@keyframes pulse-dot{0%,100%{box-shadow:0 0 10px rgba(225,29,72,.7)}50%{box-shadow:0 0 20px rgba(225,29,72,1)}}
+.nav-links{display:flex;gap:24px;list-style:none}
+.nav-links a{font-size:13.5px;font-weight:500;color:var(--muted);transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:7px 18px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;transition:all .2s;font-family:inherit}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--b2)}
+.btn-ghost:hover{color:var(--text);border-color:rgba(255,255,255,.18)}
+.btn-red{background:var(--red);color:#fff;box-shadow:0 0 20px rgba(225,29,72,.28)}
+.btn-red:hover{background:var(--red-h)}
+
+.page{margin-top:52px;min-height:100vh}
+
+/* HERO */
+.updates-hero{padding:80px 48px 64px;max-width:960px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:48px;border-bottom:1px solid var(--b)}
+.hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:16px}
+.hero-h1{font-size:clamp(32px,5vw,52px);font-weight:900;letter-spacing:-2px;line-height:1.05;margin-bottom:14px}
+.hero-lead{font-size:15.5px;color:var(--muted);line-height:1.65;max-width:460px}
+.sub-pill{display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:10px;border:1px solid var(--b2);background:var(--s1);font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.sub-pill:hover{border-color:rgba(255,255,255,.18);color:var(--text)}
+.sub-dot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* TIMELINE */
+.timeline{max-width:960px;margin:0 auto;padding:0 48px 120px;display:grid;grid-template-columns:188px 1fr;gap:0 56px}
+.timeline-rule{grid-column:1/-1;border:none;border-top:1px solid var(--b);margin:60px 0 0}
+
+/* VERSION LABEL */
+.ver{padding-top:60px;position:sticky;top:72px;height:fit-content;align-self:start}
+.ver-code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim);margin-bottom:7px;letter-spacing:.5px}
+.ver-name{font-size:21px;font-weight:800;letter-spacing:-.6px;margin-bottom:6px}
+.ver-date{font-size:12px;color:var(--dim);margin-bottom:12px}
+.ver-pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:5px}
+.vp-launch{background:rgba(225,29,72,.1);color:var(--pink);border:1px solid rgba(225,29,72,.2)}
+.vp-latest{background:rgba(62,207,142,.1);color:var(--green);border:1px solid rgba(62,207,142,.2)}
+.vp-stable{background:rgba(255,255,255,.05);color:var(--dim);border:1px solid var(--b)}
+
+/* ENTRY */
+.entry-col{position:relative;padding-left:32px;padding-top:60px}
+.entry-col::before{content:'';position:absolute;left:0;top:60px;bottom:0;width:1px;background:var(--b)}
+.entry{padding-bottom:0;position:relative}
+.entry::before{content:'';position:absolute;left:-36px;top:8px;width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 10px rgba(225,29,72,.6)}
+
+/* Launch ring for v1.0 */
+.launch-dot::before{width:11px !important;height:11px !important;left:-38px !important;top:6px !important;box-shadow:0 0 16px rgba(225,29,72,.8) !important;border:2px solid rgba(225,29,72,.3) !important}
+
+.entry-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:10px}
+.entry-h2{font-size:28px;font-weight:800;letter-spacing:-.8px;line-height:1.1;margin-bottom:12px}
+.entry-lead{font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:36px;max-width:580px}
+
+/* Launch callout band */
+.launch-band{display:flex;align-items:center;gap:16px;padding:18px 22px;border-radius:12px;background:linear-gradient(100deg,rgba(225,29,72,.07),rgba(251,113,133,.04));border:1px solid rgba(225,29,72,.18);margin-bottom:32px}
+.lb-icon{width:36px;height:36px;border-radius:9px;background:rgba(225,29,72,.1);border:1px solid rgba(225,29,72,.2);display:flex;align-items:center;justify-content:center;color:var(--red);flex-shrink:0}
+.lb-text{font-size:13.5px;color:rgba(237,237,240,.75);line-height:1.6}
+.lb-text strong{color:var(--text)}
+
+/* Changelog items */
+.change-block{margin-bottom:28px}
+.change-block-label{font-size:10.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+.change-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:11px}
+.ct{font-size:9.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;padding:3px 7px;border-radius:4px;flex-shrink:0;margin-top:2px;line-height:1}
+.ct-new{background:rgba(62,207,142,.1);color:var(--green)}
+.ct-improved{background:rgba(96,165,250,.1);color:var(--blue)}
+.ct-fixed{background:rgba(251,191,36,.1);color:var(--yellow)}
+.ct-removed{background:rgba(225,29,72,.1);color:var(--pink)}
+.change-text{font-size:13.5px;color:rgba(237,237,240,.72);line-height:1.65}
+.change-text code{font-family:'JetBrains Mono',monospace;font-size:11.5px;padding:1px 5px;border-radius:4px;background:rgba(255,255,255,.06);color:rgba(237,237,240,.85)}
+
+/* Feature grid in launch post */
+.launch-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:32px}
+.lg-card{padding:18px 20px;border-radius:11px;background:var(--s1);border:1px solid var(--b)}
+.lg-card-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.lg-card-h{font-size:14px;font-weight:700;margin-bottom:5px}
+.lg-card-p{font-size:12.5px;color:var(--muted);line-height:1.6}
+
+/* Reveal */
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1)}
+.reveal.up{opacity:1;transform:none}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}
+
+@media(max-width:760px){nav{padding:0 16px}.nav-links{display:none}.timeline{grid-template-columns:1fr;padding-left:24px;padding-right:24px}.ver{position:static;padding-top:48px}.entry-col{padding-left:0;padding-top:16px}.entry-col::before{display:none}.entry::before{display:none}.updates-hero{flex-direction:column;gap:24px;padding:60px 24px 48px}.sub-pill{width:fit-content}.launch-grid{grid-template-columns:1fr}}
+.site-footer{border-top:1px solid var(--b);padding:20px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.foot-logo{display:flex;align-items:center;gap:7px;font-weight:700;font-size:13.5px}
+.foot-links{list-style:none;display:flex;gap:18px;flex-wrap:wrap}
+.foot-links a{font-size:12px;color:var(--dim);transition:color .18s}
+.foot-links a:hover{color:var(--text)}
+.foot-copy{font-size:11.5px;color:var(--dim)}
+#cookie-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:999;background:rgba(13,13,20,.96);backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,.11);padding:16px 48px;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.ck-text{font-size:13px;color:rgba(237,237,240,.6);max-width:640px;line-height:1.5}
+.ck-text a{color:#fb7185;text-decoration:underline}
+.ck-actions{display:flex;gap:9px;flex-shrink:0}
+.ck-btn{padding:7px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:background .18s}
+.ck-accept{background:#fff;color:#07070b}.ck-accept:hover{background:#e8e8ea}
+.ck-decline{background:rgba(255,255,255,.07);color:rgba(237,237,240,.6);border:1px solid rgba(255,255,255,.11)}.ck-decline:hover{background:rgba(255,255,255,.12)}
+@media(max-width:680px){.site-footer{padding:16px 20px}#cookie-bar{padding:14px 20px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html"><img class="logo-mark" src="logo.webp" alt="" width="30" height="30"/>sovyx</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#pricing">Pricing</a></li>
+    <li><a href="docs.html">Docs</a></li>
+    <li><a href="integrations.html">Integrations</a></li>
+    <li><a href="updates.html" class="active">Updates</a></li>
+  </ul>
+  <div class="nav-right">
+    <a class="btn btn-ghost" href="login.html">Log in</a>
+    <a class="btn btn-red" href="login.html">Sign up</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <div class="updates-hero">
+    <div>
+      <div class="hero-eyebrow">Changelog</div>
+      <h1 class="hero-h1">What's new<br>at Sovyx</h1>
+      <p class="hero-lead">Every release, feature, and fix — documented as we ship it. The first entry is today.</p>
+    </div>
+    <button class="sub-pill">
+      <span class="sub-dot"></span>
+      Get notified
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </button>
+  </div>
+
+  <div class="timeline">
+
+    <!-- v1.0 Launch -->
+    <div class="ver reveal">
+      <div class="ver-code">v1.0.0</div>
+      <div class="ver-name">Launch</div>
+      <div class="ver-date">November 22, 2026</div>
+      <span class="ver-pill vp-launch">
+        <svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+        Launch
+      </span>
+    </div>
+
+    <div class="entry-col launch-dot">
+      <div class="entry reveal">
+        <div class="entry-label">November 22, 2026</div>
+        <h2 class="entry-h2">Sovyx is live.</h2>
+        <p class="entry-lead">Today we're opening Sovyx to the public. Everything you need to buy, sell, and automate digital goods — the REST API, reseller panel, Discord bot, webhooks, and all four pricing tiers — ships today in v1.0.</p>
+
+        <div class="launch-band reveal d1">
+          <div class="lb-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div class="lb-text"><strong>Built for resellers, available to everyone.</strong> From single orders to high-volume automation — the same API, the same delivery speed, the same uptime across every plan.</div>
+        </div>
+
+        <div class="launch-grid reveal d2">
+          <div class="lg-card">
+            <div class="lg-card-label"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>REST API</div>
+            <div class="lg-card-h">Full v1 from day one</div>
+            <div class="lg-card-p">Orders, stock, keys, account endpoints — all stable, all documented, no beta disclaimers.</div>
+          </div>
+          <div class="lg-card">
+            <div class="lg-card-label"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Reseller panel</div>
+            <div class="lg-card-h">Your brand, your buyers</div>
+            <div class="lg-card-p">Create a panel under your name. Set credit limits, issue keys, track everything.</div>
+          </div>
+          <div class="lg-card">
+            <div class="lg-card-label"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>Discord bot</div>
+            <div class="lg-card-h">Slash commands → DM delivery</div>
+            <div class="lg-card-p">Buyers order inside your server. Keys arrive as an ephemeral DM, invisible to everyone else.</div>
+          </div>
+          <div class="lg-card">
+            <div class="lg-card-label"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>Webhooks</div>
+            <div class="lg-card-h">Events land on your server</div>
+            <div class="lg-card-p">HMAC-signed payloads, 5 automatic retries, and <code>order.fulfilled</code> / <code>stock.low</code> events out of the box.</div>
+          </div>
+        </div>
+
+        <div class="change-block reveal d3">
+          <div class="change-block-label">Shipping in v1.0</div>
+          <div class="change-item"><span class="ct ct-new">New</span><span class="change-text">REST API v1 — <code>/v1/orders</code>, <code>/v1/stock</code>, <code>/v1/keys</code>, <code>/v1/account</code> and <code>/v1/webhooks</code> endpoints, all stable.</span></div>
+          <div class="change-item"><span class="ct ct-new">New</span><span class="change-text">Discord Bot — slash command ordering, ephemeral key delivery, and stock checks inside any server.</span></div>
+          <div class="change-item"><span class="ct ct-new">New</span><span class="change-text">Reseller panel — credit management, per-buyer limits, bulk key generation, and usage analytics.</span></div>
+          <div class="change-item"><span class="ct ct-new">New</span><span class="change-text">Free, Pro, Ultra, and Elite plans. All four tiers live from day one — no waitlist, no invite codes.</span></div>
+          <div class="change-item"><span class="ct ct-new">New</span><span class="change-text">Webhook signing with HMAC-SHA256. Every payload is signed; verification code is in the docs.</span></div>
+          <div class="change-item"><span class="ct ct-new">New</span><span class="change-text">License key table — search, filter by status, bulk extend, and export across your entire key inventory.</span></div>
+          <div class="change-item"><span class="ct ct-new">New</span><span class="change-text">Annual billing across all plans. 20% off when you pay yearly.</span></div>
+          <div class="change-item"><span class="ct ct-new">New</span><span class="change-text">99.9% uptime SLA, enforced across all infrastructure. Status page at <code>status.sovyx.cc</code>.</span></div>
+        </div>
+
+        <div class="change-block reveal">
+          <div class="change-block-label">What's next</div>
+          <div class="change-item"><span class="ct ct-improved">Soon</span><span class="change-text">Telegram Bot integration — inline ordering and Telegram Payments support.</span></div>
+          <div class="change-item"><span class="ct ct-improved">Soon</span><span class="change-text">Node.js and Python SDKs — TypeScript-first, fully typed, zero prod dependencies.</span></div>
+          <div class="change-item"><span class="ct ct-improved">Soon</span><span class="change-text">Shopify App — auto-fulfil virtual product orders on payment confirmed.</span></div>
+          <div class="change-item"><span class="ct ct-improved">Soon</span><span class="change-text">WooCommerce plugin — same auto-fulfil behaviour for self-hosted stores.</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('up'); io.unobserve(e.target); }});
+}, { threshold: 0.06 });
+revealEls.forEach(el => io.observe(el));
+(function(){const b=document.getElementById('cookie-bar');if(!b||localStorage.getItem('sv_cookie'))return;b.style.display='flex';document.getElementById('ck-accept').onclick=()=>{localStorage.setItem('sv_cookie','1');b.style.display='none';};document.getElementById('ck-decline').onclick=()=>{localStorage.setItem('sv_cookie','0');b.style.display='none';};})();
+</script>
+
+<footer class="site-footer">
+  <div class="foot-logo"><img src="logo.webp" alt="" width="22" height="22" style="display:block;object-fit:contain;mix-blend-mode:screen;flex-shrink:0"/>sovyx</div>
+  <ul class="foot-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="terms.html">Terms</a></li>
+    <li><a href="privacy.html">Privacy</a></li>
+    <li><a href="refunds.html">Refunds</a></li>
+    <li><a href="docs.html">Docs</a></li>
+    <li><a href="login.html">Log in</a></li>
+  </ul>
+  <span class="foot-copy">© 2026 Sovyx</span>
+</footer>
+
+<div id="cookie-bar">
+  <p class="ck-text">We use cookies to operate the platform and understand how the site is used. See our <a href="privacy.html">Privacy Policy</a>.</p>
+  <div class="ck-actions">
+    <button class="ck-btn ck-decline" id="ck-decline">Decline optional</button>
+    <button class="ck-btn ck-accept" id="ck-accept">Accept all</button>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Sovyx — The shop built for resellers.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#07070b;--s1:#0d0d14;--s2:#131320;--s3:#18182a;
+  --b:rgba(255,255,255,.055);--b2:rgba(255,255,255,.1);--b3:rgba(255,255,255,.18);
+  --red:#e11d48;--red-h:#f43f5e;--pink:#fb7185;
+  --text:#ededf0;--muted:#6b6b80;--dim:#35354a;
+  --green:#3ecf8e;--blue:#60a5fa;--yellow:#fbbf24;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',system-ui,sans-serif;font-feature-settings:'ss01','cv01';background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+svg{display:block;flex-shrink:0}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;transition:background .25s,border-color .25s;border-bottom:1px solid transparent}
+nav.scrolled{background:rgba(7,7,11,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom-color:var(--b)}
+.logo{display:flex;align-items:center;gap:7px;font-weight:700;font-size:14.5px;letter-spacing:-.25px}
+.logo-mark{display:block;width:30px;height:30px;flex-shrink:0;object-fit:contain}
+.nav-links{display:flex;gap:22px}
+.nav-links a{font-size:13px;font-weight:500;color:var(--muted);transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-actions{display:flex;align-items:center;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .18s;font-family:inherit}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--b2)}
+.btn-ghost:hover{color:var(--text);border-color:var(--b3)}
+.btn-red{background:var(--red);color:#fff;box-shadow:0 0 22px rgba(225,29,72,.35),inset 0 1px 0 rgba(255,255,255,.14)}
+.btn-red:hover{background:var(--red-h);box-shadow:0 0 44px rgba(225,29,72,.6),0 6px 20px rgba(225,29,72,.25);transform:translateY(-1px)}
+
+/* HERO */
+.hero{display:flex;flex-direction:column;align-items:center;padding:140px 48px 0;border-bottom:1px solid var(--b);position:relative;overflow:hidden;text-align:center}
+.hero-bg{position:absolute;top:-180px;left:50%;transform:translateX(-50%);width:700px;height:700px;background:radial-gradient(circle,rgba(255,255,255,.045) 0%,rgba(255,255,255,.01) 35%,transparent 65%);pointer-events:none;z-index:0}
+.hero-inner{max-width:720px;width:100%;display:flex;flex-direction:column;align-items:center;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;padding:5px 12px 5px 8px;border:1px solid var(--b2);border-radius:999px;font-size:12px;color:rgba(237,237,240,.65);margin-bottom:28px;background:rgba(255,255,255,.025)}
+.hero-badge-dot{width:5px;height:5px;border-radius:50%;background:var(--red);flex-shrink:0;box-shadow:0 0 6px rgba(225,29,72,.8)}
+h1{font-size:clamp(36px,4.8vw,60px);font-weight:800;letter-spacing:-2px;line-height:1.05;margin-bottom:20px;color:#fff}
+.hero-desc{font-size:14.5px;color:var(--muted);max-width:480px;line-height:1.75;margin-bottom:32px}
+.hero-actions{display:flex;align-items:center;gap:8px;justify-content:center}
+.hero-actions .btn{padding:10px 22px;font-size:13.5px}
+.btn-white{background:#fff;color:#0a0a0f;font-weight:700}
+.btn-white:hover{background:#e8e8ea;transform:translateY(-1px)}
+.hero-meta{margin-top:44px;display:flex;gap:48px;padding-top:24px;border-top:1px solid var(--b);justify-content:center}
+.meta-item{display:flex;flex-direction:column;gap:4px;align-items:center}
+.meta-num{font-size:21px;font-weight:800;letter-spacing:-.8px}
+.meta-label{font-size:11px;color:var(--muted)}
+
+/* hero visual — dashboard preview */
+.hero-visual{position:relative;z-index:1;margin-top:60px;width:calc(100% + 96px);max-width:1100px;border:1px solid var(--b2);border-radius:12px 12px 0 0;overflow:hidden;background:var(--s1);display:flex;flex-direction:column;height:400px}
+.app-chrome{height:36px;border-bottom:1px solid var(--b);background:rgba(0,0,0,.35);display:flex;align-items:center;padding:0 16px;gap:7px;flex-shrink:0}
+.chrome-dot{width:9px;height:9px;border-radius:50%}
+.chrome-url{margin:0 auto;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--dim);display:flex;align-items:center;gap:5px}
+.app-body{flex:1;display:grid;grid-template-columns:210px 1fr;overflow:hidden}
+.app-sidebar{background:rgba(0,0,0,.24);border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;overflow:hidden}
+.sb-logo{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.06)}
+.sb-logo-mark{width:20px;height:20px;border-radius:5px;background:var(--red);flex-shrink:0}
+.sb-logo-name{font-size:13px;font-weight:700;color:#fff}
+.wk-sel{display:flex;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.06)}
+.wk-av{width:18px;height:18px;border-radius:4px;background:rgba(255,255,255,.12);flex-shrink:0;font-size:8px;font-weight:800;color:rgba(255,255,255,.7);display:flex;align-items:center;justify-content:center}
+.wk-name{font-size:11.5px;font-weight:500;color:rgba(237,237,240,.75);flex:1}
+.wk-cnt{font-size:9px;background:rgba(225,29,72,.2);color:var(--pink);padding:1px 5px;border-radius:4px;font-weight:600}
+.sidebar-sec{padding:7px 0}
+.sidebar-sec+.sidebar-sec{border-top:1px solid rgba(255,255,255,.05)}
+.sidebar-label{font-size:10px;font-weight:500;color:rgba(255,255,255,.26);padding:5px 14px 4px}
+.sidebar-item{display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:11.5px;color:rgba(237,237,240,.44);cursor:default}
+.sidebar-item svg{width:12px;height:12px;opacity:.4;flex-shrink:0}
+.sidebar-item.active{color:rgba(237,237,240,.92);background:rgba(255,255,255,.07)}
+.sidebar-item.active svg{opacity:.8}
+.sb-badge{margin-left:auto;font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px}
+.sb-red{color:var(--red);background:rgba(225,29,72,.14)}
+.sb-num{background:rgba(255,255,255,.09);color:rgba(237,237,240,.45)}
+.app-main{overflow:hidden;padding:14px 18px}
+.app-breadcrumb{font-size:10.5px;color:rgba(255,255,255,.26);margin-bottom:10px}
+.app-breadcrumb span{color:rgba(237,237,240,.52)}
+.app-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.app-title{font-size:24px;font-weight:800;letter-spacing:-.7px;line-height:1}
+.app-new-btn{font-size:10.5px;padding:5px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.07);color:rgba(237,237,240,.72);font-family:inherit;cursor:default;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-bottom:12px;border:1px solid rgba(255,255,255,.07);border-radius:8px;overflow:hidden;background:rgba(255,255,255,.07)}
+.scard{background:var(--s1);padding:10px 14px}
+.scard-label{font-size:9.5px;color:rgba(237,237,240,.34);margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.scard-label svg{width:11px;height:11px;opacity:.5}
+.scard-num{font-size:21px;font-weight:800;letter-spacing:-.6px}
+.scard-delta{font-size:9px;margin-top:4px}
+.chart-card{background:transparent;padding:0}
+.chart-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.chart-title{font-size:12px;font-weight:700}
+.chart-filter{font-size:10px;color:rgba(237,237,240,.38);border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:3px 8px}
+.chart-tabs{display:flex;margin-bottom:10px;border-bottom:1px solid rgba(255,255,255,.07)}
+.chart-tab{font-size:11px;padding-bottom:7px;margin-right:16px;color:rgba(237,237,240,.34);cursor:default}
+.chart-tab.on{color:rgba(237,237,240,.86);border-bottom:2px solid var(--red);margin-bottom:-1px}
+.bars{display:flex;align-items:flex-end;gap:5px;height:98px}
+.bar{flex:1;border-radius:3px 3px 0 0;background:rgba(255,255,255,.13);min-width:0}
+.bar.hi{background:rgba(255,255,255,.34)}
+
+/* SECTION */
+.section{padding:88px 56px;max-width:1160px;margin:0 auto}
+.divide{border:none;border-top:1px solid var(--b)}
+.sec-label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.sec-label::before{content:'';width:16px;height:1px;background:var(--dim)}
+.sec-h{font-size:clamp(24px,3vw,38px);font-weight:800;letter-spacing:-1.2px;line-height:1.08;margin-bottom:11px}
+.sec-p{font-size:14px;color:var(--muted);max-width:420px;line-height:1.72;margin-bottom:48px}
+
+/* TABLE */
+.table-wrap{border:1px solid var(--b2);border-radius:12px;overflow:hidden;background:var(--s1)}
+.t-header{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;border-bottom:1px solid var(--b)}
+.t-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+.t-count{font-size:11px;color:var(--dim);font-weight:400}
+.t-actions{display:flex;gap:7px}
+.t-btn{font-size:11px;padding:4px 11px;border-radius:6px;border:1px solid var(--b2);background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-weight:500;transition:all .15s}
+.t-btn:hover{color:var(--text);border-color:var(--b3)}
+.t-btn.danger{border-color:rgba(225,29,72,.22);color:var(--pink);background:rgba(225,29,72,.05)}
+.t-btn.primary{border-color:transparent;background:var(--red);color:#fff}
+.t-stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--b)}
+.ts-cell{padding:11px 20px;border-right:1px solid var(--b)}
+.ts-cell:last-child{border-right:none}
+.ts-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.8px;color:var(--dim);margin-bottom:3px}
+.ts-num{font-size:18px;font-weight:800;letter-spacing:-.4px}
+.t-row-head{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr;gap:12px;padding:7px 20px;border-bottom:1px solid var(--b);font-size:9.5px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--dim)}
+.t-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr;gap:12px;padding:10px 20px;border-bottom:1px solid rgba(255,255,255,.03);font-size:12px;align-items:center;transition:background .12s}
+.t-row:last-child{border-bottom:none}
+.t-row:hover{background:rgba(255,255,255,.016)}
+.key-cell{display:flex;align-items:center;gap:8px}
+.key-ico{width:22px;height:22px;border-radius:5px;background:var(--s2);border:1px solid var(--b);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.key-str{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(237,237,240,.6)}
+.badge{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px;display:inline-block}
+.b-active{background:rgba(62,207,142,.1);color:var(--green)}
+.b-unused{background:rgba(255,255,255,.06);color:var(--dim)}
+.b-expired{background:rgba(251,191,36,.1);color:var(--yellow)}
+.b-banned{background:rgba(225,29,72,.1);color:var(--pink)}
+.row-m{color:var(--muted);font-size:12px}
+.row-d{color:var(--dim);font-size:12px}
+.row-lt{font-size:9.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--pink)}
+
+/* BENTO */
+.bento{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.bcard{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:24px;overflow:hidden;transition:border-color .2s}
+.bcard:hover{border-color:var(--b2)}
+.bcard.span2{grid-column:span 2}
+.bcard.tall{grid-row:span 2}
+.b-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.b-h{font-size:15px;font-weight:700;letter-spacing:-.25px;margin-bottom:6px}
+.b-p{font-size:12.5px;color:var(--muted);line-height:1.65}
+
+.steps{margin-top:18px;border-radius:8px;border:1px solid var(--b);overflow:hidden}
+.step{display:flex;align-items:center;gap:10px;padding:9px 13px;border-bottom:1px solid var(--b);font-size:12px}
+.step:last-child{border-bottom:none}
+.step-ico{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700}
+.s-done{background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.2);color:var(--green)}
+.s-active{background:rgba(225,29,72,.1);border:1px solid rgba(225,29,72,.22);color:var(--red)}
+.s-pend{background:var(--s2);border:1px solid var(--b);color:var(--dim)}
+.step-name{flex:1;color:rgba(237,237,240,.72);font-weight:500}
+.step-time{font-size:10.5px;color:var(--dim);font-family:'JetBrains Mono',monospace}
+
+.elog{margin-top:16px;border-radius:8px;border:1px solid var(--b);overflow:hidden;background:var(--s2)}
+.elog-head{padding:7px 12px;border-bottom:1px solid var(--b);font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);display:flex;justify-content:space-between}
+.erow{display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.03);font-size:11px}
+.erow:last-child{border-bottom:none}
+.em{font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;padding:2px 5px;border-radius:3px;flex-shrink:0}
+.em-post{background:rgba(96,165,250,.1);color:var(--blue)}
+.em-get{background:rgba(62,207,142,.08);color:var(--green)}
+.e-path{flex:1;font-family:'JetBrains Mono',monospace;font-size:10.5px;color:rgba(237,237,240,.55)}
+.e-ms{font-size:10px;color:var(--dim);font-family:'JetBrains Mono',monospace}
+.e-status{font-size:9.5px;padding:1px 5px;border-radius:3px;font-weight:700}
+.es-200{background:rgba(62,207,142,.08);color:var(--green)}
+.es-500{background:rgba(225,29,72,.08);color:var(--pink)}
+
+.wh{margin-top:16px;border-radius:8px;border:1px solid var(--b);overflow:hidden}
+.wh-row{display:flex;align-items:center;justify-content:space-between;padding:8px 13px;border-bottom:1px solid rgba(255,255,255,.03);font-size:11px}
+.wh-row:last-child{border-bottom:none}
+.wh-ev{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(237,237,240,.6)}
+.wh-s{font-size:9.5px;padding:2px 6px;border-radius:3px;font-weight:700}
+
+.cbars{margin-top:16px}
+.cbar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.cbar-dur{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);min-width:52px}
+.cbar-track{flex:1;height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden}
+.cbar-fill{height:100%;border-radius:2px;background:var(--red)}
+.cbar-n{font-size:11px;color:var(--dim);min-width:22px;text-align:right;font-family:'JetBrains Mono',monospace}
+
+/* RESELLER */
+.reseller-3col{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:40px}
+.rcol{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:22px;transition:border-color .2s}
+.rcol:hover{border-color:var(--b2)}
+.rcol-ico{width:30px;height:30px;border-radius:7px;background:rgba(225,29,72,.07);border:1px solid rgba(225,29,72,.14);display:flex;align-items:center;justify-content:center;color:var(--red);margin-bottom:12px}
+.rcol-h{font-size:14px;font-weight:700;margin-bottom:6px}
+.rcol-p{font-size:12.5px;color:var(--muted);line-height:1.65}
+.panel-mock{background:var(--s1);border:1px solid var(--b2);border-radius:12px;overflow:hidden}
+.pm-top{padding:12px 18px;border-bottom:1px solid var(--b);display:flex;align-items:center;justify-content:space-between}
+.pm-name{font-size:12.5px;font-weight:700}
+.pm-sub{font-size:11px;color:var(--dim)}
+.pm-gen{font-size:11px;padding:4px 11px;border-radius:6px;background:var(--red);color:#fff;border:none;font-family:inherit;font-weight:600;cursor:pointer}
+.pm-stats{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--b)}
+.pm-s{padding:10px 16px;border-right:1px solid var(--b);text-align:center}
+.pm-s:last-child{border-right:none}
+.pm-sl{font-size:9.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px}
+.pm-sv{font-size:16px;font-weight:800;letter-spacing:-.3px}
+.pm-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:8px;padding:8px 16px;border-bottom:1px solid rgba(255,255,255,.03);font-size:11.5px;align-items:center}
+.pm-row:last-child{border-bottom:none}
+.pm-rh{font-size:9px;text-transform:uppercase;letter-spacing:1.1px;color:var(--dim);font-weight:700}
+
+/* PRICING */
+.billing-toggle-row{display:flex;align-items:center;gap:10px;margin-bottom:36px}
+.tog-label{font-size:12.5px;color:var(--muted);cursor:pointer;transition:color .18s}
+.tog-label.on{color:var(--text)}
+.tog{position:relative;width:36px;height:20px;cursor:pointer}
+.tog input{opacity:0;width:0;height:0;position:absolute}
+.tog-track{position:absolute;inset:0;border-radius:10px;background:var(--s2);border:1px solid var(--b2);transition:background .2s}
+.tog-thumb{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--muted);transition:transform .2s,background .2s}
+.tog input:checked+.tog-track{background:rgba(225,29,72,.18)}
+.tog input:checked~.tog-thumb{transform:translateX(16px);background:var(--red)}
+.save-tag{font-size:10.5px;padding:2px 7px;border-radius:4px;background:rgba(62,207,142,.09);border:1px solid rgba(62,207,142,.18);color:var(--green);font-weight:600}
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;align-items:start}
+.pcard{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:24px 20px;transition:border-color .2s}
+.pcard:hover{border-color:var(--b2)}
+.pcard.featured{border-color:rgba(225,29,72,.26);background:linear-gradient(155deg,rgba(225,29,72,.05),rgba(251,113,133,.02));box-shadow:0 0 40px rgba(225,29,72,.05)}
+.pcard.featured:hover{border-color:rgba(225,29,72,.42)}
+.p-tier-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.p-tier{font-size:13px;font-weight:700}
+.p-pop{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--red);color:#fff;text-transform:uppercase;letter-spacing:.5px}
+.p-tag{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+.p-amount{font-size:30px;font-weight:800;letter-spacing:-1.2px;margin-bottom:3px}
+.p-amount sub{font-size:13px;font-weight:400;color:var(--muted);letter-spacing:0;vertical-align:baseline}
+.p-unit{font-size:11px;color:var(--muted);margin-bottom:16px}
+.p-div{border:none;border-top:1px solid var(--b);margin-bottom:14px}
+.p-feats{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.p-feat{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.chk{width:14px;height:14px;border-radius:50%;flex-shrink:0;background:rgba(225,29,72,.09);border:1px solid rgba(225,29,72,.18);display:flex;align-items:center;justify-content:center;color:var(--red)}
+.chk svg{width:8px;height:8px}
+.dash{width:14px;height:14px;border-radius:50%;flex-shrink:0;background:var(--s2);border:1px solid var(--b);display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:10px;font-weight:700}
+.p-cta{width:100%}
+
+/* REVIEWS */
+.reviews-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.review{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:22px 24px;transition:border-color .2s}
+.review:hover{border-color:var(--b2)}
+.r-quote{font-size:13.5px;line-height:1.74;color:rgba(237,237,240,.62);margin-bottom:18px}
+.r-quote strong{color:var(--text);font-weight:600}
+.r-foot{display:flex;align-items:center;gap:10px}
+.r-av{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff}
+.r-name{font-size:12.5px;font-weight:600;margin-bottom:1px}
+.r-handle{font-size:11px;color:var(--muted)}
+.r-stars{margin-left:auto;color:var(--red);font-size:11px;letter-spacing:1px}
+
+/* CTA */
+.cta-band{padding:100px 56px;text-align:center;position:relative;overflow:hidden}
+.cta-glow{position:absolute;bottom:-60px;left:50%;transform:translateX(-50%);width:600px;height:360px;background:radial-gradient(ellipse at bottom,rgba(225,29,72,.09),transparent 65%);pointer-events:none}
+.cta-band h2{font-size:clamp(28px,4vw,48px);font-weight:800;letter-spacing:-1.8px;margin-bottom:12px}
+.cta-band p{font-size:14.5px;color:var(--muted);max-width:320px;margin:0 auto 28px;line-height:1.65}
+.cta-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.cta-row .btn{padding:9px 22px;font-size:13.5px}
+
+/* FOOTER */
+footer{border-top:1px solid var(--b);padding:22px 56px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.foot-logo{display:flex;align-items:center;gap:7px;font-weight:700;font-size:13.5px}
+.foot-links{display:flex;gap:18px;flex-wrap:wrap}
+.foot-links a{font-size:12px;color:var(--dim);transition:color .18s}
+.foot-links a:hover{color:var(--text)}
+
+/* COOKIE BANNER */
+#cookie-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:999;background:rgba(13,13,20,.96);backdrop-filter:blur(16px);border-top:1px solid var(--b2);padding:16px 48px;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.ck-text{font-size:13px;color:rgba(237,237,240,.6);max-width:640px;line-height:1.5}
+.ck-text a{color:var(--pink);text-decoration:underline}
+.ck-actions{display:flex;gap:9px;flex-shrink:0}
+.ck-btn{padding:7px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:background .18s}
+.ck-accept{background:#fff;color:#07070b}
+.ck-accept:hover{background:#e8e8ea}
+.ck-decline{background:rgba(255,255,255,.07);color:rgba(237,237,240,.6);border:1px solid var(--b)}
+.ck-decline:hover{background:rgba(255,255,255,.12)}
+.foot-copy{font-size:11.5px;color:var(--dim)}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1)}
+.reveal.up{opacity:1;transform:none}
+.d1{transition-delay:.07s}.d2{transition-delay:.14s}.d3{transition-delay:.21s}.d4{transition-delay:.28s}
+
+/* RESPONSIVE */
+@media(max-width:1000px){.hero{grid-template-columns:1fr;min-height:auto}.hero-left{padding:112px 32px 52px;border-right:none;border-bottom:1px solid var(--b)}.hero-right{height:380px}.bento{grid-template-columns:1fr 1fr}.bcard.span2{grid-column:span 1}.price-grid{grid-template-columns:1fr 1fr}.reseller-3col{grid-template-columns:1fr}}
+@media(max-width:680px){nav{padding:0 16px}.nav-links{display:none}.section{padding:60px 24px}.cta-band,.footer{padding-left:24px;padding-right:24px}.bento{grid-template-columns:1fr}.price-grid{grid-template-columns:1fr}.reviews-grid{grid-template-columns:1fr}.hero-left{padding:96px 24px 44px}.t-row,.t-row-head{grid-template-columns:1.5fr 1fr 1fr}.t-row>:nth-child(n+4),.t-row-head>:nth-child(n+4){display:none}.app-body{grid-template-columns:1fr}.app-sidebar{display:none}}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a class="logo" href="index.html"><img class="logo-mark" src="logo.webp?v=3" alt="" width="30" height="30"/>sovyx</a>
+  <ul class="nav-links">
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="docs.html">Docs</a></li>
+    <li><a href="integrations.html">Integrations</a></li>
+    <li><a href="updates.html">Updates</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a class="btn btn-ghost" href="login.html">Log in</a>
+    <a class="btn btn-red" href="login.html">Get started</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <div class="hero-badge"><span class="hero-badge-dot"></span>Sovyx is live — just launched</div>
+    <h1>The shop behind your<br>reselling business.</h1>
+    <p class="hero-desc">Stock, sell, and automate digital goods — keys, accounts, subscriptions — through your own branded shop, a REST API, or a Discord bot. Everything ships in under four seconds.</p>
+    <div class="hero-actions">
+      <a class="btn btn-white" href="login.html">Start for free</a>
+      <a class="btn btn-ghost" href="docs.html">Read the docs</a>
+    </div>
+    <div class="hero-meta">
+      <div class="meta-item"><div class="meta-num" data-count="18400" data-suffix="+">18,400+</div><div class="meta-label">Orders fulfilled</div></div>
+      <div class="meta-item"><div class="meta-num" data-count="4200" data-suffix="+">4,200+</div><div class="meta-label">Active resellers</div></div>
+      <div class="meta-item"><div class="meta-num">&lt; 4s</div><div class="meta-label">Avg delivery</div></div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="app-chrome">
+        <div class="chrome-dot" style="background:#ff5f56"></div>
+        <div class="chrome-dot" style="background:#febc2e"></div>
+        <div class="chrome-dot" style="background:#27c93f"></div>
+        <div class="chrome-url">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          app.sovyx.cc
+        </div>
+      </div>
+      <div class="app-body">
+        <div class="app-sidebar">
+          <div class="sb-logo">
+            <div class="sb-logo-mark"></div>
+            <div class="sb-logo-name">sovyx</div>
+          </div>
+          <div class="wk-sel">
+            <div class="wk-av">M</div>
+            <div class="wk-name">my-shop</div>
+            <div class="wk-cnt">3</div>
+          </div>
+          <div class="sidebar-sec">
+            <div class="sidebar-label">Workspace</div>
+            <div class="sidebar-item active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              Overview
+            </div>
+            <div class="sidebar-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              Orders <span class="sb-badge sb-num">12</span>
+            </div>
+            <div class="sidebar-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="3.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
+              Stock
+            </div>
+            <div class="sidebar-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>
+              Webhooks
+            </div>
+          </div>
+          <div class="sidebar-sec">
+            <div class="sidebar-label">Development</div>
+            <div class="sidebar-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              API Keys
+            </div>
+            <div class="sidebar-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Discord bot <span class="sb-badge sb-red">New</span>
+            </div>
+          </div>
+          <div class="sidebar-sec">
+            <div class="sidebar-label">Management</div>
+            <div class="sidebar-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Resellers
+            </div>
+            <div class="sidebar-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+              Reseller panel
+            </div>
+          </div>
+        </div>
+        <div class="app-main">
+          <div class="app-breadcrumb">Workspace / <span>Overview</span></div>
+          <div class="app-title-row">
+            <div class="app-title">Overview</div>
+            <button class="app-new-btn">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add stock
+            </button>
+          </div>
+          <div class="stat-row">
+            <div class="scard">
+              <div class="scard-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+                Live orders
+              </div>
+              <div class="scard-num">63</div>
+              <div class="scard-delta" style="color:var(--green)">↑ 8.4%</div>
+            </div>
+            <div class="scard">
+              <div class="scard-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Total orders
+              </div>
+              <div class="scard-num">18,412</div>
+              <div class="scard-delta" style="color:var(--green)">↑ 10.3%</div>
+            </div>
+            <div class="scard">
+              <div class="scard-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="3.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
+                Stock units
+              </div>
+              <div class="scard-num">3,847</div>
+              <div class="scard-delta" style="color:var(--yellow)">↓ 2.1%</div>
+            </div>
+            <div class="scard">
+              <div class="scard-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                API calls
+              </div>
+              <div class="scard-num">4,231</div>
+              <div class="scard-delta" style="color:var(--green)">↑ 9.7%</div>
+            </div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-top">
+              <div class="chart-title">Activity</div>
+              <div class="chart-filter">Last 7 days</div>
+            </div>
+            <div class="chart-tabs">
+              <div class="chart-tab on">Orders</div>
+              <div class="chart-tab">Revenue</div>
+              <div class="chart-tab">API calls</div>
+            </div>
+            <div class="bars">
+              <div class="bar" style="height:38%"></div>
+              <div class="bar" style="height:50%"></div>
+              <div class="bar" style="height:44%"></div>
+              <div class="bar" style="height:65%"></div>
+              <div class="bar" style="height:58%"></div>
+              <div class="bar hi" style="height:80%"></div>
+              <div class="bar hi" style="height:92%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+
+<hr class="divide"/>
+
+<!-- LICENSE TABLE -->
+<section class="section">
+  <div class="sec-label reveal">Stock management</div>
+  <h2 class="sec-h reveal d1">Every key, every status.</h2>
+  <p class="sec-p reveal d2">Search, filter, and manage your entire inventory from one table. Active, unused, expired — all tracked automatically.</p>
+  <div class="table-wrap reveal">
+    <div class="t-header">
+      <div class="t-title">All keys <span class="t-count">8,545</span></div>
+      <div class="t-actions">
+        <button class="t-btn danger">Delete unused</button>
+        <button class="t-btn">Extend all</button>
+        <button class="t-btn primary">+ New keys</button>
+      </div>
+    </div>
+    <div class="t-stats">
+      <div class="ts-cell"><div class="ts-label">Active</div><div class="ts-num" style="color:var(--green)">6,212</div></div>
+      <div class="ts-cell"><div class="ts-label">Unused</div><div class="ts-num">1,904</div></div>
+      <div class="ts-cell"><div class="ts-label">Expired</div><div class="ts-num" style="color:var(--yellow)">388</div></div>
+      <div class="ts-cell"><div class="ts-label">Banned</div><div class="ts-num" style="color:var(--pink)">41</div></div>
+    </div>
+    <div class="t-row-head"><div>Key</div><div>Status</div><div>Source</div><div>Redeemed by</div><div>Length</div><div>Expires</div></div>
+    <div class="t-row"><div class="key-cell"><div class="key-ico"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="3.5"/><path d="m21 2-9.6 9.6"/></svg></div><span class="key-str">SVX-7F3K-Q9XW-2MDP</span></div><div><span class="badge b-active">Active</span></div><div class="row-m">Developer</div><div class="row-m">ravenfall</div><div class="row-d">30d</div><div class="row-d">Dec 12</div></div>
+    <div class="t-row"><div class="key-cell"><div class="key-ico"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="3.5"/><path d="m21 2-9.6 9.6"/></svg></div><span class="key-str">SVX-K2PZ-8VTR-M4QC</span></div><div><span class="badge b-active">Active</span></div><div class="row-m">raze_keys</div><div class="row-m">mkt_ollie</div><div class="row-d">90d</div><div class="row-d">Jan 30</div></div>
+    <div class="t-row"><div class="key-cell"><div class="key-ico" style="opacity:.5"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="3.5"/><path d="m21 2-9.6 9.6"/></svg></div><span class="key-str">SVX-3XHD-W7NB-Q1LS</span></div><div><span class="badge b-unused">Unused</span></div><div class="row-m">Developer</div><div class="row-d">—</div><div class="row-d">7d</div><div class="row-d">Never</div></div>
+    <div class="t-row"><div class="key-cell"><div class="key-ico" style="opacity:.4"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="3.5"/><path d="m21 2-9.6 9.6"/></svg></div><span class="key-str">SVX-9QMC-T5EY-6RJW</span></div><div><span class="badge b-expired">Expired</span></div><div class="row-m">nyx.dev</div><div class="row-m">anon_4471</div><div class="row-d">30d</div><div class="row-d" style="color:var(--yellow)">Nov 15</div></div>
+    <div class="t-row"><div class="key-cell"><div class="key-ico"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="3.5"/><path d="m21 2-9.6 9.6"/></svg></div><span class="key-str">SVX-L8WF-2KDN-Z3PA</span></div><div><span class="badge b-active">Active</span></div><div class="row-m">Developer</div><div class="row-m">sora</div><div><span class="row-lt">Lifetime</span></div><div class="row-d">Never</div></div>
+    <div class="t-row"><div class="key-cell"><div class="key-ico" style="border-color:rgba(225,29,72,.2)"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="3.5"/><path d="m21 2-9.6 9.6"/></svg></div><span class="key-str">SVX-Y4RT-N3GX-B7HE</span></div><div><span class="badge b-banned">Banned</span></div><div class="row-m">Developer</div><div class="row-m">anon_4471</div><div class="row-d">30d</div><div class="row-d">Dec 2</div></div>
+  </div>
+</section>
+
+<hr class="divide"/>
+
+<!-- BENTO -->
+<section class="section">
+  <div class="sec-label reveal">Features</div>
+  <h2 class="sec-h reveal d1">Built to run itself.</h2>
+  <p class="sec-p reveal d2">Order comes in. Stock is reserved. Key hits the buyer. Webhook fires. All in under four seconds, no manual step ever.</p>
+  <div class="bento reveal">
+    <div class="bcard tall">
+      <div class="b-label"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Delivery</div>
+      <div class="b-h">Keys hit your DMs in seconds</div>
+      <div class="b-p">Payment confirms. Keys ship. No manual step — ever.</div>
+      <div class="steps">
+        <div class="step"><div class="step-ico s-done"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="step-name">Payment confirmed</div><div class="step-time">0ms</div></div>
+        <div class="step"><div class="step-ico s-done"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="step-name">Stock reserved</div><div class="step-time">120ms</div></div>
+        <div class="step"><div class="step-ico s-active"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="step-name">Delivering</div><div class="step-time">390ms</div></div>
+        <div class="step"><div class="step-ico s-pend">4</div><div class="step-name">Webhook fired</div><div class="step-time">—</div></div>
+        <div class="step"><div class="step-ico s-pend">5</div><div class="step-name">Order complete</div><div class="step-time">—</div></div>
+      </div>
+    </div>
+    <div class="bcard span2">
+      <div class="b-label"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>REST API</div>
+      <div class="b-h">Every order is an API call</div>
+      <div class="b-p">Build bots, storefronts, or tools on top of Sovyx. Full REST API with real-time delivery hooks.</div>
+      <div class="elog">
+        <div class="elog-head"><span>Live activity</span><span>api.sovyx.cc</span></div>
+        <div class="erow"><span class="em em-post">POST</span><span class="e-path">/v1/orders</span><span class="e-ms">382ms</span><span class="e-status es-200">201</span></div>
+        <div class="erow"><span class="em em-get">GET</span><span class="e-path">/v1/stock?category=accounts</span><span class="e-ms">48ms</span><span class="e-status es-200">200</span></div>
+        <div class="erow"><span class="em em-post">POST</span><span class="e-path">/v1/orders</span><span class="e-ms">291ms</span><span class="e-status es-200">201</span></div>
+        <div class="erow"><span class="em em-get">GET</span><span class="e-path">/v1/account/balance</span><span class="e-ms">22ms</span><span class="e-status es-200">200</span></div>
+        <div class="erow" style="opacity:.4"><span class="em em-post">POST</span><span class="e-path">/v1/orders</span><span class="e-ms">—</span><span class="e-status es-500">409</span></div>
+      </div>
+    </div>
+    <div class="bcard">
+      <div class="b-label"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>Webhooks</div>
+      <div class="b-h">Events land on your server</div>
+      <div class="b-p">Get notified the moment an order fulfils or stock runs low.</div>
+      <div class="wh">
+        <div class="wh-row"><span class="wh-ev">order.fulfilled</span><span class="wh-s" style="background:rgba(62,207,142,.08);color:var(--green)">200</span></div>
+        <div class="wh-row"><span class="wh-ev">key.delivered</span><span class="wh-s" style="background:rgba(62,207,142,.08);color:var(--green)">200</span></div>
+        <div class="wh-row"><span class="wh-ev">stock.low</span><span class="wh-s" style="background:rgba(251,191,36,.08);color:var(--yellow)">retry 2/5</span></div>
+        <div class="wh-row" style="opacity:.35"><span class="wh-ev">order.failed</span><span class="wh-s" style="background:rgba(225,29,72,.08);color:var(--pink)">500</span></div>
+      </div>
+    </div>
+    <div class="bcard">
+      <div class="b-label"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Reseller credit</div>
+      <div class="b-h">Spend credit, not keys</div>
+      <div class="b-p">Top up once, spend per order at your plan rate.</div>
+      <div class="cbars">
+        <div class="cbar-row"><span class="cbar-dur">1 Day</span><div class="cbar-track"><div class="cbar-fill" style="width:72%"></div></div><span class="cbar-n">30</span></div>
+        <div class="cbar-row"><span class="cbar-dur">1 Week</span><div class="cbar-track"><div class="cbar-fill" style="width:40%"></div></div><span class="cbar-n">12</span></div>
+        <div class="cbar-row"><span class="cbar-dur">1 Month</span><div class="cbar-track"><div class="cbar-fill" style="width:92%"></div></div><span class="cbar-n">48</span></div>
+        <div class="cbar-row"><span class="cbar-dur">3 Months</span><div class="cbar-track"><div class="cbar-fill" style="width:18%"></div></div><span class="cbar-n">6</span></div>
+        <div class="cbar-row"><span class="cbar-dur">Lifetime</span><div class="cbar-track"><div class="cbar-fill" style="width:6%"></div></div><span class="cbar-n">1</span></div>
+      </div>
+    </div>
+    <div class="bcard">
+      <div class="b-label"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Warranty</div>
+      <div class="b-h">Dead key? We replace it.</div>
+      <div class="b-p">Every order is covered. File a claim and a replacement ships before you close the tab.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divide"/>
+
+<!-- RESELLER -->
+<section class="section">
+  <div class="sec-label reveal">Reseller panel</div>
+  <h2 class="sec-h reveal d1">Your brand.<br>Our infrastructure.</h2>
+  <p class="sec-p reveal d2">Set up a panel for your buyers under your own name. You control the limits, the credit, and what they can access.</p>
+  <div class="reseller-3col reveal">
+    <div class="rcol"><div class="rcol-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></div><div class="rcol-h">Your brand, not ours</div><div class="rcol-p">Your buyers see your name, your accent, your support. Everything resolved server-side.</div></div>
+    <div class="rcol"><div class="rcol-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div><div class="rcol-h">Credit, not keys</div><div class="rcol-p">Top up buyers with credit per duration. They generate keys from that balance and nothing more.</div></div>
+    <div class="rcol"><div class="rcol-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="rcol-h">Scoped to what you allow</div><div class="rcol-p">Key caps, licence limits, panel expiry — all set by you. Buyers can't exceed your own access.</div></div>
+  </div>
+  <div class="panel-mock reveal">
+    <div class="pm-top"><div><div class="pm-name">Reseller panel</div><div class="pm-sub">mira-keys · Ultra plan</div></div><button class="pm-gen">+ Generate keys</button></div>
+    <div class="pm-stats">
+      <div class="pm-s"><div class="pm-sl">Credit balance</div><div class="pm-sv">$183.50</div></div>
+      <div class="pm-s"><div class="pm-sl">Keys issued</div><div class="pm-sv">341</div></div>
+      <div class="pm-s"><div class="pm-sl">Active keys</div><div class="pm-sv" style="color:var(--green)">298</div></div>
+    </div>
+    <div class="pm-row pm-rh"><div>Key</div><div>Status</div><div>Buyer</div><div>Expires</div></div>
+    <div class="pm-row"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(237,237,240,.55)">RSMK-3FN6Y-N3KV8-PKQ3C</div><span class="badge b-unused">Unused</span><span class="row-d">—</span><span class="row-d">Oct 13</span></div>
+    <div class="pm-row"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(237,237,240,.55)">RSMK-RBLCN-H52U9-SMLVN</div><span class="badge b-active">Active</span><span class="row-m">buyer_x92</span><span class="row-d">Dec 1</span></div>
+    <div class="pm-row"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(237,237,240,.55)">RSMK-SKSGC-8T9RC-K7GBA</div><span class="badge b-active">Active</span><span class="row-m">buyer_x33</span><span class="row-d">Nov 28</span></div>
+    <div class="pm-row"><div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(237,237,240,.55)">RSMK-DG544-3T8K2-PLPWC</div><span class="badge b-banned">Banned</span><span class="row-m">anon_flip</span><span class="row-d" style="color:var(--pink)">Nov 2</span></div>
+  </div>
+</section>
+
+<hr class="divide"/>
+
+<!-- PRICING -->
+<section class="section" id="pricing">
+  <div class="sec-label reveal">Pricing</div>
+  <h2 class="sec-h reveal d1">Simple pricing.</h2>
+  <p class="sec-p reveal d2">Start free. No card required. Scale when you're ready.</p>
+  <div class="billing-toggle-row reveal">
+    <span class="tog-label on" id="lbl-m">Monthly</span>
+    <label class="tog"><input type="checkbox" id="billing-cb" onchange="switchBilling(this)"/><span class="tog-track"></span><span class="tog-thumb"></span></label>
+    <span class="tog-label" id="lbl-a">Annual</span>
+    <span class="save-tag">Save 20%</span>
+  </div>
+  <div class="price-grid">
+    <div class="pcard reveal"><div class="p-tier-row"><div class="p-tier">Free</div></div><div class="p-tag">Explore the shop. No card needed.</div><div class="p-amount">$0</div><div class="p-unit">forever</div><hr class="p-div"/><div class="p-feats"><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>5 orders / month</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Instant delivery</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>7-day warranty</div><div class="p-feat"><span class="dash">—</span>Reseller pricing</div><div class="p-feat"><span class="dash">—</span>API access</div></div><a class="btn btn-ghost p-cta" href="login.html">Get started</a></div>
+    <div class="pcard reveal d1"><div class="p-tier-row"><div class="p-tier">Sovyx Pro</div></div><div class="p-tag">For regular buyers who need more room.</div><div class="p-amount"><sub>$</sub><span class="pv" data-m="4.99" data-a="3.99">4.99</span></div><div class="p-unit">per month</div><hr class="p-div"/><div class="p-feats"><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>50 orders / month</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Instant delivery</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>30-day warranty</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Basic API</div><div class="p-feat"><span class="dash">—</span>Reseller pricing</div></div><a class="btn btn-ghost p-cta" href="login.html">Get started</a></div>
+    <div class="pcard featured reveal d2"><div class="p-tier-row"><div class="p-tier">Sovyx Ultra</div><span class="p-pop">Popular</span></div><div class="p-tag">Best margins. Built for serious resellers.</div><div class="p-amount"><sub>$</sub><span class="pv" data-m="14.99" data-a="11.99">14.99</span></div><div class="p-unit">per month</div><hr class="p-div"/><div class="p-feats"><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>500 orders / month</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Instant delivery</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>60-day warranty</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Full API + webhooks</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Reseller pricing</div></div><a class="btn btn-red p-cta" href="login.html">Get started</a></div>
+    <div class="pcard reveal d3"><div class="p-tier-row"><div class="p-tier">Sovyx Elite</div></div><div class="p-tag">Unlimited orders, SLA, dedicated manager.</div><div class="p-amount"><sub>$</sub><span class="pv" data-m="24.99" data-a="19.99">24.99</span></div><div class="p-unit">per month</div><hr class="p-div"/><div class="p-feats"><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Unlimited orders</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Instant delivery</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>90-day warranty</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Full API + webhooks</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Dedicated manager</div></div><a class="btn btn-ghost p-cta" href="login.html">Get started</a></div>
+  </div>
+</section>
+
+<hr class="divide"/>
+
+<!-- REVIEWS -->
+<section class="section">
+  <div class="sec-label reveal">Reviews</div>
+  <h2 class="sec-h reveal d1">Don't take our word for it.</h2>
+  <p class="sec-p reveal d2">From first-time buyers to resellers moving serious volume.</p>
+  <div class="reviews-grid">
+    <div class="review reveal"><p class="r-quote">"Ordered <strong>50 accounts at 2am</strong>. All 50 hit. Delivery was under two minutes. I've tried six shops — Sovyx is the only one I keep coming back to."</p><div class="r-foot"><div class="r-av" style="background:linear-gradient(135deg,#e11d48,#fb7185)">J</div><div><div class="r-name">Jake R.</div><div class="r-handle">@jakeresel · Discord</div></div><div class="r-stars">★★★★★</div></div></div>
+    <div class="review reveal d1"><p class="r-quote">"Two dead keys from another shop in the same week. <strong>Sovyx replaced both without question.</strong> That alone is worth switching."</p><div class="r-foot"><div class="r-av" style="background:linear-gradient(135deg,#7c3aed,#c084fc)">M</div><div><div class="r-name">Maya T.</div><div class="r-handle">@mayaflips · Discord</div></div><div class="r-stars">★★★★★</div></div></div>
+    <div class="review reveal"><p class="r-quote">"Wholesale deal cuts my cost by 40%. <strong>Stock is always fresh</strong>, and reservations mean I never miss a drop."</p><div class="r-foot"><div class="r-av" style="background:linear-gradient(135deg,#0ea5e9,#38bdf8)">D</div><div><div class="r-name">Danny W.</div><div class="r-handle">@dswholesale · Discord</div></div><div class="r-stars">★★★★★</div></div></div>
+    <div class="review reveal d1"><p class="r-quote">"I run a server of 500+ resellers and <strong>everyone I've sent to Sovyx thanks me.</strong> Clean checkout, real humans in support."</p><div class="r-foot"><div class="r-av" style="background:linear-gradient(135deg,#059669,#34d399)">A</div><div><div class="r-name">Aria S.</div><div class="r-handle">@ariashop · Discord</div></div><div class="r-stars">★★★★★</div></div></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band">
+  <div class="cta-glow"></div>
+  <h2 class="reveal">Start selling today.</h2>
+  <p class="reveal d1">Sign up in 30 seconds. No card required. Your first 5 orders are on us.</p>
+  <div class="cta-row reveal d2">
+    <a class="btn btn-red" href="login.html">Sign up free <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    <a class="btn btn-ghost" href="docs.html">View docs</a>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-logo"><img src="logo.webp" alt="" width="22" height="22" style="display:block;object-fit:contain;mix-blend-mode:screen;flex-shrink:0"/>sovyx</div>
+  <ul class="foot-links">
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="docs.html">Docs</a></li>
+    <li><a href="integrations.html">Integrations</a></li>
+    <li><a href="updates.html">Updates</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="terms.html">Terms</a></li>
+    <li><a href="privacy.html">Privacy</a></li>
+    <li><a href="refunds.html">Refunds</a></li>
+    <li><a href="login.html">Log in</a></li>
+  </ul>
+  <span class="foot-copy">© 2026 Sovyx</span>
+</footer>
+
+<div id="cookie-bar">
+  <p class="ck-text">We use cookies to operate the platform, remember your preferences, and understand how the site is used. See our <a href="privacy.html">Privacy Policy</a> for details.</p>
+  <div class="ck-actions">
+    <button class="ck-btn ck-decline" id="ck-decline">Decline optional</button>
+    <button class="ck-btn ck-accept" id="ck-accept">Accept all</button>
+  </div>
+</div>
+
+<script>
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>8),{passive:true});
+const ro=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('up');ro.unobserve(e.target);}});},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+function animCount(el){const t=parseInt(el.dataset.count),s=el.dataset.suffix||'',dur=1600,st=performance.now();const f=n=>{const p=Math.min((n-st)/dur,1),e=1-Math.pow(1-p,3);el.textContent=Math.round(e*t).toLocaleString()+s;if(p<1)requestAnimationFrame(f);};requestAnimationFrame(f);}
+const co=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){animCount(e.target);co.unobserve(e.target);}});},{threshold:0.5});
+document.querySelectorAll('[data-count]').forEach(el=>co.observe(el));
+function switchBilling(cb){const on=cb.checked;document.getElementById('lbl-m').classList.toggle('on',!on);document.getElementById('lbl-a').classList.toggle('on',on);document.querySelectorAll('.pv').forEach(el=>el.textContent=on?el.dataset.a:el.dataset.m);}
+// Cookie banner
+(function(){const b=document.getElementById('cookie-bar');if(!b)return;if(localStorage.getItem('sv_cookie'))return;b.style.display='flex';document.getElementById('ck-accept').onclick=function(){localStorage.setItem('sv_cookie','1');b.style.display='none';};document.getElementById('ck-decline').onclick=function(){localStorage.setItem('sv_cookie','0');b.style.display='none';};})();
+</script>
+</body>
+</html>

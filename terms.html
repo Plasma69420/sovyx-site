@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Terms of Service — Sovyx</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#07070b;--s1:#0d0d14;--b:rgba(255,255,255,.055);--b2:rgba(255,255,255,.11);--red:#e11d48;--pink:#fb7185;--text:#ededf0;--muted:#6b6b80;--dim:#35354a}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;font-feature-settings:'ss01';-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--text)}
+a{text-decoration:none;color:inherit}
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:58px;border-bottom:1px solid var(--b);background:rgba(7,7,11,.82);backdrop-filter:blur(14px)}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;letter-spacing:-.3px}
+.logo-mark{display:block;width:30px;height:30px;flex-shrink:0;object-fit:contain;mix-blend-mode:screen}
+.nav-links{display:flex;align-items:center;gap:28px;font-size:13.5px;color:var(--muted)}
+.nav-links a:hover{color:var(--text)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.btn{display:inline-flex;align-items:center;padding:8px 18px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:background .18s,transform .15s;text-decoration:none}
+.btn-ghost{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--b2)}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{background:#c8193f}
+
+.legal-wrap{display:grid;grid-template-columns:220px 1fr;gap:0;min-height:calc(100vh - 58px)}
+.legal-nav{padding:40px 32px;border-right:1px solid var(--b);position:sticky;top:58px;height:calc(100vh - 58px);overflow-y:auto}
+.legal-nav-title{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);margin-bottom:16px}
+.legal-nav ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+.legal-nav a{font-size:13px;color:var(--muted);padding:5px 8px;border-radius:6px;display:block;transition:color .2s,background .2s}
+.legal-nav a:hover{color:var(--text);background:rgba(255,255,255,.04)}
+
+.legal-content{padding:60px 64px 100px;max-width:760px}
+.legal-eyebrow{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:12px}
+.legal-title{font-size:36px;font-weight:800;letter-spacing:-1px;margin-bottom:10px}
+.legal-updated{font-size:13px;color:var(--dim);margin-bottom:48px}
+.legal-section{margin-bottom:40px;scroll-margin-top:80px}
+.legal-section h2{font-size:17px;font-weight:700;letter-spacing:-.3px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--b)}
+.legal-section p,.legal-section li{font-size:14.5px;line-height:1.75;color:rgba(237,237,240,.62);margin-bottom:12px}
+.legal-section li{margin-left:20px;margin-bottom:8px}
+.legal-section strong{color:rgba(237,237,240,.86);font-weight:600}
+.legal-section a{color:var(--pink);text-decoration:underline}
+
+footer{border-top:1px solid var(--b);padding:22px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.foot-logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
+.foot-links{list-style:none;display:flex;gap:20px;flex-wrap:wrap}
+.foot-links a{font-size:13px;color:var(--muted);transition:color .2s}
+.foot-links a:hover{color:var(--text)}
+.foot-copy{font-size:12px;color:var(--dim)}
+
+@media(max-width:780px){.legal-wrap{grid-template-columns:1fr}.legal-nav{display:none}.legal-content{padding:40px 20px 80px}nav{padding:0 16px}footer{padding:16px 20px}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="logo" href="index.html"><img class="logo-mark" src="logo.webp" alt="" width="30" height="30"/>sovyx</a>
+  <div class="nav-links">
+    <a href="index.html#pricing">Pricing</a>
+    <a href="docs.html">Docs</a>
+    <a href="integrations.html">Integrations</a>
+    <a href="updates.html">Updates</a>
+  </div>
+  <div class="nav-actions">
+    <a class="btn btn-ghost" href="login.html">Log in</a>
+    <a class="btn btn-red" href="login.html">Get started</a>
+  </div>
+</nav>
+
+<div class="legal-wrap">
+  <aside class="legal-nav">
+    <div class="legal-nav-title">On this page</div>
+    <ul>
+      <li><a href="#acceptance">Acceptance</a></li>
+      <li><a href="#accounts">Accounts</a></li>
+      <li><a href="#service">Service</a></li>
+      <li><a href="#digital-goods">Digital goods</a></li>
+      <li><a href="#payments">Payments</a></li>
+      <li><a href="#acceptable-use">Acceptable use</a></li>
+      <li><a href="#ip">Intellectual property</a></li>
+      <li><a href="#termination">Termination</a></li>
+      <li><a href="#liability">Liability</a></li>
+      <li><a href="#changes">Changes</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </aside>
+
+  <main class="legal-content">
+    <div class="legal-eyebrow">Legal</div>
+    <h1 class="legal-title">Terms of Service</h1>
+    <div class="legal-updated">Last updated: November 2026</div>
+
+    <div class="legal-section" id="acceptance">
+      <h2>1. Acceptance of terms</h2>
+      <p>By accessing or using the Sovyx platform ("Service"), you agree to be bound by these Terms of Service. If you do not agree to these terms, do not use the Service.</p>
+      <p>You must be of legal age to enter into binding contracts in your jurisdiction to use the Service. If you are under the applicable legal age, you may only use the Service with the consent and supervision of a parent or legal guardian who agrees to be bound by these terms.</p>
+    </div>
+
+    <div class="legal-section" id="accounts">
+      <h2>2. Accounts</h2>
+      <p>You must provide accurate, complete, and current information when registering for an account. You are responsible for maintaining the security of your account credentials and for all activity that occurs under your account.</p>
+      <p>You must notify Sovyx immediately of any unauthorised use of your account. We reserve the right to suspend or terminate accounts that we reasonably believe are being used fraudulently or in violation of these terms.</p>
+      <p>You may not share your account credentials or allow others to access your account.</p>
+    </div>
+
+    <div class="legal-section" id="service">
+      <h2>3. Description of service</h2>
+      <p>Sovyx provides a digital commerce infrastructure platform that enables merchants to:</p>
+      <ul>
+        <li>Create and manage a branded storefront for digital goods</li>
+        <li>Stock and automate delivery of digital products (licence keys, accounts, subscriptions)</li>
+        <li>Manage reseller networks with custom pricing tiers</li>
+        <li>Integrate with third-party services via REST API and Discord bot</li>
+      </ul>
+      <p>Sovyx acts as a <strong>platform provider only</strong>. We do not own, verify, or take responsibility for the digital goods you list, sell, or deliver through the platform.</p>
+    </div>
+
+    <div class="legal-section" id="digital-goods">
+      <h2>4. Digital goods</h2>
+      <p>You are solely responsible for ensuring that all products listed on your Sovyx shop are:</p>
+      <ul>
+        <li>Legally obtained and legitimately yours to sell</li>
+        <li>Accurately described to buyers</li>
+        <li>Not in violation of any third-party's intellectual property or licence terms</li>
+        <li>Not illegal, fraudulent, or harmful</li>
+      </ul>
+      <p><strong>Strictly prohibited goods include</strong> but are not limited to: stolen accounts, cracked software, credentials obtained without authorisation, content that facilitates illegal activity, and any goods whose sale is prohibited by applicable law.</p>
+      <p>Sovyx reserves the right to remove any listing and terminate any account found to be in violation of this section, with or without prior notice.</p>
+    </div>
+
+    <div class="legal-section" id="payments">
+      <h2>5. Payments and billing</h2>
+      <p>Subscription fees for Sovyx plans are billed in advance on a monthly or annual basis. All fees are non-refundable except as described in our <a href="refunds.html">Refund Policy</a>.</p>
+      <p>Payments are processed by third-party payment processors. By providing your payment information, you authorise Sovyx to charge the applicable fees to your selected payment method.</p>
+      <p>We reserve the right to change our pricing with 30 days' notice. Continued use of the Service after a price change constitutes acceptance of the new pricing.</p>
+      <p>Failure to pay applicable fees may result in suspension or termination of your account.</p>
+    </div>
+
+    <div class="legal-section" id="acceptable-use">
+      <h2>6. Acceptable use</h2>
+      <p>You agree not to use the Service to:</p>
+      <ul>
+        <li>Violate any applicable law or regulation</li>
+        <li>Infringe on the intellectual property rights of others</li>
+        <li>Transmit spam, unsolicited communications, or malicious code</li>
+        <li>Attempt to gain unauthorised access to Sovyx systems or other accounts</li>
+        <li>Use the Service in any way that could damage, disable, or impair it</li>
+        <li>Reverse engineer, decompile, or attempt to extract the source code of the platform</li>
+        <li>Resell or sublicense access to the platform itself without written permission</li>
+      </ul>
+    </div>
+
+    <div class="legal-section" id="ip">
+      <h2>7. Intellectual property</h2>
+      <p>Sovyx and its underlying technology, branding, and software remain the exclusive property of Sovyx. These terms do not grant you any rights to use the Sovyx name, logo, or trademarks.</p>
+      <p>You retain all rights to the content you upload or create through the platform. By using the Service, you grant Sovyx a limited licence to store and process that content solely to provide the Service.</p>
+    </div>
+
+    <div class="legal-section" id="termination">
+      <h2>8. Termination</h2>
+      <p>You may cancel your account at any time through your account settings. Cancellation takes effect at the end of the current billing period.</p>
+      <p>Sovyx may suspend or terminate your account immediately if you breach these terms, engage in fraudulent activity, or if required by law. Upon termination, your right to access the Service ends immediately.</p>
+    </div>
+
+    <div class="legal-section" id="liability">
+      <h2>9. Limitation of liability</h2>
+      <p>The Service is provided "as is" without warranties of any kind. Sovyx does not warrant that the Service will be uninterrupted, error-free, or meet your specific requirements.</p>
+      <p><strong>To the maximum extent permitted by law</strong>, Sovyx shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of profits, data, or goodwill, arising from your use of or inability to use the Service.</p>
+      <p>Sovyx's total liability to you for any claims arising from use of the Service shall not exceed the amount you paid to Sovyx in the 12 months preceding the claim.</p>
+    </div>
+
+    <div class="legal-section" id="changes">
+      <h2>10. Changes to these terms</h2>
+      <p>We may update these Terms of Service from time to time. We will notify you of material changes by posting an updated version on this page and updating the "Last updated" date. Continued use of the Service after changes become effective constitutes your acceptance of the revised terms.</p>
+    </div>
+
+    <div class="legal-section" id="contact">
+      <h2>11. Contact</h2>
+      <p>If you have questions about these terms, contact us at <strong>legal@sovyx.cc</strong>.</p>
+    </div>
+  </main>
+</div>
+
+<footer>
+  <div class="foot-logo"><img class="logo-mark" src="logo.webp" alt="" width="22" height="22" style="mix-blend-mode:screen"/>sovyx</div>
+  <ul class="foot-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="terms.html">Terms</a></li>
+    <li><a href="privacy.html">Privacy</a></li>
+    <li><a href="refunds.html">Refunds</a></li>
+    <li><a href="docs.html">Docs</a></li>
+    <li><a href="login.html">Log in</a></li>
+  </ul>
+  <span class="foot-copy">© 2026 Sovyx</span>
+</footer>
+</body>
+</html>

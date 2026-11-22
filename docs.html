@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Docs — Sovyx</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#07070b;--s1:#0d0d14;--s2:#131320;--b:rgba(255,255,255,.055);--b2:rgba(255,255,255,.11);--red:#e11d48;--pink:#fb7185;--text:#ededf0;--muted:#6b6b80;--dim:#35354a;--green:#3ecf8e;--blue:#60a5fa;--yellow:#fbbf24}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;font-feature-settings:'ss01';-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--text);line-height:1}
+a{text-decoration:none;color:inherit}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(7,7,11,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--b)}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;letter-spacing:-.3px}
+.logo-mark{display:block;width:30px;height:30px;flex-shrink:0;object-fit:contain;mix-blend-mode:screen}
+.nav-links{display:flex;gap:24px;list-style:none}
+.nav-links a{font-size:13.5px;font-weight:500;color:var(--muted);transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.nav-search{display:flex;align-items:center;gap:8px;padding:5px 12px;border-radius:7px;border:1px solid var(--b2);background:rgba(255,255,255,.03);color:var(--dim);font-size:13px;cursor:pointer;transition:border-color .2s}
+.nav-search:hover{border-color:rgba(255,255,255,.18)}
+.nav-search kbd{font-size:11px;padding:1px 5px;border-radius:4px;background:var(--s2);border:1px solid var(--b2);color:var(--dim)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.btn-sm{padding:6px 14px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .2s}
+.btn-ghost-sm{background:transparent;color:var(--muted);border:1px solid var(--b2)}
+.btn-ghost-sm:hover{color:var(--text);border-color:rgba(255,255,255,.2)}
+.btn-red-sm{background:var(--red);color:#fff;box-shadow:0 0 16px rgba(225,29,72,.25)}
+.btn-red-sm:hover{background:#f43f5e}
+
+/* ── LAYOUT ── */
+.docs-layout{display:grid;grid-template-columns:240px 1fr 180px;min-height:calc(100vh - 52px);margin-top:52px}
+
+/* ── LEFT SIDEBAR ── */
+.docs-sidebar{position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;border-right:1px solid var(--b);padding:20px 0;scrollbar-width:thin;scrollbar-color:var(--dim) transparent}
+.docs-sidebar::-webkit-scrollbar{width:4px}
+.docs-sidebar::-webkit-scrollbar-track{background:transparent}
+.docs-sidebar::-webkit-scrollbar-thumb{background:var(--dim);border-radius:2px}
+.sb-category{padding:12px 20px 6px;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim)}
+.sb-link{display:flex;align-items:center;gap:8px;padding:6px 20px;font-size:13px;color:var(--muted);cursor:pointer;transition:color .2s,background .2s;border-radius:0}
+.sb-link:hover{color:var(--text);background:rgba(255,255,255,.03)}
+.sb-link.active{color:var(--text);font-weight:600;background:rgba(225,29,72,.07)}
+.sb-link.active::before{content:'';position:absolute;left:0;width:2px;height:28px;background:var(--red);border-radius:0 2px 2px 0}
+.sb-link{position:relative}
+.method{font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 5px;border-radius:4px;text-transform:uppercase;flex-shrink:0}
+.m-get{background:rgba(62,207,142,.12);color:var(--green)}
+.m-post{background:rgba(96,165,250,.12);color:var(--blue)}
+.m-put{background:rgba(251,191,36,.12);color:var(--yellow)}
+.m-del{background:rgba(225,29,72,.12);color:var(--red)}
+
+/* ── MAIN CONTENT ── */
+.docs-content{padding:48px 60px;max-width:780px;min-height:100%}
+.doc-next-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid var(--b2);font-size:13px;color:var(--muted);float:right;margin-top:4px;transition:all .2s}
+.doc-next-btn:hover{color:var(--text);border-color:rgba(255,255,255,.2)}
+.doc-h1{font-size:32px;font-weight:800;letter-spacing:-1px;margin-bottom:12px;clear:both}
+.doc-lead{font-size:16px;color:var(--muted);line-height:1.65;margin-bottom:28px}
+.doc-tags{display:flex;gap:8px;margin-bottom:36px}
+.doc-tag{font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:6px;background:var(--s1);border:1px solid var(--b);color:var(--muted)}
+
+/* quick-start cards */
+.qs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:48px}
+.qs-card{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:20px;cursor:default;transition:border-color .2s,background .2s}
+.qs-card:hover{border-color:var(--b2);background:var(--s2)}
+.qs-card-icon{color:var(--muted);margin-bottom:12px}
+.qs-card-title{font-size:14px;font-weight:700;margin-bottom:7px}
+.qs-card-desc{font-size:13px;color:var(--muted);line-height:1.55}
+
+/* sections */
+.doc-section{margin-bottom:48px}
+.doc-h2{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:14px;scroll-margin-top:80px}
+.doc-h3{font-size:16px;font-weight:700;margin-bottom:10px;scroll-margin-top:80px}
+.doc-p{font-size:14.5px;color:rgba(237,237,240,.75);line-height:1.75;margin-bottom:16px}
+.doc-ol,.doc-ul{padding-left:20px;margin-bottom:16px}
+.doc-ol li,.doc-ul li{font-size:14.5px;color:rgba(237,237,240,.75);line-height:1.75;margin-bottom:6px}
+
+/* code */
+.code-block{position:relative;margin:20px 0;border-radius:10px;background:var(--s1);border:1px solid var(--b);overflow:hidden}
+.code-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--b);background:rgba(255,255,255,.02)}
+.code-filename{font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace}
+.copy-btn{font-size:11px;color:var(--dim);background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:5px;border:1px solid var(--b2);font-family:inherit;transition:color .2s,border-color .2s}
+.copy-btn:hover{color:var(--text);border-color:rgba(255,255,255,.2)}
+.code-body{padding:18px 20px;overflow-x:auto}
+pre{font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.7;color:rgba(237,237,240,.8)}
+.c-muted{color:var(--dim)}
+.c-str{color:#a3e635}
+.c-kw{color:var(--pink)}
+.c-fn{color:var(--blue)}
+.c-num{color:var(--yellow)}
+.c-comment{color:var(--dim);font-style:italic}
+
+/* callout */
+.callout{display:flex;gap:12px;padding:14px 16px;border-radius:10px;margin:20px 0;font-size:13.5px;line-height:1.6}
+.callout-warn{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);color:rgba(237,237,240,.75)}
+.callout-info{background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.2);color:rgba(237,237,240,.75)}
+.callout-icon{flex-shrink:0;margin-top:1px}
+
+/* table */
+.doc-table-wrap{overflow-x:auto;margin:20px 0}
+.doc-table{width:100%;border-collapse:collapse;font-size:13.5px}
+.doc-table th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--b2)}
+.doc-table td{padding:10px 14px;border-bottom:1px solid var(--b);color:rgba(237,237,240,.7);vertical-align:top}
+.doc-table tr:last-child td{border-bottom:none}
+.doc-table code{font-family:'JetBrains Mono',monospace;font-size:11.5px;padding:2px 6px;background:var(--s2);border-radius:4px;border:1px solid var(--b2)}
+
+/* inline code */
+p code,li code{font-family:'JetBrains Mono',monospace;font-size:12px;padding:2px 6px;background:var(--s2);border-radius:4px;border:1px solid var(--b2);color:var(--pink)}
+
+/* API endpoint block */
+.endpoint-block{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:20px 24px;margin:20px 0}
+.endpoint-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.endpoint-method{font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;text-transform:uppercase}
+.endpoint-path{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--text)}
+.endpoint-desc{font-size:13.5px;color:var(--muted);line-height:1.6;margin-bottom:16px}
+.param-label{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.param-row{display:flex;align-items:flex-start;gap:12px;padding:8px 0;border-top:1px solid var(--b);font-size:13px}
+.param-name{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text);min-width:120px}
+.param-type{font-size:11px;color:var(--dim);min-width:60px;padding-top:1px}
+.param-required{font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(225,29,72,.12);color:var(--red);font-weight:600}
+.param-optional{font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(255,255,255,.05);color:var(--dim);font-weight:600}
+.param-desc{color:rgba(237,237,240,.6);line-height:1.5}
+
+/* ── RIGHT TOC ── */
+.docs-toc{position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;padding:28px 20px;border-left:1px solid var(--b)}
+.toc-label{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
+.toc-link{display:block;font-size:12.5px;color:var(--dim);padding:4px 0;transition:color .2s;line-height:1.4}
+.toc-link:hover,.toc-link.active{color:var(--text)}
+.toc-link.sub{padding-left:12px;font-size:12px}
+
+@media(max-width:1100px){.docs-layout{grid-template-columns:220px 1fr}.docs-toc{display:none}}
+@media(max-width:760px){.docs-layout{grid-template-columns:1fr}.docs-sidebar{display:none}.docs-content{padding:28px 24px}}
+.site-footer{border-top:1px solid var(--b);padding:20px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.foot-logo{display:flex;align-items:center;gap:7px;font-weight:700;font-size:13.5px}
+.foot-links{list-style:none;display:flex;gap:18px;flex-wrap:wrap}
+.foot-links a{font-size:12px;color:var(--dim);transition:color .18s}
+.foot-links a:hover{color:var(--text)}
+.foot-copy{font-size:11.5px;color:var(--dim)}
+#cookie-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:999;background:rgba(13,13,20,.96);backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,.11);padding:16px 48px;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.ck-text{font-size:13px;color:rgba(237,237,240,.6);max-width:640px;line-height:1.5}
+.ck-text a{color:#fb7185;text-decoration:underline}
+.ck-actions{display:flex;gap:9px;flex-shrink:0}
+.ck-btn{padding:7px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:background .18s}
+.ck-accept{background:#fff;color:#07070b}.ck-accept:hover{background:#e8e8ea}
+.ck-decline{background:rgba(255,255,255,.07);color:rgba(237,237,240,.6);border:1px solid rgba(255,255,255,.11)}.ck-decline:hover{background:rgba(255,255,255,.12)}
+@media(max-width:680px){.site-footer{padding:16px 20px}#cookie-bar{padding:14px 20px}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="index.html"><img class="logo-mark" src="logo.webp" alt="" width="30" height="30"/>sovyx</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#pricing">Pricing</a></li>
+    <li><a href="docs.html" class="active">Docs</a></li>
+    <li><a href="integrations.html">Integrations</a></li>
+    <li><a href="updates.html">Updates</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-search">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Search documentation…
+      <kbd>Ctrl K</kbd>
+    </div>
+    <a class="btn-sm btn-ghost-sm" href="login.html">Log in</a>
+    <a class="btn-sm btn-red-sm" href="login.html">Sign up</a>
+  </div>
+</nav>
+
+<div class="docs-layout">
+
+  <!-- ── LEFT SIDEBAR ── -->
+  <aside class="docs-sidebar">
+
+    <div class="sb-category">Get started</div>
+    <a class="sb-link active" href="#introduction">Introduction</a>
+
+    <div class="sb-category">Authentication</div>
+    <a class="sb-link" href="#auth">API Keys</a>
+    <a class="sb-link" href="#auth">OAuth 2.0</a>
+    <a class="sb-link" href="#rate-limits">Rate limits</a>
+
+    <div class="sb-category">Using the API</div>
+    <a class="sb-link" href="#requests">Making requests</a>
+    <a class="sb-link" href="#errors">Error codes</a>
+    <a class="sb-link" href="#webhooks">Webhooks</a>
+
+    <div class="sb-category">Reseller</div>
+    <a class="sb-link" href="#reseller-overview">Reseller API</a>
+    <a class="sb-link" href="#reseller-overview">Reseller panel</a>
+
+    <div class="sb-category">API Reference</div>
+    <a class="sb-link" href="#overview">Overview</a>
+
+    <div class="sb-category">Quota</div>
+    <a class="sb-link" href="#quota"><span class="method m-get">GET</span>Plan &amp; usage</a>
+
+    <div class="sb-category">Orders</div>
+    <a class="sb-link" href="#list-orders"><span class="method m-get">GET</span>List orders</a>
+    <a class="sb-link" href="#create-order"><span class="method m-post">POST</span>Create order</a>
+    <a class="sb-link" href="#get-order"><span class="method m-get">GET</span>Get an order</a>
+    <a class="sb-link" href="#cancel-order"><span class="method m-del">DEL</span>Cancel order</a>
+
+    <div class="sb-category">Stock</div>
+    <a class="sb-link" href="#list-stock"><span class="method m-get">GET</span>List stock</a>
+    <a class="sb-link" href="#stock-category"><span class="method m-get">GET</span>Stock by category</a>
+
+    <div class="sb-category">Keys</div>
+    <a class="sb-link" href="#validate-key"><span class="method m-post">POST</span>Validate a key</a>
+    <a class="sb-link" href="#get-key"><span class="method m-get">GET</span>Key details</a>
+
+    <div class="sb-category">Webhooks</div>
+    <a class="sb-link" href="#list-webhooks"><span class="method m-get">GET</span>List webhooks</a>
+    <a class="sb-link" href="#create-webhook"><span class="method m-post">POST</span>Create webhook</a>
+    <a class="sb-link" href="#delete-webhook"><span class="method m-del">DEL</span>Delete webhook</a>
+
+    <div class="sb-category">Account</div>
+    <a class="sb-link" href="#profile"><span class="method m-get">GET</span>Profile</a>
+    <a class="sb-link" href="#balance"><span class="method m-get">GET</span>Balance</a>
+
+  </aside>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main class="docs-content">
+
+    <!-- Introduction -->
+    <div id="introduction">
+      <a class="doc-next-btn" href="#auth">Authentication <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      <h1 class="doc-h1">Introduction</h1>
+      <p class="doc-lead">Everything you need to integrate Sovyx stock delivery into your app, bot, or storefront.</p>
+      <div class="doc-tags">
+        <span class="doc-tag">REST API</span>
+        <span class="doc-tag">v1</span>
+        <span class="doc-tag">JSON</span>
+      </div>
+
+      <div class="qs-grid">
+        <div class="qs-card">
+          <div class="qs-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+          <div class="qs-card-title">Quick start</div>
+          <div class="qs-card-desc">Make your first API call and receive stock in under 5 minutes.</div>
+        </div>
+        <div class="qs-card">
+          <div class="qs-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="qs-card-title">Authentication</div>
+          <div class="qs-card-desc">API keys, rate limits, and security best practices.</div>
+        </div>
+        <div class="qs-card">
+          <div class="qs-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+          <div class="qs-card-title">Reseller guide</div>
+          <div class="qs-card-desc">Place bulk orders, manage credit, and use the reseller panel.</div>
+        </div>
+        <div class="qs-card">
+          <div class="qs-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
+          <div class="qs-card-title">Webhook events</div>
+          <div class="qs-card-desc">Get notified the moment an order is fulfilled or stock runs low.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Authentication -->
+    <div class="doc-section" id="auth">
+      <h2 class="doc-h2">Authentication</h2>
+      <p class="doc-p">Sovyx uses Bearer token authentication. All API requests must include your API key in the <code>Authorization</code> header.</p>
+
+      <div class="code-block">
+        <div class="code-topbar"><span class="code-filename">HTTP header</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body"><pre><span class="c-muted">Authorization:</span> <span class="c-str">Bearer svx_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxx</span></pre></div>
+      </div>
+
+      <p class="doc-p">You can generate and manage API keys from your dashboard under <strong>Settings → API Keys</strong>. Keys are scoped — a reseller key can only access reseller endpoints.</p>
+
+      <div class="callout callout-warn">
+        <span class="callout-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="#fbbf24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+        <span><strong>Keep your key secret.</strong> Never expose it in client-side code, browser requests, or version control. Use environment variables in production.</span>
+      </div>
+
+      <h3 class="doc-h3" id="rate-limits">Rate limits</h3>
+      <div class="doc-table-wrap"><table class="doc-table">
+        <thead><tr><th>Plan</th><th>Requests / minute</th><th>Requests / day</th></tr></thead>
+        <tbody>
+          <tr><td>Free</td><td>10</td><td>500</td></tr>
+          <tr><td>Sovyx Pro</td><td>100</td><td>10,000</td></tr>
+          <tr><td>Sovyx Ultra</td><td>1,000</td><td>100,000</td></tr>
+          <tr><td>Sovyx Elite</td><td>Unlimited</td><td>Unlimited</td></tr>
+        </tbody>
+      </table></div>
+      <p class="doc-p">When you exceed your rate limit the API returns <code>429 Too Many Requests</code> with a <code>Retry-After</code> header indicating when to retry.</p>
+    </div>
+
+    <!-- Quick Start -->
+    <div class="doc-section" id="requests">
+      <h2 class="doc-h2">Quick Start</h2>
+      <p class="doc-p">The simplest way to place an order. Everything runs automatically — authenticate, pick stock, and receive keys.</p>
+
+      <div class="code-block">
+        <div class="code-topbar"><span class="code-filename">order.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body"><pre><span class="c-comment">// npm install sovyx</span>
+<span class="c-kw">import</span> { <span class="c-fn">Sovyx</span> } <span class="c-kw">from</span> <span class="c-str">'sovyx'</span>;
+
+<span class="c-kw">const</span> client = <span class="c-kw">new</span> <span class="c-fn">Sovyx</span>({
+  apiKey: process.<span class="c-fn">env</span>.<span class="c-str">SOVYX_API_KEY</span>
+});
+
+<span class="c-comment">// 1. Check available stock</span>
+<span class="c-kw">const</span> stock = <span class="c-kw">await</span> client.stock.<span class="c-fn">list</span>({
+  category: <span class="c-str">'accounts'</span>,
+  available: <span class="c-kw">true</span>
+});
+
+<span class="c-comment">// 2. Place an order</span>
+<span class="c-kw">const</span> order = <span class="c-kw">await</span> client.orders.<span class="c-fn">create</span>({
+  product_id: stock[<span class="c-num">0</span>].id,
+  quantity: <span class="c-num">1</span>,
+  deliver_to: <span class="c-str">'discord:123456789'</span>
+});
+
+console.<span class="c-fn">log</span>(order.keys);  <span class="c-comment">// ['xxxx-yyyy-zzzz']</span>
+console.<span class="c-fn">log</span>(order.status); <span class="c-comment">// 'delivered'</span></pre></div>
+      </div>
+
+      <p class="doc-p">Or use the REST API directly from any language:</p>
+
+      <div class="code-block">
+        <div class="code-topbar"><span class="code-filename">curl</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body"><pre><span class="c-fn">curl</span> -X POST https://api.sovyx.cc/v1/orders \
+  -H <span class="c-str">"Authorization: Bearer $SOVYX_API_KEY"</span> \
+  -H <span class="c-str">"Content-Type: application/json"</span> \
+  -d <span class="c-str">'{"product_id":"prod_netflix_4k","quantity":1}'</span></pre></div>
+      </div>
+    </div>
+
+    <!-- Errors -->
+    <div class="doc-section" id="errors">
+      <h2 class="doc-h2">Error Codes</h2>
+      <p class="doc-p">The API returns standard HTTP status codes. All error responses include a JSON body with <code>error.code</code> and <code>error.message</code>.</p>
+
+      <div class="doc-table-wrap"><table class="doc-table">
+        <thead><tr><th>Status</th><th>Code</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>400</td><td><code>bad_request</code></td><td>Missing or invalid parameters</td></tr>
+          <tr><td>401</td><td><code>unauthorized</code></td><td>Invalid or missing API key</td></tr>
+          <tr><td>403</td><td><code>forbidden</code></td><td>Insufficient plan permissions</td></tr>
+          <tr><td>404</td><td><code>not_found</code></td><td>Resource does not exist</td></tr>
+          <tr><td>409</td><td><code>out_of_stock</code></td><td>Product temporarily unavailable</td></tr>
+          <tr><td>429</td><td><code>rate_limited</code></td><td>Too many requests — back off and retry</td></tr>
+          <tr><td>500</td><td><code>internal_error</code></td><td>Server error — contact support</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- Webhooks -->
+    <div class="doc-section" id="webhooks">
+      <h2 class="doc-h2">Webhooks</h2>
+      <p class="doc-p">Webhooks let your server receive real-time notifications when orders are fulfilled, keys are delivered, or stock runs low. Register an HTTPS endpoint and we'll POST events to it.</p>
+
+      <h3 class="doc-h3">Event types</h3>
+      <div class="doc-table-wrap"><table class="doc-table">
+        <thead><tr><th>Event</th><th>Triggered when</th></tr></thead>
+        <tbody>
+          <tr><td><code>order.fulfilled</code></td><td>An order is completed and keys are ready</td></tr>
+          <tr><td><code>order.failed</code></td><td>An order could not be completed</td></tr>
+          <tr><td><code>key.delivered</code></td><td>A key is sent to the recipient</td></tr>
+          <tr><td><code>stock.low</code></td><td>A product falls below its alert threshold</td></tr>
+          <tr><td><code>stock.empty</code></td><td>A product goes out of stock</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="code-block">
+        <div class="code-topbar"><span class="code-filename">webhook-handler.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body"><pre><span class="c-kw">import</span> { <span class="c-fn">verifySignature</span> } <span class="c-kw">from</span> <span class="c-str">'sovyx'</span>;
+
+app.<span class="c-fn">post</span>(<span class="c-str">'/webhooks/sovyx'</span>, (req, res) => {
+  <span class="c-comment">// Verify the request is from Sovyx</span>
+  <span class="c-kw">const</span> sig = req.headers[<span class="c-str">'svx-signature'</span>];
+  <span class="c-kw">if</span> (!<span class="c-fn">verifySignature</span>(req.body, sig, process.env.<span class="c-str">SOVYX_WEBHOOK_SECRET</span>)) {
+    <span class="c-kw">return</span> res.<span class="c-fn">status</span>(<span class="c-num">401</span>).<span class="c-fn">end</span>();
+  }
+
+  <span class="c-kw">const</span> { event, data } = req.body;
+
+  <span class="c-kw">if</span> (event === <span class="c-str">'order.fulfilled'</span>) {
+    console.<span class="c-fn">log</span>(<span class="c-str">`Order ${data.id} fulfilled — keys: ${data.keys.join(', ')}`</span>);
+  }
+
+  res.<span class="c-fn">status</span>(<span class="c-num">200</span>).<span class="c-fn">end</span>();
+});</pre></div>
+      </div>
+    </div>
+
+    <!-- API Reference -->
+    <div class="doc-section" id="overview">
+      <h2 class="doc-h2">API Reference</h2>
+      <p class="doc-p">Base URL: <code>https://api.sovyx.cc/v1</code></p>
+      <p class="doc-p">All requests and responses use JSON. Timestamps are in ISO 8601 format (UTC).</p>
+    </div>
+
+    <!-- Create Order -->
+    <div class="doc-section" id="create-order">
+      <h3 class="doc-h3">Create order</h3>
+      <div class="endpoint-block">
+        <div class="endpoint-row">
+          <span class="endpoint-method method m-post">POST</span>
+          <span class="endpoint-path">/v1/orders</span>
+        </div>
+        <p class="endpoint-desc">Place a new order for one or more units of a product. Keys are delivered automatically on fulfillment.</p>
+        <div class="param-label">Body parameters</div>
+        <div class="param-row">
+          <span class="param-name">product_id</span>
+          <span class="param-type">string</span>
+          <span class="param-required">required</span>
+          <span class="param-desc">The ID of the product to order. Use <code>GET /v1/stock</code> to list available products.</span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">quantity</span>
+          <span class="param-type">integer</span>
+          <span class="param-required">required</span>
+          <span class="param-desc">Number of units to purchase. Must be ≥ 1. Reseller plans allow up to 500 per request.</span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">deliver_to</span>
+          <span class="param-type">string</span>
+          <span class="param-optional">optional</span>
+          <span class="param-desc">Delivery target. Format: <code>discord:USER_ID</code>, <code>telegram:CHAT_ID</code>, or <code>email:addr@example.com</code>. Defaults to your account's registered Discord.</span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">metadata</span>
+          <span class="param-type">object</span>
+          <span class="param-optional">optional</span>
+          <span class="param-desc">Arbitrary key-value pairs attached to the order. Useful for correlating with your own records.</span>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-topbar"><span class="code-filename">Response · 201 Created</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body"><pre>{
+  <span class="c-str">"id"</span>: <span class="c-str">"ord_01HXYZ"</span>,
+  <span class="c-str">"status"</span>: <span class="c-str">"delivered"</span>,
+  <span class="c-str">"product_id"</span>: <span class="c-str">"prod_netflix_4k"</span>,
+  <span class="c-str">"quantity"</span>: <span class="c-num">1</span>,
+  <span class="c-str">"keys"</span>: [<span class="c-str">"email@example.com:password123"</span>],
+  <span class="c-str">"delivered_at"</span>: <span class="c-str">"2026-11-22T14:03:12Z"</span>,
+  <span class="c-str">"created_at"</span>: <span class="c-str">"2026-11-22T14:03:10Z"</span>
+}</pre></div>
+      </div>
+    </div>
+
+    <!-- List Stock -->
+    <div class="doc-section" id="list-stock">
+      <h3 class="doc-h3">List stock</h3>
+      <div class="endpoint-block">
+        <div class="endpoint-row">
+          <span class="endpoint-method method m-get">GET</span>
+          <span class="endpoint-path">/v1/stock</span>
+        </div>
+        <p class="endpoint-desc">Returns all available products with their current stock levels and pricing.</p>
+        <div class="param-label">Query parameters</div>
+        <div class="param-row">
+          <span class="param-name">category</span>
+          <span class="param-type">string</span>
+          <span class="param-optional">optional</span>
+          <span class="param-desc">Filter by category. One of: <code>accounts</code>, <code>keys</code>, <code>tools</code>.</span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">available</span>
+          <span class="param-type">boolean</span>
+          <span class="param-optional">optional</span>
+          <span class="param-desc">When <code>true</code>, only return products currently in stock.</span>
+        </div>
+        <div class="param-row">
+          <span class="param-name">limit</span>
+          <span class="param-type">integer</span>
+          <span class="param-optional">optional</span>
+          <span class="param-desc">Number of results per page (default: 20, max: 100).</span>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-topbar"><span class="code-filename">Response · 200 OK</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body"><pre>{
+  <span class="c-str">"data"</span>: [
+    {
+      <span class="c-str">"id"</span>: <span class="c-str">"prod_netflix_4k"</span>,
+      <span class="c-str">"name"</span>: <span class="c-str">"Netflix Premium 4K"</span>,
+      <span class="c-str">"category"</span>: <span class="c-str">"accounts"</span>,
+      <span class="c-str">"price"</span>: <span class="c-num">4.99</span>,
+      <span class="c-str">"reseller_price"</span>: <span class="c-num">2.49</span>,
+      <span class="c-str">"stock"</span>: <span class="c-num">143</span>,
+      <span class="c-str">"warranty_days"</span>: <span class="c-num">30</span>
+    }
+  ],
+  <span class="c-str">"total"</span>: <span class="c-num">42</span>,
+  <span class="c-str">"page"</span>: <span class="c-num">1</span>
+}</pre></div>
+      </div>
+    </div>
+
+    <!-- Balance -->
+    <div class="doc-section" id="balance">
+      <h3 class="doc-h3">Get balance</h3>
+      <div class="endpoint-block">
+        <div class="endpoint-row">
+          <span class="endpoint-method method m-get">GET</span>
+          <span class="endpoint-path">/v1/account/balance</span>
+        </div>
+        <p class="endpoint-desc">Returns your current credit balance and usage for the billing period.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-topbar"><span class="code-filename">Response · 200 OK</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+        <div class="code-body"><pre>{
+  <span class="c-str">"balance"</span>: <span class="c-num">47.50</span>,
+  <span class="c-str">"currency"</span>: <span class="c-str">"USD"</span>,
+  <span class="c-str">"plan"</span>: <span class="c-str">"pro"</span>,
+  <span class="c-str">"orders_this_month"</span>: <span class="c-num">34</span>,
+  <span class="c-str">"orders_limit"</span>: <span class="c-num">50</span>,
+  <span class="c-str">"reset_at"</span>: <span class="c-str">"2026-12-01T00:00:00Z"</span>
+}</pre></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ── RIGHT TOC ── -->
+  <aside class="docs-toc">
+    <div class="toc-label">On this page</div>
+    <a class="toc-link" href="#introduction">Introduction</a>
+    <a class="toc-link" href="#auth">Authentication</a>
+    <a class="toc-link sub" href="#rate-limits">Rate limits</a>
+    <a class="toc-link" href="#requests">Quick Start</a>
+    <a class="toc-link" href="#errors">Error codes</a>
+    <a class="toc-link" href="#webhooks">Webhooks</a>
+    <a class="toc-link" href="#overview">API reference</a>
+    <a class="toc-link sub" href="#create-order">Create order</a>
+    <a class="toc-link sub" href="#list-stock">List stock</a>
+    <a class="toc-link sub" href="#balance">Get balance</a>
+  </aside>
+
+</div>
+
+<script>
+// Copy code buttons
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+
+// Active TOC on scroll
+const tocLinks = document.querySelectorAll('.toc-link');
+const sbLinks = document.querySelectorAll('.sb-link');
+const sections = document.querySelectorAll('[id]');
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+      sbLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+sections.forEach(s => observer.observe(s));
+
+// Sidebar link navigation
+sbLinks.forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+(function(){const b=document.getElementById('cookie-bar');if(!b||localStorage.getItem('sv_cookie'))return;b.style.display='flex';document.getElementById('ck-accept').onclick=()=>{localStorage.setItem('sv_cookie','1');b.style.display='none';};document.getElementById('ck-decline').onclick=()=>{localStorage.setItem('sv_cookie','0');b.style.display='none';};})();
+</script>
+
+<footer class="site-footer">
+  <div class="foot-logo"><img src="logo.webp" alt="" width="22" height="22" style="display:block;object-fit:contain;mix-blend-mode:screen;flex-shrink:0"/>sovyx</div>
+  <ul class="foot-links">
+    <li><a href="about.html">About</a></li>
+    <li><a href="terms.html">Terms</a></li>
+    <li><a href="privacy.html">Privacy</a></li>
+    <li><a href="refunds.html">Refunds</a></li>
+    <li><a href="docs.html">Docs</a></li>
+    <li><a href="login.html">Log in</a></li>
+  </ul>
+  <span class="foot-copy">© 2026 Sovyx</span>
+</footer>
+
+<div id="cookie-bar">
+  <p class="ck-text">We use cookies to operate the platform and understand how the site is used. See our <a href="privacy.html">Privacy Policy</a>.</p>
+  <div class="ck-actions">
+    <button class="ck-btn ck-decline" id="ck-decline">Decline optional</button>
+    <button class="ck-btn ck-accept" id="ck-accept">Accept all</button>
+  </div>
+</div>
+</body>
+</html>

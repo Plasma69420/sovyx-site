@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Reseller sign in — Sovyx</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#07070b;--s1:#0d0d14;--b:rgba(255,255,255,.055);--b2:rgba(255,255,255,.11);--red:#e11d48;--pink:#fb7185;--text:#ededf0;--muted:#6b6b80;--dim:#35354a}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Inter',system-ui,sans-serif;font-feature-settings:'ss01';-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--text)}
+a{text-decoration:none;color:inherit}
+.auth-wrap{display:flex;flex-direction:column;min-height:100vh}
+.auth-main{flex:1;display:grid;grid-template-columns:1fr 1fr}
+.auth-left{background:var(--s1);display:flex;flex-direction:column;border-right:1px solid var(--b)}
+.auth-topbar{display:flex;align-items:center;justify-content:space-between;padding:22px 44px;border-bottom:1px solid var(--b)}
+.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;letter-spacing:-.3px}
+.logo-mark{display:block;width:30px;height:30px;flex-shrink:0;object-fit:contain;mix-blend-mode:screen}
+.topbar-link{font-size:13px;color:var(--muted);transition:color .2s}
+.topbar-link:hover{color:var(--text)}
+.auth-form-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 44px}
+.auth-form-inner{width:100%;max-width:360px}
+.form-title{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:7px}
+.form-sub{font-size:14px;color:var(--muted);margin-bottom:32px;line-height:1.5}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:7px}
+.input-wrap{position:relative}
+.form-input{width:100%;padding:10px 14px;border-radius:8px;border:1px solid var(--b2);background:rgba(255,255,255,.03);color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s,background .2s}
+.form-input::placeholder{color:var(--dim)}
+.form-input:focus{border-color:rgba(225,29,72,.5);background:rgba(225,29,72,.03)}
+.form-input.pr{padding-right:44px}
+.eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--dim);cursor:pointer;padding:4px;display:flex;align-items:center;transition:color .2s}
+.eye-btn:hover{color:var(--muted)}
+.form-submit{width:100%;padding:11px;margin-top:8px;border-radius:9px;border:none;background:#fff;color:#07070b;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s,transform .15s}
+.form-submit:hover{background:#e8e8e8;transform:translateY(-1px)}
+
+.auth-right{background:var(--bg);display:flex;flex-direction:column;justify-content:flex-end;padding:60px;position:relative;overflow:hidden}
+.auth-right-glow{position:absolute;bottom:-100px;right:-80px;width:500px;height:500px;background:radial-gradient(circle,rgba(225,29,72,.07),transparent 65%);pointer-events:none}
+.auth-right-tagline{font-size:clamp(26px,3.2vw,40px);font-weight:800;letter-spacing:-1.5px;line-height:1.1;color:rgba(237,237,240,.3);margin-bottom:36px}
+.auth-right-tagline em{font-style:normal;color:rgba(237,237,240,.55)}
+.auth-features{display:flex;flex-direction:column}
+.auth-feat{display:flex;align-items:flex-start;gap:20px;padding:16px 0;border-top:1px solid var(--b)}
+.auth-feat:last-child{border-bottom:1px solid var(--b)}
+.af-label{font-size:12px;font-weight:600;color:var(--dim);letter-spacing:.3px;min-width:80px;padding-top:1px}
+.af-desc{font-size:13px;color:rgba(237,237,240,.38);line-height:1.5}
+
+.auth-footer{border-top:1px solid var(--b);padding:16px 44px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--dim)}
+.auth-footer-links{display:flex;align-items:center;gap:20px}
+.auth-footer-links a{color:var(--dim);transition:color .2s}
+.auth-footer-links a:hover,.auth-footer-links a.cur{color:var(--text)}
+
+@media(max-width:700px){.auth-main{grid-template-columns:1fr}.auth-right{display:none}.auth-topbar,.auth-form-wrap,.auth-footer{padding-left:24px;padding-right:24px}}
+</style>
+</head>
+<body>
+<div class="auth-wrap">
+  <div class="auth-main">
+
+    <div class="auth-left">
+      <div class="auth-topbar">
+        <a class="logo" href="index.html"><img class="logo-mark" src="logo.webp" alt="" width="30" height="30"/>sovyx</a>
+        <a class="topbar-link" href="login.html">User sign in →</a>
+      </div>
+      <div class="auth-form-wrap">
+        <div class="auth-form-inner">
+          <h1 class="form-title">Reseller sign in</h1>
+          <p class="form-sub">Use the credentials your plan gave you.</p>
+          <form onsubmit="return false">
+            <div class="form-group">
+              <label class="form-label">Username</label>
+              <input class="form-input" type="text" placeholder="eg. mira-keys" autocomplete="username"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <div class="input-wrap">
+                <input class="form-input pr" type="password" placeholder="Enter your password" id="pw" autocomplete="current-password"/>
+                <button class="eye-btn" type="button" onclick="togglePw()">
+                  <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+            </div>
+            <button class="form-submit" type="submit" style="margin-top:16px">Log in</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="auth-right">
+      <div class="auth-right-glow"></div>
+      <h2 class="auth-right-tagline">Make orders from<br><em>your credit.</em></h2>
+      <div class="auth-features">
+        <div class="auth-feat"><div class="af-label">Credit</div><div class="af-desc">Pre-loaded balance — spend per order at your plan's rate.</div></div>
+        <div class="auth-feat"><div class="af-label">Products</div><div class="af-desc">One login unlocks your full reseller catalogue.</div></div>
+        <div class="auth-feat"><div class="af-label">Reseller API</div><div class="af-desc">Place orders programmatically and receive keys via webhook.</div></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="auth-footer">
+    <span>© 2026 Sovyx</span>
+    <div class="auth-footer-links">
+      <a href="login.html">User sign in</a>
+      <a class="cur" href="reseller.html">Reseller sign in</a>
+    </div>
+  </div>
+</div>
+<script>
+function togglePw(){
+  const inp=document.getElementById('pw');
+  const icon=document.getElementById('eye-icon');
+  if(inp.type==='password'){inp.type='text';icon.innerHTML='<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';}
+  else{inp.type='password';icon.innerHTML='<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';}
+}
+</script>
+</body>
+</html>
