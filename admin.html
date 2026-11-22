@@ -1,744 +1,340 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Sovyx — Admin</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg: #0a0a0d;
-  --sidebar-bg: #090910;
-  --card-bg: #111118;
-  --border: rgba(255,255,255,0.065);
-  --text-primary: #f5f5f7;
-  --text-secondary: rgba(255,255,255,0.45);
-  --text-muted: rgba(255,255,255,0.28);
-  --accent: #7c3aed;
-  --accent-hover: #6d28d9;
-  --accent-green: #22c55e;
-  --accent-red: #ef4444;
-  --accent-amber: #f59e0b;
-  --accent-blue: #3b82f6;
-  --radius: 10px;
+:root{
+  --bg:#07070b;--s1:#0d0d14;--s2:#131320;--s3:#18182a;
+  --b:rgba(255,255,255,.055);--b2:rgba(255,255,255,.1);--b3:rgba(255,255,255,.18);
+  --red:#e11d48;--red-h:#f43f5e;--pink:#fb7185;
+  --text:#ededf0;--muted:#6b6b80;--dim:#35354a;
+  --green:#3ecf8e;--blue:#60a5fa;--yellow:#fbbf24;
 }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',system-ui,sans-serif;font-feature-settings:'ss01','cv01';background:var(--bg);color:var(--text);min-height:100vh;line-height:1}
+a{text-decoration:none;color:inherit}
+svg{display:block;flex-shrink:0}
 
-html, body {
-  height: 100%;
-  background:
-    radial-gradient(ellipse 60% 55% at 10% 5%, rgba(88,50,190,0.6) 0%, transparent 65%),
-    radial-gradient(ellipse 55% 65% at 92% 95%, rgba(185,95,25,0.5) 0%, transparent 60%),
-    #17141f;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  color: var(--text-primary);
-  min-height: 100vh;
-}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(7,7,11,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--b)}
+.logo{display:flex;align-items:center;gap:7px;font-weight:700;font-size:14.5px;letter-spacing:-.25px}
+.logo-mark{display:block;width:30px;height:30px;flex-shrink:0;object-fit:contain}
+.nav-center{display:flex;gap:2px}
+.nav-tab{padding:5px 12px;border-radius:6px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:none;font-family:inherit;transition:color .15s,background .15s}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.on{color:var(--text);background:rgba(255,255,255,.07)}
+.nav-right{display:flex;align-items:center;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .18s;font-family:inherit}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--b2)}
+.btn-ghost:hover{color:var(--text);border-color:var(--b3)}
+.btn-red{background:var(--red);color:#fff;border:none;box-shadow:0 0 22px rgba(225,29,72,.35),inset 0 1px 0 rgba(255,255,255,.14)}
+.btn-red:hover{background:var(--red-h);box-shadow:0 0 44px rgba(225,29,72,.6);transform:translateY(-1px)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.admin-pill{font-size:11px;font-weight:700;padding:2px 10px;border-radius:4px;background:rgba(225,29,72,.1);color:var(--pink);border:1px solid rgba(225,29,72,.2);letter-spacing:.3px;text-transform:uppercase}
 
-/* ===== LOGIN ===== */
-#login-screen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 20px;
-}
+/* PAGE */
+.page{padding:80px 28px 48px;max-width:1200px;margin:0 auto}
 
-.login-card {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 40px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 40px 120px rgba(0,0,0,0.6);
-}
+/* LOGIN */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-card{background:var(--s1);border:1px solid var(--b2);border-radius:14px;padding:40px;width:100%;max-width:400px}
+.login-logo{display:flex;align-items:center;gap:8px;margin-bottom:28px;font-weight:700;font-size:15px;letter-spacing:-.25px}
+.login-card h1{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
+.login-card p{font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.6}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--dim);letter-spacing:.8px;text-transform:uppercase;margin-bottom:7px}
+.field input,.field select{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:10px 13px;font-size:13px;color:var(--text);font-family:inherit;outline:none;transition:border-color .15s;appearance:none}
+.field input:focus,.field select:focus{border-color:rgba(225,29,72,.5)}
+.field input::placeholder{color:var(--dim)}
+.field select option{background:var(--s2)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.login-err{font-size:13px;color:var(--pink);margin-top:12px;text-align:center;display:none}
 
-.login-logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 28px;
-}
+/* SETUP WARNING */
+#setup-warn{display:none;background:rgba(251,191,36,.07);border-bottom:1px solid rgba(251,191,36,.15);padding:10px 28px;font-size:12px;color:var(--yellow);gap:8px;align-items:center}
 
-.login-logo-icon {
-  width: 32px;
-  height: 32px;
-  background: white;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* TAB PANELS */
+.tab-panel{display:none}
+.tab-panel.on{display:block}
 
-.login-logo-icon svg { width: 18px; height: 18px; }
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;margin-bottom:24px;border:1px solid var(--b2);border-radius:12px;overflow:hidden;background:rgba(255,255,255,.07)}
+.scard{background:var(--s1);padding:16px 20px}
+.scard-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.8px;color:var(--dim);margin-bottom:8px}
+.scard-num{font-size:26px;font-weight:800;letter-spacing:-.6px}
+.scard-sub{font-size:11px;color:var(--muted);margin-top:3px}
 
-.login-logo span {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.3px;
-}
+/* SECTION HEADER */
+.sec-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.sec-row h2{font-size:15px;font-weight:700;letter-spacing:-.25px}
+.sec-row .acts{display:flex;gap:7px}
 
-.login-logo .badge {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--accent-amber);
-  background: rgba(245,158,11,0.12);
-  border: 1px solid rgba(245,158,11,0.25);
-  padding: 2px 7px;
-  border-radius: 20px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
+/* TABLE */
+.table-wrap{background:var(--s1);border:1px solid var(--b2);border-radius:12px;overflow:hidden;margin-bottom:28px}
+.t-toolbar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--b)}
+.t-search{flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:7px 12px;font-size:13px;color:var(--text);font-family:inherit;outline:none}
+.t-search:focus{border-color:rgba(225,29,72,.4)}
+.t-search::placeholder{color:var(--dim)}
+.t-filter{background:var(--s2);border:1px solid var(--b2);border-radius:7px;padding:7px 10px;font-size:12px;color:var(--text);font-family:inherit;outline:none;cursor:pointer;appearance:none;padding-right:24px}
+.t-head{display:grid;gap:12px;padding:8px 16px;border-bottom:1px solid var(--b);font-size:9.5px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--dim)}
+.t-row{display:grid;gap:12px;padding:11px 16px;border-bottom:1px solid rgba(255,255,255,.03);font-size:12px;align-items:center;transition:background .1s}
+.t-row:last-child{border-bottom:none}
+.t-row:hover{background:rgba(255,255,255,.016)}
+.users-grid{grid-template-columns:2.2fr 1fr 0.7fr 1.6fr 1fr 1fr 1.4fr}
+.keys-grid-cols{grid-template-columns:2.5fr 1fr 0.8fr 1fr 1fr}
+.hwid-grid{grid-template-columns:1.5fr 2fr 1fr 1fr 1fr}
+.cell-user{display:flex;flex-direction:column;gap:2px}
+.cell-user .un{font-weight:600;color:var(--text)}
+.cell-user .em{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.cell-key{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green)}
+.cell-muted{color:var(--muted)}
+.cell-dim{color:var(--dim)}
+.empty{padding:40px;text-align:center;color:var(--dim);font-size:13px}
 
-.login-card h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
-.login-card p { font-size: 13px; color: var(--text-secondary); margin-bottom: 28px; }
+/* BADGES */
+.badge{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px;display:inline-block}
+.b-active{background:rgba(62,207,142,.1);color:var(--green)}
+.b-expired{background:rgba(251,191,36,.1);color:var(--yellow)}
+.b-basic{background:rgba(255,255,255,.06);color:var(--dim)}
+.b-pro{background:rgba(96,165,250,.1);color:var(--blue)}
+.b-ultimate{background:rgba(225,29,72,.1);color:var(--pink)}
+.b-pending{background:rgba(251,191,36,.1);color:var(--yellow)}
+.b-done{background:rgba(62,207,142,.1);color:var(--green)}
 
-.field { margin-bottom: 16px; }
-.field label { display: block; font-size: 12px; font-weight: 500; color: var(--text-secondary); margin-bottom: 7px; letter-spacing: 0.3px; text-transform: uppercase; }
-.field input {
-  width: 100%;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 13px;
-  font-size: 14px;
-  color: var(--text-primary);
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.15s;
-}
-.field input:focus { border-color: rgba(124,58,237,0.6); }
+/* ROW ACTIONS */
+.row-acts{display:flex;gap:5px}
+.t-btn{font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid var(--b2);background:transparent;color:var(--muted);cursor:pointer;font-family:inherit;font-weight:500;transition:all .12s;white-space:nowrap}
+.t-btn:hover{color:var(--text);border-color:var(--b3)}
+.t-btn.danger{border-color:rgba(225,29,72,.22);color:var(--pink);background:rgba(225,29,72,.05)}
+.t-btn.danger:hover{background:rgba(225,29,72,.1)}
+.t-btn.primary{border-color:transparent;background:var(--red);color:#fff}
+.t-btn.primary:hover{background:var(--red-h)}
+.t-btn.success{border-color:rgba(62,207,142,.2);color:var(--green);background:rgba(62,207,142,.06)}
 
-.btn-primary {
-  width: 100%;
-  background: var(--accent);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 11px;
-  font-size: 14px;
-  font-weight: 600;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background 0.15s;
-  margin-top: 4px;
-}
-.btn-primary:hover { background: var(--accent-hover); }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+/* KEYS PAGE */
+.gen-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:28px}
+.gen-card{background:var(--s1);border:1px solid var(--b2);border-radius:12px;padding:22px}
+.gen-card h3{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:16px}
+.gen-row{display:flex;gap:8px;margin-bottom:12px}
+.gen-row .field{flex:1;margin:0}
+.gen-row .field input,.gen-row .field select{padding:8px 11px}
+.key-out{background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:10px 13px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--green);display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px;min-height:40px;word-break:break-all}
+.copy-ico{background:none;border:none;cursor:pointer;color:var(--dim);transition:color .12s;padding:2px}
+.copy-ico:hover{color:var(--text)}
+.bulk-list{max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;margin-top:10px}
+.bulk-list::-webkit-scrollbar{width:4px}
+.bulk-list::-webkit-scrollbar-track{background:transparent}
+.bulk-list::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
 
-.login-error {
-  font-size: 13px;
-  color: var(--accent-red);
-  margin-top: 12px;
-  text-align: center;
-  display: none;
-}
+/* SETTINGS */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.set-card{background:var(--s1);border:1px solid var(--b2);border-radius:12px;padding:22px}
+.set-card h3{font-size:14px;font-weight:700;margin-bottom:4px}
+.set-card .sub{font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.6}
+.code-hint{background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);line-height:1.7}
+.code-hint code{color:var(--green)}
 
-/* ===== SETUP BANNER ===== */
-#setup-banner {
-  background: rgba(245,158,11,0.1);
-  border-bottom: 1px solid rgba(245,158,11,0.2);
-  padding: 10px 24px;
-  font-size: 12px;
-  color: var(--accent-amber);
-  display: none;
-  align-items: center;
-  gap: 8px;
-}
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:999;padding:20px}
+.overlay.open{display:flex}
+.modal{background:var(--s1);border:1px solid var(--b2);border-radius:14px;padding:28px;width:100%;max-width:460px}
+.modal h2{font-size:17px;font-weight:800;letter-spacing:-.4px;margin-bottom:22px}
+.modal-acts{display:flex;gap:8px;justify-content:flex-end;margin-top:22px}
 
-/* ===== APP SHELL ===== */
-#app {
-  display: none;
-  min-height: 100vh;
-  flex-direction: column;
-}
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--s1);border:1px solid var(--b2);border-radius:10px;padding:11px 16px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:9px;box-shadow:0 20px 60px rgba(0,0,0,.5);transform:translateY(70px);opacity:0;transition:transform .22s,opacity .22s;z-index:9999;pointer-events:none}
+#toast.show{transform:translateY(0);opacity:1}
+#toast .dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0}
+#toast.err .dot{background:var(--red)}
 
-.top-bar {
-  display: flex;
-  align-items: center;
-  padding: 0 24px;
-  height: 56px;
-  border-bottom: 1px solid var(--border);
-  background: rgba(10,10,13,0.8);
-  backdrop-filter: blur(12px);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  gap: 16px;
-}
-
-.top-bar-logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-right: 8px;
-}
-
-.top-bar-logo-icon {
-  width: 24px; height: 24px;
-  background: white;
-  border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
-}
-.top-bar-logo-icon svg { width: 14px; height: 14px; }
-.top-bar-logo span { font-size: 15px; font-weight: 700; }
-.top-bar-logo .badge {
-  font-size: 9px; font-weight: 600; color: var(--accent-amber);
-  background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25);
-  padding: 2px 6px; border-radius: 20px; letter-spacing: 0.5px; text-transform: uppercase;
-}
-
-.nav-tabs {
-  display: flex;
-  gap: 2px;
-  flex: 1;
-}
-
-.nav-tab {
-  padding: 6px 14px;
-  border-radius: 7px;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  cursor: pointer;
-  border: none;
-  background: none;
-  font-family: inherit;
-  transition: color 0.15s, background 0.15s;
-}
-.nav-tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
-.nav-tab.active { color: var(--text-primary); background: rgba(255,255,255,0.08); }
-
-.top-bar-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-left: auto;
-}
-
-.admin-badge {
-  font-size: 11px;
-  color: var(--accent-amber);
-  background: rgba(245,158,11,0.1);
-  border: 1px solid rgba(245,158,11,0.2);
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-weight: 600;
-}
-
-.btn-sm {
-  padding: 6px 12px;
-  border-radius: 7px;
-  font-size: 12px;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
-  border: 1px solid var(--border);
-  background: rgba(255,255,255,0.05);
-  color: var(--text-primary);
-  transition: background 0.15s;
-}
-.btn-sm:hover { background: rgba(255,255,255,0.08); }
-.btn-sm.danger { color: var(--accent-red); border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.06); }
-.btn-sm.success { color: var(--accent-green); border-color: rgba(34,197,94,0.3); background: rgba(34,197,94,0.06); }
-.btn-sm.primary { color: white; border-color: var(--accent); background: var(--accent); }
-.btn-sm.primary:hover { background: var(--accent-hover); }
-
-/* ===== MAIN CONTENT ===== */
-.main {
-  padding: 24px;
-  max-width: 1300px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
-
-/* ===== STATS ROW ===== */
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin-bottom: 24px;
-}
-
-.stat-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 18px 20px;
-}
-
-.stat-label { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
-.stat-value { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
-.stat-sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
-
-/* ===== SECTION HEADER ===== */
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-.section-header h2 { font-size: 15px; font-weight: 600; }
-.section-header .actions { display: flex; gap: 8px; }
-
-/* ===== TABLE ===== */
-.table-wrap {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.search-bar {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.search-input {
-  flex: 1;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  padding: 8px 12px;
-  font-size: 13px;
-  color: var(--text-primary);
-  font-family: inherit;
-  outline: none;
-}
-.search-input:focus { border-color: rgba(124,58,237,0.5); }
-.search-input::placeholder { color: var(--text-muted); }
-
-table { width: 100%; border-collapse: collapse; }
-thead th {
-  padding: 10px 16px;
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
-  background: rgba(255,255,255,0.02);
-}
-tbody td {
-  padding: 12px 16px;
-  font-size: 13px;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-  vertical-align: middle;
-}
-tbody tr:last-child td { border-bottom: none; }
-tbody tr:hover td { background: rgba(255,255,255,0.025); }
-
-.pill {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-.pill.active   { background: rgba(34,197,94,0.12); color: var(--accent-green); border: 1px solid rgba(34,197,94,0.25); }
-.pill.expired  { background: rgba(239,68,68,0.1);  color: var(--accent-red);   border: 1px solid rgba(239,68,68,0.2); }
-.pill.basic    { background: rgba(107,114,128,0.12); color: #9ca3af; border: 1px solid rgba(107,114,128,0.25); }
-.pill.pro      { background: rgba(59,130,246,0.12); color: var(--accent-blue); border: 1px solid rgba(59,130,246,0.25); }
-.pill.ultimate { background: rgba(245,158,11,0.12); color: var(--accent-amber); border: 1px solid rgba(245,158,11,0.25); }
-
-.row-actions { display: flex; gap: 6px; }
-
-.empty-state {
-  padding: 48px 24px;
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 13px;
-}
-
-/* ===== MODAL ===== */
-.modal-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(4px);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-  display: none;
-}
-.modal-overlay.open { display: flex; }
-
-.modal {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 28px;
-  width: 100%;
-  max-width: 480px;
-  box-shadow: 0 40px 100px rgba(0,0,0,0.7);
-}
-
-.modal h2 { font-size: 17px; font-weight: 700; margin-bottom: 20px; }
-.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
-
-.select {
-  width: 100%;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 13px;
-  font-size: 14px;
-  color: var(--text-primary);
-  font-family: inherit;
-  outline: none;
-  appearance: none;
-  cursor: pointer;
-}
-.select option { background: #1a1a2e; }
-
-/* ===== KEYS PAGE ===== */
-.keys-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-bottom: 24px;
-}
-
-.key-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-}
-
-.key-card h3 { font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 16px; }
-
-.key-display {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 13px;
-  font-family: 'Courier New', monospace;
-  font-size: 13px;
-  color: var(--accent-green);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 10px;
-  word-break: break-all;
-  min-height: 42px;
-}
-
-.copy-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--text-secondary);
-  padding: 2px;
-  flex-shrink: 0;
-  transition: color 0.15s;
-}
-.copy-btn:hover { color: var(--text-primary); }
-
-.gen-row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
-.gen-row .select { flex: 1; }
-
-/* ===== TOAST ===== */
-#toast {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 18px;
-  font-size: 13px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-  transform: translateY(80px);
-  opacity: 0;
-  transition: transform 0.25s, opacity 0.25s;
-  z-index: 9999;
-}
-#toast.show { transform: translateY(0); opacity: 1; }
-#toast .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); flex-shrink: 0; }
-#toast.error .dot { background: var(--accent-red); }
-
-/* ===== CONFIRM MODAL ===== */
-#confirm-modal .modal-body { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
-
-/* ===== HWID PAGE ===== */
-.hwid-log {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-/* ===== SETTINGS PAGE ===== */
-.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.settings-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px 24px;
-}
-.settings-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-.settings-card p { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
-
-@media (max-width: 900px) {
-  .stats-row { grid-template-columns: repeat(2, 1fr); }
-  .keys-grid { grid-template-columns: 1fr; }
-  .settings-grid { grid-template-columns: 1fr; }
+@media(max-width:900px){
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .gen-grid{grid-template-columns:1fr}
+  .settings-grid{grid-template-columns:1fr}
+  .users-grid{grid-template-columns:2fr 1fr 1fr 1fr}
 }
 </style>
 </head>
 <body>
 
-<!-- ===== FIREBASE CONFIG BANNER ===== -->
-<div id="setup-banner" style="display:none; background:rgba(245,158,11,0.1); border-bottom:1px solid rgba(245,158,11,0.2); padding:12px 24px; font-size:13px; color:#f59e0b; gap:10px; align-items:center;">
-  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
-  Firebase not configured — open this file and paste your Firebase config at the top of the script section.
+<!-- Setup warning -->
+<div id="setup-warn" style="display:none">
+  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+  Firebase not configured — paste your config into the FIREBASE_CONFIG object in the &lt;script&gt; block.
 </div>
 
-<!-- ===== LOGIN ===== -->
+<!-- Login -->
 <div id="login-screen">
   <div class="login-card">
     <div class="login-logo">
-      <div class="login-logo-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-      </div>
-      <span>Sovyx</span>
-      <span class="badge">Admin</span>
+      <img src="logo.png" class="logo-mark" alt="" onerror="this.style.display='none'">
+      Sovyx
+      <span class="admin-pill">Admin</span>
     </div>
-    <h1>Admin Portal</h1>
-    <p>Sign in to manage subscriptions, users, and licenses.</p>
-    <div class="field">
-      <label>Email</label>
-      <input type="email" id="login-email" placeholder="admin@sovyx.cc" autocomplete="username">
-    </div>
-    <div class="field">
-      <label>Password</label>
-      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
-    </div>
-    <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign in</button>
-    <div class="login-error" id="login-error"></div>
+    <h1>Admin portal</h1>
+    <p>Sign in to manage subscriptions, users, and license keys.</p>
+    <div class="field"><label>Email</label><input type="email" id="li-email" placeholder="admin@sovyx.cc" autocomplete="username"></div>
+    <div class="field"><label>Password</label><input type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password"></div>
+    <button class="btn btn-red" style="width:100%;justify-content:center;margin-top:4px" id="li-btn" onclick="doLogin()">Sign in</button>
+    <div class="login-err" id="li-err"></div>
   </div>
 </div>
 
-<!-- ===== APP ===== -->
-<div id="app">
-  <!-- Top Bar -->
-  <div class="top-bar">
-    <div class="top-bar-logo">
-      <div class="top-bar-logo-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-      </div>
-      <span>Sovyx</span>
-      <span class="badge">Admin</span>
+<!-- App -->
+<div id="app" style="display:none">
+  <nav>
+    <div class="logo">
+      <img src="logo.png" class="logo-mark" alt="" onerror="this.style.display='none'">
+      Sovyx
+      <span class="admin-pill">Admin</span>
     </div>
-    <div class="nav-tabs">
-      <button class="nav-tab active" onclick="showTab('users',this)">Users</button>
-      <button class="nav-tab" onclick="showTab('keys',this)">License Keys</button>
-      <button class="nav-tab" onclick="showTab('hwid',this)">HWID Resets</button>
-      <button class="nav-tab" onclick="showTab('settings',this)">Settings</button>
+    <div class="nav-center">
+      <button class="nav-tab on"  onclick="tab('users',this)">Users</button>
+      <button class="nav-tab"     onclick="tab('keys',this)">License Keys</button>
+      <button class="nav-tab"     onclick="tab('hwid',this)">HWID Resets</button>
+      <button class="nav-tab"     onclick="tab('settings',this)">Settings</button>
     </div>
-    <div class="top-bar-right">
-      <span class="admin-badge" id="admin-email-label"></span>
-      <button class="btn-sm danger" onclick="doLogout()">Sign out</button>
+    <div class="nav-right">
+      <span id="admin-lbl" style="font-size:12px;color:var(--muted)"></span>
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Sign out</button>
     </div>
-  </div>
+  </nav>
 
-  <!-- Main -->
-  <div class="main">
+  <div class="page">
 
-    <!-- ===== USERS TAB ===== -->
-    <div class="tab-panel active" id="tab-users">
+    <!-- USERS -->
+    <div class="tab-panel on" id="tab-users">
       <div class="stats-row" id="stats-row">
-        <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub">all accounts</div></div>
-        <div class="stat-card"><div class="stat-label">Active Subs</div><div class="stat-value" id="stat-active">—</div><div class="stat-sub">valid licenses</div></div>
-        <div class="stat-card"><div class="stat-label">Total Credits</div><div class="stat-value" id="stat-credits">—</div><div class="stat-sub">across all users</div></div>
-        <div class="stat-card"><div class="stat-label">Plans</div><div class="stat-value" id="stat-plans">—</div><div class="stat-sub">basic / pro / ultimate</div></div>
+        <div class="scard"><div class="scard-label">Total users</div><div class="scard-num" id="st-total">—</div></div>
+        <div class="scard"><div class="scard-label">Active subs</div><div class="scard-num" id="st-active">—</div></div>
+        <div class="scard"><div class="scard-label">Total credits</div><div class="scard-num" id="st-credits">—</div></div>
+        <div class="scard"><div class="scard-label">Plans</div><div class="scard-num" id="st-plans" style="font-size:16px;padding-top:4px">—</div></div>
       </div>
 
-      <div class="section-header">
+      <div class="sec-row">
         <h2>Users</h2>
-        <div class="actions">
-          <button class="btn-sm primary" onclick="openModal('create-user-modal')">+ Create User</button>
+        <div class="acts">
+          <button class="btn btn-red btn-sm" onclick="openModal('m-create')">+ Create user</button>
         </div>
       </div>
 
       <div class="table-wrap">
-        <div class="search-bar">
-          <input class="search-input" placeholder="Search by email or username…" id="user-search" oninput="filterUsers(this.value)">
-          <select class="select" style="width:140px" id="plan-filter" onchange="filterUsers(document.getElementById('user-search').value)">
+        <div class="t-toolbar">
+          <input class="t-search" placeholder="Search email or username…" oninput="filterUsers(this.value)" id="u-search">
+          <select class="t-filter" onchange="filterUsers(document.getElementById('u-search').value)" id="u-plan-filter">
             <option value="">All plans</option>
             <option value="basic">Basic</option>
             <option value="pro">Pro</option>
             <option value="ultimate">Ultimate</option>
           </select>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Plan</th>
-              <th>Credits</th>
-              <th>License Key</th>
-              <th>Expires</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="users-tbody">
-            <tr><td colspan="7" class="empty-state">Loading users…</td></tr>
-          </tbody>
-        </table>
+        <div class="t-head users-grid">
+          <span>User</span><span>Plan</span><span>Credits</span><span>License key</span><span>Expires</span><span>Status</span><span>Actions</span>
+        </div>
+        <div id="users-body"></div>
       </div>
     </div>
 
-    <!-- ===== KEYS TAB ===== -->
+    <!-- KEYS -->
     <div class="tab-panel" id="tab-keys">
-      <div class="section-header" style="margin-bottom:20px">
-        <h2>License Keys</h2>
-        <div class="actions">
-          <button class="btn-sm primary" onclick="genBulkKeys()">Generate Bulk</button>
-        </div>
-      </div>
+      <div class="sec-row" style="margin-bottom:20px"><h2>License Keys</h2></div>
 
-      <div class="keys-grid">
-        <div class="key-card">
-          <h3>Generate Single Key</h3>
-          <div class="gen-row" style="margin-bottom:12px">
-            <select class="select" id="gen-plan">
-              <option value="basic">Basic</option>
-              <option value="pro">Pro</option>
-              <option value="ultimate">Ultimate</option>
-            </select>
-            <select class="select" id="gen-days">
-              <option value="30">30 days</option>
-              <option value="90">90 days</option>
-              <option value="180">180 days</option>
-              <option value="365">1 year</option>
-              <option value="0">Lifetime</option>
-            </select>
+      <div class="gen-grid">
+        <div class="gen-card">
+          <h3>Generate single key</h3>
+          <div class="gen-row">
+            <div class="field"><label>Plan</label>
+              <select id="gk-plan"><option value="basic">Basic</option><option value="pro">Pro</option><option value="ultimate">Ultimate</option></select>
+            </div>
+            <div class="field"><label>Duration</label>
+              <select id="gk-days"><option value="30">30 days</option><option value="90">90 days</option><option value="180">180 days</option><option value="365">1 year</option><option value="0">Lifetime</option></select>
+            </div>
           </div>
-          <button class="btn-sm primary" onclick="generateKey()" style="width:100%; padding:9px; font-size:13px">Generate Key</button>
-          <div id="gen-result" style="margin-top:12px; display:none">
-            <div class="key-display">
-              <span id="gen-key-val"></span>
-              <button class="copy-btn" onclick="copyText(document.getElementById('gen-key-val').textContent)" title="Copy">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          <button class="btn btn-red btn-sm" style="width:100%;justify-content:center" onclick="genSingleKey()">Generate</button>
+          <div id="gk-out" style="display:none">
+            <div class="key-out">
+              <span id="gk-val"></span>
+              <button class="copy-ico" onclick="copyText(document.getElementById('gk-val').textContent)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
               </button>
             </div>
-            <div style="font-size:11px; color:var(--text-muted); margin-top:4px">Key saved to database — assign to a user from the Users tab</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:6px">Key saved — assign from Users tab</div>
           </div>
         </div>
 
-        <div class="key-card">
-          <h3>Bulk Generate</h3>
-          <div class="gen-row" style="margin-bottom:12px">
-            <input class="search-input" type="number" id="bulk-count" placeholder="Qty (max 50)" min="1" max="50" value="5">
-            <select class="select" id="bulk-plan">
-              <option value="basic">Basic</option>
-              <option value="pro">Pro</option>
-              <option value="ultimate">Ultimate</option>
-            </select>
-            <select class="select" id="bulk-days">
-              <option value="30">30d</option>
-              <option value="90">90d</option>
-              <option value="180">180d</option>
-              <option value="365">1yr</option>
-              <option value="0">Life</option>
-            </select>
+        <div class="gen-card">
+          <h3>Bulk generate</h3>
+          <div class="gen-row">
+            <div class="field"><label>Qty</label><input type="number" id="bk-qty" value="10" min="1" max="50"></div>
+            <div class="field"><label>Plan</label>
+              <select id="bk-plan"><option value="basic">Basic</option><option value="pro">Pro</option><option value="ultimate">Ultimate</option></select>
+            </div>
+            <div class="field"><label>Duration</label>
+              <select id="bk-days"><option value="30">30d</option><option value="90">90d</option><option value="180">180d</option><option value="365">1yr</option><option value="0">Life</option></select>
+            </div>
           </div>
-          <button class="btn-sm primary" onclick="generateBulkKeys()" style="width:100%; padding:9px; font-size:13px">Generate</button>
-          <div id="bulk-result" style="margin-top:12px; display:none">
-            <div style="font-size:11px; color:var(--text-secondary); margin-bottom:8px" id="bulk-count-label"></div>
-            <div id="bulk-keys-list" style="max-height:160px; overflow-y:auto; display:flex; flex-direction:column; gap:4px"></div>
-            <button class="btn-sm" style="width:100%; margin-top:8px" onclick="copyAllKeys()">Copy All</button>
+          <button class="btn btn-red btn-sm" style="width:100%;justify-content:center" onclick="genBulk()">Generate</button>
+          <div id="bk-out" style="display:none">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;margin-bottom:6px">
+              <span id="bk-label" style="font-size:12px;color:var(--muted)"></span>
+              <button class="t-btn" onclick="copyAllBulk()">Copy all</button>
+            </div>
+            <div class="bulk-list" id="bk-list"></div>
           </div>
         </div>
       </div>
 
-      <div class="section-header">
-        <h2>Unassigned Keys</h2>
-      </div>
+      <div class="sec-row"><h2>Unassigned keys</h2></div>
       <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Key</th><th>Plan</th><th>Duration</th><th>Created</th><th>Actions</th></tr>
-          </thead>
-          <tbody id="keys-tbody">
-            <tr><td colspan="5" class="empty-state">Loading keys…</td></tr>
-          </tbody>
-        </table>
+        <div class="t-head keys-grid-cols"><span>Key</span><span>Plan</span><span>Duration</span><span>Created</span><span>Actions</span></div>
+        <div id="keys-body"></div>
       </div>
     </div>
 
-    <!-- ===== HWID TAB ===== -->
+    <!-- HWID -->
     <div class="tab-panel" id="tab-hwid">
-      <div class="section-header">
-        <h2>HWID Reset Requests</h2>
-      </div>
-      <div class="table-wrap hwid-log">
-        <table>
-          <thead>
-            <tr><th>User</th><th>Old HWID</th><th>Requested</th><th>Status</th><th>Actions</th></tr>
-          </thead>
-          <tbody id="hwid-tbody">
-            <tr><td colspan="5" class="empty-state">No HWID reset requests</td></tr>
-          </tbody>
-        </table>
+      <div class="sec-row"><h2>HWID Reset Requests</h2></div>
+      <div class="table-wrap">
+        <div class="t-head hwid-grid"><span>User</span><span>HWID</span><span>Requested</span><span>Status</span><span>Actions</span></div>
+        <div id="hwid-body"></div>
       </div>
     </div>
 
-    <!-- ===== SETTINGS TAB ===== -->
+    <!-- SETTINGS -->
     <div class="tab-panel" id="tab-settings">
-      <div class="section-header" style="margin-bottom:20px"><h2>Settings</h2></div>
+      <div class="sec-row" style="margin-bottom:20px"><h2>Settings</h2></div>
       <div class="settings-grid">
-        <div class="settings-card">
-          <h3>Plans</h3>
-          <p>Prices and feature labels shown to users</p>
-          <div class="field"><label>Basic Price</label><input class="field input" type="text" id="plan-basic-price" placeholder="e.g. $9.99/mo" style="width:100%; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; padding:9px 12px; font-size:13px; color:var(--text-primary); font-family:inherit; outline:none;"></div>
-          <div class="field"><label>Pro Price</label><input type="text" id="plan-pro-price" placeholder="e.g. $19.99/mo" style="width:100%; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; padding:9px 12px; font-size:13px; color:var(--text-primary); font-family:inherit; outline:none;"></div>
-          <div class="field"><label>Ultimate Price</label><input type="text" id="plan-ultimate-price" placeholder="e.g. $39.99/mo" style="width:100%; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; padding:9px 12px; font-size:13px; color:var(--text-primary); font-family:inherit; outline:none;"></div>
-          <button class="btn-sm primary" onclick="saveSettings()">Save Prices</button>
+        <div class="set-card">
+          <h3>Plan pricing</h3>
+          <div class="sub">Labels shown to customers on the pricing page</div>
+          <div class="field"><label>Basic price</label><input type="text" id="p-basic" placeholder="e.g. $9.99/mo"></div>
+          <div class="field"><label>Pro price</label><input type="text" id="p-pro" placeholder="e.g. $19.99/mo"></div>
+          <div class="field"><label>Ultimate price</label><input type="text" id="p-ultimate" placeholder="e.g. $39.99/mo"></div>
+          <button class="btn btn-red btn-sm" onclick="savePricing()">Save</button>
         </div>
-        <div class="settings-card">
-          <h3>Firebase Config</h3>
-          <p>Paste your firebaseConfig object values here to reconnect</p>
-          <div style="font-size:12px; color:var(--text-muted); background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:12px; font-family:monospace; line-height:1.7">
-            Edit the <code style="color:var(--accent-green)">FIREBASE_CONFIG</code> object at the top of this file's &lt;script&gt; block.
-          </div>
+        <div class="set-card">
+          <h3>Firebase config</h3>
+          <div class="sub">To reconnect to a different Firebase project, edit the FIREBASE_CONFIG block in the page source.</div>
+          <div class="code-hint">Edit <code>FIREBASE_CONFIG</code><br>at the top of the &lt;script type="module"&gt; block.</div>
         </div>
-        <div class="settings-card">
-          <h3>Admin Accounts</h3>
-          <p>Add additional admin email addresses</p>
-          <div class="field"><input type="email" id="new-admin-email" placeholder="admin2@example.com" style="width:100%; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; padding:9px 12px; font-size:13px; color:var(--text-primary); font-family:inherit; outline:none;"></div>
-          <button class="btn-sm primary" onclick="addAdmin()">Add Admin</button>
+        <div class="set-card">
+          <h3>Add admin account</h3>
+          <div class="sub">Grant admin access to another email address</div>
+          <div class="field"><label>Email</label><input type="email" id="adm-email" placeholder="admin2@sovyx.cc"></div>
+          <button class="btn btn-red btn-sm" onclick="addAdmin()">Add</button>
         </div>
-        <div class="settings-card">
-          <h3>Danger Zone</h3>
-          <p>Irreversible actions — be careful</p>
-          <div style="display:flex; flex-direction:column; gap:8px">
-            <button class="btn-sm danger" onclick="confirmAction('Delete ALL unassigned keys?', deleteAllUnassigned)">Delete All Unassigned Keys</button>
-            <button class="btn-sm danger" onclick="confirmAction('Delete ALL expired users?', deleteExpiredUsers)">Delete All Expired Users</button>
+        <div class="set-card">
+          <h3>Danger zone</h3>
+          <div class="sub">These actions cannot be undone</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="t-btn danger" onclick="confirm2('Delete ALL unassigned keys?',deleteAllKeys)">Delete all unassigned keys</button>
+            <button class="t-btn danger" onclick="confirm2('Delete ALL expired users?',deleteExpired)">Delete all expired users</button>
           </div>
         </div>
       </div>
@@ -747,145 +343,126 @@ tbody tr:hover td { background: rgba(255,255,255,0.025); }
   </div>
 </div>
 
-<!-- ===== MODALS ===== -->
-
-<!-- Create User -->
-<div class="modal-overlay" id="create-user-modal">
+<!-- Modals -->
+<div class="overlay" id="m-create">
   <div class="modal">
-    <h2>Create User</h2>
-    <div class="field"><label>Email</label><input type="email" id="cu-email" placeholder="user@example.com"></div>
-    <div class="field"><label>Username</label><input type="text" id="cu-username" placeholder="username"></div>
-    <div class="field"><label>Plan</label>
-      <select class="select" id="cu-plan">
-        <option value="basic">Basic</option>
-        <option value="pro">Pro</option>
-        <option value="ultimate">Ultimate</option>
-      </select>
+    <h2>Create user</h2>
+    <div class="field-row">
+      <div class="field"><label>Email</label><input type="email" id="cu-email" placeholder="user@example.com"></div>
+      <div class="field"><label>Username</label><input type="text" id="cu-user" placeholder="username"></div>
     </div>
-    <div class="field"><label>Subscription Duration</label>
-      <select class="select" id="cu-days">
-        <option value="30">30 days</option>
-        <option value="90">90 days</option>
-        <option value="180">180 days</option>
-        <option value="365">1 year</option>
-        <option value="0">Lifetime</option>
-      </select>
+    <div class="field-row">
+      <div class="field"><label>Plan</label>
+        <select id="cu-plan"><option value="basic">Basic</option><option value="pro">Pro</option><option value="ultimate">Ultimate</option></select>
+      </div>
+      <div class="field"><label>Duration</label>
+        <select id="cu-days"><option value="30">30 days</option><option value="90">90 days</option><option value="180">180 days</option><option value="365">1 year</option><option value="0">Lifetime</option></select>
+      </div>
     </div>
-    <div class="field"><label>Starting Credits</label><input type="number" id="cu-credits" placeholder="0" min="0" value="0"></div>
-    <div class="modal-actions">
-      <button class="btn-sm" onclick="closeModal('create-user-modal')">Cancel</button>
-      <button class="btn-sm primary" onclick="createUser()">Create</button>
+    <div class="field"><label>Starting credits</label><input type="number" id="cu-credits" value="0" min="0"></div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('m-create')">Cancel</button>
+      <button class="btn btn-red btn-sm" onclick="createUser()">Create</button>
     </div>
   </div>
 </div>
 
-<!-- Edit User -->
-<div class="modal-overlay" id="edit-user-modal">
+<div class="overlay" id="m-edit">
   <div class="modal">
-    <h2>Edit User</h2>
+    <h2>Edit user</h2>
     <input type="hidden" id="eu-uid">
-    <div class="field"><label>Email</label><input type="email" id="eu-email" readonly style="opacity:0.5"></div>
-    <div class="field"><label>Username</label><input type="text" id="eu-username"></div>
-    <div class="field"><label>Plan</label>
-      <select class="select" id="eu-plan">
-        <option value="basic">Basic</option>
-        <option value="pro">Pro</option>
-        <option value="ultimate">Ultimate</option>
-      </select>
-    </div>
-    <div class="field"><label>Expiry Date</label><input type="date" id="eu-expiry" style="background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; padding:10px 13px; font-size:14px; color:var(--text-primary); font-family:inherit; outline:none; width:100%; color-scheme:dark"></div>
-    <div class="field"><label>Credits</label><input type="number" id="eu-credits" min="0"></div>
-    <div class="field"><label>Add Credits</label>
-      <div style="display:flex; gap:8px">
-        <input type="number" id="eu-add-credits" placeholder="Amount to add" min="0" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; padding:10px 13px; font-size:14px; color:var(--text-primary); font-family:inherit; outline:none;">
-        <button class="btn-sm success" onclick="addCredits()">+ Add</button>
+    <div class="field"><label>Email</label><input type="email" id="eu-email" readonly style="opacity:.4;cursor:default"></div>
+    <div class="field-row">
+      <div class="field"><label>Username</label><input type="text" id="eu-user"></div>
+      <div class="field"><label>Plan</label>
+        <select id="eu-plan"><option value="basic">Basic</option><option value="pro">Pro</option><option value="ultimate">Ultimate</option></select>
       </div>
     </div>
-    <div class="modal-actions">
-      <button class="btn-sm" onclick="closeModal('edit-user-modal')">Cancel</button>
-      <button class="btn-sm primary" onclick="saveUser()">Save Changes</button>
+    <div class="field-row">
+      <div class="field"><label>Expiry date</label><input type="date" id="eu-expiry" style="color-scheme:dark"></div>
+      <div class="field"><label>Credits</label><input type="number" id="eu-credits" min="0"></div>
+    </div>
+    <div class="field"><label>Add credits</label>
+      <div style="display:flex;gap:8px">
+        <input type="number" id="eu-add" placeholder="Amount to add" min="0" style="flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:10px 13px;font-size:13px;color:var(--text);font-family:inherit;outline:none">
+        <button class="t-btn success" onclick="addCred()">+ Add</button>
+      </div>
+    </div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('m-edit')">Cancel</button>
+      <button class="btn btn-red btn-sm" onclick="saveUser()">Save</button>
     </div>
   </div>
 </div>
 
-<!-- Assign Key -->
-<div class="modal-overlay" id="assign-key-modal">
+<div class="overlay" id="m-key">
   <div class="modal">
-    <h2>Assign License Key</h2>
+    <h2>Assign license key</h2>
     <input type="hidden" id="ak-uid">
-    <div class="field"><label>License Key</label><input type="text" id="ak-key" placeholder="SOVYX-XXXX-XXXX-XXXX"></div>
-    <div class="field"><label>Or generate a new one for</label>
-      <select class="select" id="ak-plan">
-        <option value="basic">Basic</option>
-        <option value="pro">Pro</option>
-        <option value="ultimate">Ultimate</option>
-      </select>
+    <div class="field"><label>License key</label><input type="text" id="ak-key" placeholder="SVX-PRO-XXXX-XXXX-XXXX"></div>
+    <div class="field-row">
+      <div class="field"><label>Or generate for plan</label>
+        <select id="ak-plan"><option value="basic">Basic</option><option value="pro">Pro</option><option value="ultimate">Ultimate</option></select>
+      </div>
     </div>
-    <div class="modal-actions">
-      <button class="btn-sm" onclick="closeModal('assign-key-modal')">Cancel</button>
-      <button class="btn-sm" onclick="genAndFillKey()">Generate Key</button>
-      <button class="btn-sm primary" onclick="assignKey()">Assign</button>
+    <div class="modal-acts">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('m-key')">Cancel</button>
+      <button class="t-btn" onclick="genFill()">Generate key</button>
+      <button class="btn btn-red btn-sm" onclick="assignKey()">Assign</button>
     </div>
   </div>
 </div>
 
-<!-- Confirm -->
-<div class="modal-overlay" id="confirm-modal">
+<div class="overlay" id="m-confirm">
   <div class="modal">
-    <h2 id="confirm-title">Are you sure?</h2>
-    <div class="modal-body" id="confirm-body" style="font-size:14px; color:var(--text-secondary)"></div>
-    <div class="modal-actions">
-      <button class="btn-sm" onclick="closeModal('confirm-modal')">Cancel</button>
-      <button class="btn-sm danger" id="confirm-ok-btn">Confirm</button>
+    <h2 id="conf-title">Are you sure?</h2>
+    <p id="conf-body" style="font-size:13px;color:var(--muted);line-height:1.6"></p>
+    <div class="modal-acts">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('m-confirm')">Cancel</button>
+      <button class="t-btn danger" id="conf-ok">Confirm</button>
     </div>
   </div>
 </div>
 
-<!-- Toast -->
-<div id="toast"><div class="dot"></div><span id="toast-msg"></span></div>
+<div id="toast"><div class="dot"></div><span id="toast-txt"></span></div>
 
 <script type="module">
 // ============================================================
 //  PASTE YOUR FIREBASE CONFIG HERE
 // ============================================================
 const FIREBASE_CONFIG = {
-  apiKey: "PASTE_YOUR_API_KEY",
-  authDomain: "PASTE_YOUR_AUTH_DOMAIN",
-  projectId: "PASTE_YOUR_PROJECT_ID",
-  storageBucket: "PASTE_YOUR_STORAGE_BUCKET",
+  apiKey:            "PASTE_YOUR_API_KEY",
+  authDomain:        "PASTE_YOUR_AUTH_DOMAIN",
+  projectId:         "PASTE_YOUR_PROJECT_ID",
+  storageBucket:     "PASTE_YOUR_STORAGE_BUCKET",
   messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID",
-  appId: "PASTE_YOUR_APP_ID"
+  appId:             "PASTE_YOUR_APP_ID"
 };
 // ============================================================
 
-import { initializeApp }         from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
-                                 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, doc, getDocs, getDoc, setDoc, addDoc,
+                            from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, doc, getDocs, setDoc, addDoc,
          updateDoc, deleteDoc, query, where, orderBy, serverTimestamp, Timestamp }
-                                 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+                            from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Check if config is filled
-const configured = FIREBASE_CONFIG.apiKey !== "PASTE_YOUR_API_KEY";
-if (!configured) {
-  document.getElementById('setup-banner').style.display = 'flex';
+if (FIREBASE_CONFIG.apiKey === "PASTE_YOUR_API_KEY") {
+  document.getElementById('setup-warn').style.display = 'flex';
 }
 
-const app = initializeApp(FIREBASE_CONFIG);
-const auth = getAuth(app);
-const db   = getFirestore(app);
+const fbApp = initializeApp(FIREBASE_CONFIG);
+const auth  = getAuth(fbApp);
+const db    = getFirestore(fbApp);
 
-// ---- State ----
-let allUsers = [];
-let allKeys  = [];
-let confirmCallback = null;
+let allUsers = [], allKeys = [], confirmCb = null;
 
 // ---- Auth ----
-onAuthStateChanged(auth, user => {
-  if (user) {
+onAuthStateChanged(auth, u => {
+  if (u) {
     document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'flex';
-    document.getElementById('admin-email-label').textContent = user.email;
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('admin-lbl').textContent = u.email;
     loadAll();
   } else {
     document.getElementById('login-screen').style.display = 'flex';
@@ -894,391 +471,323 @@ onAuthStateChanged(auth, user => {
 });
 
 window.doLogin = async () => {
-  const email = document.getElementById('login-email').value.trim();
-  const pass  = document.getElementById('login-password').value;
-  const btn   = document.getElementById('login-btn');
-  const err   = document.getElementById('login-error');
+  const email = document.getElementById('li-email').value.trim();
+  const pass  = document.getElementById('li-pass').value;
+  const btn   = document.getElementById('li-btn');
+  const err   = document.getElementById('li-err');
   btn.disabled = true; btn.textContent = 'Signing in…'; err.style.display = 'none';
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-  } catch(e) {
+  try { await signInWithEmailAndPassword(auth, email, pass); }
+  catch(e) {
     err.style.display = 'block';
     err.textContent = e.code === 'auth/invalid-credential' ? 'Wrong email or password.' : e.message;
-  } finally {
-    btn.disabled = false; btn.textContent = 'Sign in';
-  }
+  } finally { btn.disabled = false; btn.textContent = 'Sign in'; }
 };
 
 window.doLogout = () => signOut(auth);
 
-// ---- Load data ----
-async function loadAll() {
-  await Promise.all([loadUsers(), loadKeys(), loadHwid()]);
-}
+// ---- Load ----
+async function loadAll() { await Promise.all([loadUsers(), loadKeys(), loadHwid()]); }
 
 async function loadUsers() {
   const snap = await getDocs(collection(db, 'users'));
   allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  renderUsers(allUsers);
-  updateStats();
+  renderUsers(allUsers); updateStats();
 }
-
 async function loadKeys() {
   const snap = await getDocs(query(collection(db, 'licenseKeys'), where('assigned', '==', false)));
   allKeys = snap.docs.map(d => ({ id: d.id, ...d.data() }));
   renderKeys(allKeys);
 }
-
 async function loadHwid() {
-  const snap = await getDocs(query(collection(db, 'hwid_resets'), orderBy('requestedAt', 'desc')));
-  const rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  renderHwid(rows);
+  try {
+    const snap = await getDocs(query(collection(db, 'hwid_resets'), orderBy('requestedAt', 'desc')));
+    renderHwid(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+  } catch { renderHwid([]); }
 }
 
 // ---- Stats ----
 function updateStats() {
   const now = Date.now();
-  const active = allUsers.filter(u => u.expiresAt === 0 || (u.expiresAt?.toMillis?.() ?? 0) > now).length;
-  const credits = allUsers.reduce((s, u) => s + (u.credits || 0), 0);
-  const plans = { basic: 0, pro: 0, ultimate: 0 };
-  allUsers.forEach(u => { if (plans[u.plan] !== undefined) plans[u.plan]++; });
-  document.getElementById('stat-total').textContent   = allUsers.length;
-  document.getElementById('stat-active').textContent  = active;
-  document.getElementById('stat-credits').textContent = credits;
-  document.getElementById('stat-plans').textContent   = `${plans.basic} / ${plans.pro} / ${plans.ultimate}`;
+  const active  = allUsers.filter(u => u.expiresAt === 0 || (u.expiresAt?.toMillis?.()??0) > now).length;
+  const credits = allUsers.reduce((s,u) => s+(u.credits||0), 0);
+  const p = {basic:0,pro:0,ultimate:0};
+  allUsers.forEach(u => { if (p[u.plan] !== undefined) p[u.plan]++; });
+  document.getElementById('st-total').textContent   = allUsers.length;
+  document.getElementById('st-active').textContent  = active;
+  document.getElementById('st-credits').textContent = credits;
+  document.getElementById('st-plans').textContent   = `${p.basic} · ${p.pro} · ${p.ultimate}`;
 }
 
-// ---- Render Users ----
-function renderUsers(users) {
-  const tbody = document.getElementById('users-tbody');
-  if (!users.length) { tbody.innerHTML = `<tr><td colspan="7" class="empty-state">No users yet — create one above</td></tr>`; return; }
+// ---- Render users ----
+function renderUsers(list) {
+  const el = document.getElementById('users-body');
+  if (!list.length) { el.innerHTML = `<div class="empty">No users yet — create one above</div>`; return; }
   const now = Date.now();
-  tbody.innerHTML = users.map(u => {
-    const expTs = u.expiresAt === 0 ? null : u.expiresAt?.toMillis?.();
+  el.innerHTML = list.map(u => {
+    const expTs   = u.expiresAt === 0 ? null : u.expiresAt?.toMillis?.();
     const expired = expTs && expTs < now;
     const expStr  = u.expiresAt === 0 ? 'Lifetime' : (expTs ? new Date(expTs).toLocaleDateString() : '—');
-    const status  = expired ? '<span class="pill expired">Expired</span>' : '<span class="pill active">Active</span>';
-    const key     = u.licenseKey ? `<span style="font-family:monospace;font-size:11px;color:var(--accent-green)">${u.licenseKey.substring(0,18)}…</span>` : '<span style="color:var(--text-muted);font-size:12px">None</span>';
-    return `<tr>
-      <td><div style="font-weight:500">${esc(u.username||u.email)}</div><div style="font-size:11px;color:var(--text-muted)">${esc(u.email)}</div></td>
-      <td><span class="pill ${u.plan||'basic'}">${u.plan||'basic'}</span></td>
-      <td>${u.credits||0}</td>
-      <td>${key}</td>
-      <td style="font-size:12px;color:var(--text-secondary)">${expStr}</td>
-      <td>${status}</td>
-      <td><div class="row-actions">
-        <button class="btn-sm" onclick="openEdit('${u.id}')">Edit</button>
-        <button class="btn-sm" onclick="openAssignKey('${u.id}')">Key</button>
-        <button class="btn-sm" onclick="resetHwid('${u.id}','${esc(u.email)}')">HWID</button>
-        <button class="btn-sm danger" onclick="confirmAction('Delete user ${esc(u.email)}?', ()=>deleteUser('${u.id}'))">Del</button>
-      </div></td>
-    </tr>`;
+    const statusB = expired ? `<span class="badge b-expired">Expired</span>` : `<span class="badge b-active">Active</span>`;
+    const keyStr  = u.licenseKey
+      ? `<span class="cell-key">${esc(u.licenseKey).substring(0,20)}…</span>`
+      : `<span class="cell-dim">None</span>`;
+    return `<div class="t-row users-grid">
+      <div class="cell-user"><span class="un">${esc(u.username||u.email)}</span><span class="em">${esc(u.email)}</span></div>
+      <div><span class="badge b-${u.plan||'basic'}">${u.plan||'basic'}</span></div>
+      <div class="cell-muted">${u.credits||0}</div>
+      <div>${keyStr}</div>
+      <div class="cell-dim">${expStr}</div>
+      <div>${statusB}</div>
+      <div class="row-acts">
+        <button class="t-btn" onclick="openEdit('${u.id}')">Edit</button>
+        <button class="t-btn" onclick="openKey('${u.id}')">Key</button>
+        <button class="t-btn" onclick="doHwidReset('${u.id}','${esc(u.email)}')">HWID</button>
+        <button class="t-btn danger" onclick="confirm2('Delete ${esc(u.email)}?',()=>delUser('${u.id}'))">Del</button>
+      </div>
+    </div>`;
   }).join('');
 }
 
-window.filterUsers = (q) => {
-  const plan = document.getElementById('plan-filter').value;
-  const filt = allUsers.filter(u => {
-    const match = !q || (u.email||'').toLowerCase().includes(q.toLowerCase()) || (u.username||'').toLowerCase().includes(q.toLowerCase());
-    const planMatch = !plan || u.plan === plan;
-    return match && planMatch;
-  });
-  renderUsers(filt);
+window.filterUsers = q => {
+  const plan = document.getElementById('u-plan-filter').value;
+  renderUsers(allUsers.filter(u => {
+    const m = !q || (u.email||'').toLowerCase().includes(q.toLowerCase()) || (u.username||'').toLowerCase().includes(q.toLowerCase());
+    return m && (!plan || u.plan === plan);
+  }));
 };
 
-// ---- Render Keys ----
-function renderKeys(keys) {
-  const tbody = document.getElementById('keys-tbody');
-  if (!keys.length) { tbody.innerHTML = `<tr><td colspan="5" class="empty-state">No unassigned keys</td></tr>`; return; }
-  tbody.innerHTML = keys.map(k => {
+// ---- Render keys ----
+function renderKeys(list) {
+  const el = document.getElementById('keys-body');
+  if (!list.length) { el.innerHTML = `<div class="empty">No unassigned keys</div>`; return; }
+  el.innerHTML = list.map(k => {
     const created = k.createdAt?.toDate?.() ? k.createdAt.toDate().toLocaleDateString() : '—';
-    const dur = k.days === 0 ? 'Lifetime' : `${k.days}d`;
-    return `<tr>
-      <td style="font-family:monospace;font-size:12px;color:var(--accent-green)">${esc(k.key)}</td>
-      <td><span class="pill ${k.plan}">${k.plan}</span></td>
-      <td style="font-size:12px;color:var(--text-secondary)">${dur}</td>
-      <td style="font-size:12px;color:var(--text-secondary)">${created}</td>
-      <td><div class="row-actions">
-        <button class="btn-sm" onclick="copyText('${k.key}')">Copy</button>
-        <button class="btn-sm danger" onclick="confirmAction('Delete this key?', ()=>deleteKey('${k.id}'))">Del</button>
-      </div></td>
-    </tr>`;
+    return `<div class="t-row keys-grid-cols">
+      <div class="cell-key">${esc(k.key)}</div>
+      <div><span class="badge b-${k.plan}">${k.plan}</span></div>
+      <div class="cell-dim">${k.days===0?'Lifetime':k.days+'d'}</div>
+      <div class="cell-dim">${created}</div>
+      <div class="row-acts">
+        <button class="t-btn" onclick="copyText('${k.key}')">Copy</button>
+        <button class="t-btn danger" onclick="confirm2('Delete this key?',()=>delKey('${k.id}'))">Del</button>
+      </div>
+    </div>`;
   }).join('');
 }
 
 // ---- Render HWID ----
-function renderHwid(rows) {
-  const tbody = document.getElementById('hwid-tbody');
-  if (!rows.length) { tbody.innerHTML = `<tr><td colspan="5" class="empty-state">No HWID reset requests</td></tr>`; return; }
-  tbody.innerHTML = rows.map(r => {
+function renderHwid(list) {
+  const el = document.getElementById('hwid-body');
+  if (!list.length) { el.innerHTML = `<div class="empty">No HWID reset requests</div>`; return; }
+  el.innerHTML = list.map(r => {
     const req = r.requestedAt?.toDate?.() ? r.requestedAt.toDate().toLocaleDateString() : '—';
-    const status = r.status === 'done'
-      ? '<span class="pill active">Done</span>'
-      : '<span class="pill expired">Pending</span>';
-    return `<tr>
-      <td style="font-size:12px">${esc(r.email||r.userId)}</td>
-      <td style="font-family:monospace;font-size:11px;color:var(--text-muted)">${esc(r.oldHwid||'—')}</td>
-      <td style="font-size:12px;color:var(--text-secondary)">${req}</td>
-      <td>${status}</td>
-      <td><div class="row-actions">
-        ${r.status !== 'done' ? `<button class="btn-sm success" onclick="approveHwid('${r.id}','${r.userId}')">Approve</button>` : ''}
-        <button class="btn-sm danger" onclick="confirmAction('Delete this request?',()=>deleteHwidReq('${r.id}'))">Del</button>
-      </div></td>
-    </tr>`;
+    const st  = r.status === 'done' ? `<span class="badge b-done">Done</span>` : `<span class="badge b-pending">Pending</span>`;
+    return `<div class="t-row hwid-grid">
+      <div class="cell-dim">${esc(r.email||r.userId||'—')}</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim)">${esc(r.oldHwid||'—')}</div>
+      <div class="cell-dim">${req}</div>
+      <div>${st}</div>
+      <div class="row-acts">
+        ${r.status!=='done'?`<button class="t-btn success" onclick="approveHwid('${r.id}','${r.userId}')">Approve</button>`:''}
+        <button class="t-btn danger" onclick="confirm2('Delete this request?',()=>delHwid('${r.id}'))">Del</button>
+      </div>
+    </div>`;
   }).join('');
 }
 
-// ---- Create User ----
+// ---- Create user ----
 window.createUser = async () => {
-  const email    = document.getElementById('cu-email').value.trim();
-  const username = document.getElementById('cu-username').value.trim();
-  const plan     = document.getElementById('cu-plan').value;
-  const days     = parseInt(document.getElementById('cu-days').value);
-  const credits  = parseInt(document.getElementById('cu-credits').value) || 0;
+  const email   = document.getElementById('cu-email').value.trim();
+  const username= document.getElementById('cu-user').value.trim();
+  const plan    = document.getElementById('cu-plan').value;
+  const days    = parseInt(document.getElementById('cu-days').value);
+  const credits = parseInt(document.getElementById('cu-credits').value)||0;
   if (!email) { toast('Enter an email', true); return; }
-
-  const expiresAt = days === 0 ? 0 : Timestamp.fromDate(new Date(Date.now() + days * 86400000));
-  const uid = email.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '_' + Date.now();
-  await setDoc(doc(db, 'users', uid), {
-    email, username: username || email.split('@')[0], plan, credits,
-    expiresAt, licenseKey: null, hwid: null, createdAt: serverTimestamp()
-  });
-  closeModal('create-user-modal');
-  toast(`User ${email} created`);
-  loadUsers();
+  const expiresAt = days===0 ? 0 : Timestamp.fromDate(new Date(Date.now()+days*86400000));
+  const uid = email.replace(/[^a-z0-9]/gi,'_').toLowerCase()+'_'+Date.now();
+  await setDoc(doc(db,'users',uid), { email, username:username||email.split('@')[0], plan, credits, expiresAt, licenseKey:null, hwid:null, createdAt:serverTimestamp() });
+  closeModal('m-create'); toast(`User created`); loadUsers();
 };
 
-// ---- Edit User ----
-window.openEdit = (uid) => {
-  const u = allUsers.find(u => u.id === uid);
-  if (!u) return;
-  document.getElementById('eu-uid').value      = uid;
-  document.getElementById('eu-email').value    = u.email;
-  document.getElementById('eu-username').value = u.username || '';
-  document.getElementById('eu-plan').value     = u.plan || 'basic';
-  document.getElementById('eu-credits').value  = u.credits || 0;
-  const expTs = u.expiresAt === 0 ? null : u.expiresAt?.toDate?.();
-  document.getElementById('eu-expiry').value   = expTs ? expTs.toISOString().split('T')[0] : '';
-  document.getElementById('eu-add-credits').value = '';
-  openModal('edit-user-modal');
+// ---- Edit user ----
+window.openEdit = uid => {
+  const u = allUsers.find(u=>u.id===uid); if(!u) return;
+  document.getElementById('eu-uid').value    = uid;
+  document.getElementById('eu-email').value  = u.email;
+  document.getElementById('eu-user').value   = u.username||'';
+  document.getElementById('eu-plan').value   = u.plan||'basic';
+  document.getElementById('eu-credits').value= u.credits||0;
+  const expTs = u.expiresAt===0 ? null : u.expiresAt?.toDate?.();
+  document.getElementById('eu-expiry').value = expTs ? expTs.toISOString().split('T')[0] : '';
+  document.getElementById('eu-add').value    = '';
+  openModal('m-edit');
 };
 
-window.addCredits = () => {
-  const add = parseInt(document.getElementById('eu-add-credits').value) || 0;
-  const cur = parseInt(document.getElementById('eu-credits').value) || 0;
-  document.getElementById('eu-credits').value = cur + add;
-  document.getElementById('eu-add-credits').value = '';
+window.addCred = () => {
+  const add = parseInt(document.getElementById('eu-add').value)||0;
+  document.getElementById('eu-credits').value = (parseInt(document.getElementById('eu-credits').value)||0) + add;
+  document.getElementById('eu-add').value = '';
 };
 
 window.saveUser = async () => {
   const uid     = document.getElementById('eu-uid').value;
-  const username= document.getElementById('eu-username').value.trim();
+  const username= document.getElementById('eu-user').value.trim();
   const plan    = document.getElementById('eu-plan').value;
-  const credits = parseInt(document.getElementById('eu-credits').value) || 0;
+  const credits = parseInt(document.getElementById('eu-credits').value)||0;
   const expiry  = document.getElementById('eu-expiry').value;
   const expiresAt = expiry ? Timestamp.fromDate(new Date(expiry)) : 0;
-  await updateDoc(doc(db, 'users', uid), { username, plan, credits, expiresAt });
-  closeModal('edit-user-modal');
-  toast('User updated');
-  loadUsers();
+  await updateDoc(doc(db,'users',uid), { username, plan, credits, expiresAt });
+  closeModal('m-edit'); toast('User updated'); loadUsers();
 };
 
-// ---- Delete User ----
-window.deleteUser = async (uid) => {
-  await deleteDoc(doc(db, 'users', uid));
-  closeModal('confirm-modal');
-  toast('User deleted');
-  loadUsers();
+window.delUser = async uid => {
+  await deleteDoc(doc(db,'users',uid));
+  closeModal('m-confirm'); toast('User deleted'); loadUsers();
 };
 
-// ---- Assign Key ----
-window.openAssignKey = (uid) => {
-  document.getElementById('ak-uid').value  = uid;
-  document.getElementById('ak-key').value  = '';
-  const u = allUsers.find(u => u.id === uid);
-  if (u) document.getElementById('ak-plan').value = u.plan || 'basic';
-  openModal('assign-key-modal');
+// ---- Key assign ----
+window.openKey = uid => {
+  document.getElementById('ak-uid').value = uid;
+  document.getElementById('ak-key').value = '';
+  const u = allUsers.find(u=>u.id===uid);
+  if(u) document.getElementById('ak-plan').value = u.plan||'basic';
+  openModal('m-key');
 };
-
-window.genAndFillKey = () => {
-  document.getElementById('ak-key').value = makeKey(document.getElementById('ak-plan').value);
-};
-
+window.genFill = () => { document.getElementById('ak-key').value = makeKey(document.getElementById('ak-plan').value); };
 window.assignKey = async () => {
   const uid = document.getElementById('ak-uid').value;
   const key = document.getElementById('ak-key').value.trim();
-  if (!key) { toast('Enter or generate a key first', true); return; }
-  await updateDoc(doc(db, 'users', uid), { licenseKey: key });
-  closeModal('assign-key-modal');
-  toast('License key assigned');
-  loadUsers();
+  if(!key){ toast('Enter or generate a key',true); return; }
+  await updateDoc(doc(db,'users',uid), { licenseKey:key });
+  closeModal('m-key'); toast('Key assigned'); loadUsers();
 };
 
 // ---- HWID ----
-window.resetHwid = async (uid, email) => {
-  await updateDoc(doc(db, 'users', uid), { hwid: null });
+window.doHwidReset = async (uid,email) => {
+  await updateDoc(doc(db,'users',uid), { hwid:null });
   toast(`HWID cleared for ${email}`);
 };
-
-window.approveHwid = async (reqId, userId) => {
-  await updateDoc(doc(db, 'users', userId), { hwid: null });
-  await updateDoc(doc(db, 'hwid_resets', reqId), { status: 'done' });
-  toast('HWID reset approved');
-  loadHwid();
+window.approveHwid = async (rid,uid) => {
+  await updateDoc(doc(db,'users',uid), { hwid:null });
+  await updateDoc(doc(db,'hwid_resets',rid), { status:'done' });
+  toast('HWID reset approved'); loadHwid();
+};
+window.delHwid = async id => {
+  await deleteDoc(doc(db,'hwid_resets',id));
+  closeModal('m-confirm'); loadHwid();
 };
 
-window.deleteHwidReq = async (id) => {
-  await deleteDoc(doc(db, 'hwid_resets', id));
-  closeModal('confirm-modal');
-  loadHwid();
-};
-
-// ---- Keys ----
-window.generateKey = async () => {
-  const plan = document.getElementById('gen-plan').value;
-  const days = parseInt(document.getElementById('gen-days').value);
+// ---- Key gen ----
+window.genSingleKey = async () => {
+  const plan = document.getElementById('gk-plan').value;
+  const days = parseInt(document.getElementById('gk-days').value);
   const key  = makeKey(plan);
-  await addDoc(collection(db, 'licenseKeys'), { key, plan, days, assigned: false, createdAt: serverTimestamp() });
-  document.getElementById('gen-key-val').textContent = key;
-  document.getElementById('gen-result').style.display = 'block';
-  toast('Key generated');
-  loadKeys();
+  await addDoc(collection(db,'licenseKeys'), { key, plan, days, assigned:false, createdAt:serverTimestamp() });
+  document.getElementById('gk-val').textContent = key;
+  document.getElementById('gk-out').style.display = 'block';
+  toast('Key generated'); loadKeys();
 };
 
-window.generateBulkKeys = async () => {
-  const count = Math.min(parseInt(document.getElementById('bulk-count').value) || 5, 50);
-  const plan  = document.getElementById('bulk-plan').value;
-  const days  = parseInt(document.getElementById('bulk-days').value);
-  const keys  = [];
-  for (let i = 0; i < count; i++) {
-    const key = makeKey(plan);
-    keys.push(key);
-    await addDoc(collection(db, 'licenseKeys'), { key, plan, days, assigned: false, createdAt: serverTimestamp() });
+window.genBulk = async () => {
+  const qty  = Math.min(parseInt(document.getElementById('bk-qty').value)||5, 50);
+  const plan = document.getElementById('bk-plan').value;
+  const days = parseInt(document.getElementById('bk-days').value);
+  const keys = [];
+  for(let i=0;i<qty;i++){
+    const k = makeKey(plan); keys.push(k);
+    await addDoc(collection(db,'licenseKeys'), { key:k, plan, days, assigned:false, createdAt:serverTimestamp() });
   }
-  document.getElementById('bulk-count-label').textContent = `${count} keys generated:`;
-  const list = document.getElementById('bulk-keys-list');
-  list.innerHTML = keys.map(k => `
-    <div class="key-display" style="font-size:11px; padding:7px 10px">
+  document.getElementById('bk-label').textContent = `${qty} keys generated:`;
+  document.getElementById('bk-list').innerHTML = keys.map(k=>`
+    <div class="key-out" style="font-size:11px;padding:7px 10px">
       <span>${k}</span>
-      <button class="copy-btn" onclick="copyText('${k}')">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-      </button>
+      <button class="copy-ico" onclick="copyText('${k}')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg></button>
     </div>`).join('');
-  document.getElementById('bulk-result').style.display = 'block';
-  window._bulkKeys = keys;
-  toast(`${count} keys generated`);
-  loadKeys();
+  document.getElementById('bk-out').style.display = 'block';
+  window._bkKeys = keys;
+  toast(`${qty} keys generated`); loadKeys();
 };
 
-window.copyAllKeys = () => {
-  if (window._bulkKeys) {
-    navigator.clipboard.writeText(window._bulkKeys.join('\n'));
-    toast('All keys copied');
-  }
+window.copyAllBulk = () => {
+  if(window._bkKeys){ navigator.clipboard.writeText(window._bkKeys.join('\n')); toast('All keys copied'); }
 };
 
-window.deleteKey = async (id) => {
-  await deleteDoc(doc(db, 'licenseKeys', id));
-  closeModal('confirm-modal');
-  loadKeys();
-};
-
-window.deleteAllUnassigned = async () => {
-  const snap = await getDocs(query(collection(db, 'licenseKeys'), where('assigned', '==', false)));
-  await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
-  closeModal('confirm-modal');
-  toast('All unassigned keys deleted');
-  loadKeys();
-};
-
-window.deleteExpiredUsers = async () => {
-  const now = Timestamp.now();
-  const snap = await getDocs(collection(db, 'users'));
-  const expired = snap.docs.filter(d => {
-    const exp = d.data().expiresAt;
-    return exp !== 0 && exp && exp.toMillis() < now.toMillis();
-  });
-  await Promise.all(expired.map(d => deleteDoc(d.ref)));
-  closeModal('confirm-modal');
-  toast(`${expired.length} expired users deleted`);
-  loadUsers();
+window.delKey = async id => {
+  await deleteDoc(doc(db,'licenseKeys',id));
+  closeModal('m-confirm'); loadKeys();
 };
 
 // ---- Settings ----
-window.saveSettings = async () => {
-  await setDoc(doc(db, 'settings', 'plans'), {
-    basic:    document.getElementById('plan-basic-price').value,
-    pro:      document.getElementById('plan-pro-price').value,
-    ultimate: document.getElementById('plan-ultimate-price').value,
-  });
-  toast('Settings saved');
+window.savePricing = async () => {
+  await setDoc(doc(db,'settings','plans'), { basic:document.getElementById('p-basic').value, pro:document.getElementById('p-pro').value, ultimate:document.getElementById('p-ultimate').value });
+  toast('Pricing saved');
 };
 
 window.addAdmin = async () => {
-  const email = document.getElementById('new-admin-email').value.trim();
-  if (!email) return;
-  await setDoc(doc(db, 'admins', email.replace(/[^a-z0-9]/gi, '_')), { email });
-  toast(`${email} added as admin`);
-  document.getElementById('new-admin-email').value = '';
+  const email = document.getElementById('adm-email').value.trim();
+  if(!email) return;
+  await setDoc(doc(db,'admins',email.replace(/[^a-z0-9]/gi,'_')), { email });
+  toast(`${email} added`); document.getElementById('adm-email').value='';
+};
+
+window.deleteAllKeys = async () => {
+  const snap = await getDocs(query(collection(db,'licenseKeys'), where('assigned','==',false)));
+  await Promise.all(snap.docs.map(d=>deleteDoc(d.ref)));
+  closeModal('m-confirm'); toast('All unassigned keys deleted'); loadKeys();
+};
+
+window.deleteExpired = async () => {
+  const now = Timestamp.now();
+  const snap = await getDocs(collection(db,'users'));
+  const exp = snap.docs.filter(d=>{ const e=d.data().expiresAt; return e!==0&&e&&e.toMillis()<now.toMillis(); });
+  await Promise.all(exp.map(d=>deleteDoc(d.ref)));
+  closeModal('m-confirm'); toast(`${exp.length} users deleted`); loadUsers();
 };
 
 // ---- Helpers ----
 function makeKey(plan) {
-  const prefix = { basic: 'SVX-BSC', pro: 'SVX-PRO', ultimate: 'SVX-ULT' }[plan] || 'SVX';
-  const seg = () => Math.random().toString(36).substring(2,6).toUpperCase();
-  return `${prefix}-${seg()}-${seg()}-${seg()}`;
+  const pfx = {basic:'SVX-BSC',pro:'SVX-PRO',ultimate:'SVX-ULT'}[plan]||'SVX';
+  const s = ()=>Math.random().toString(36).substring(2,6).toUpperCase();
+  return `${pfx}-${s()}-${s()}-${s()}`;
 }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-function esc(s) {
-  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+window.copyText = t => { navigator.clipboard.writeText(t); toast('Copied'); };
 
-window.copyText = (t) => {
-  navigator.clipboard.writeText(t);
-  toast('Copied to clipboard');
+// ---- Modals ----
+window.openModal  = id => document.getElementById(id).classList.add('open');
+window.closeModal = id => document.getElementById(id).classList.remove('open');
+window.confirm2   = (msg, cb) => {
+  document.getElementById('conf-body').textContent = msg;
+  confirmCb = cb;
+  document.getElementById('conf-ok').onclick = ()=>{ if(confirmCb) confirmCb(); };
+  openModal('m-confirm');
 };
+document.querySelectorAll('.overlay').forEach(o => o.addEventListener('click', e=>{ if(e.target===o) o.classList.remove('open'); }));
 
-// ---- Modal helpers ----
-window.openModal  = (id) => document.getElementById(id).classList.add('open');
-window.closeModal = (id) => document.getElementById(id).classList.remove('open');
-
-window.confirmAction = (msg, cb) => {
-  document.getElementById('confirm-body').textContent = msg;
-  confirmCallback = cb;
-  document.getElementById('confirm-ok-btn').onclick = () => { if (confirmCallback) confirmCallback(); };
-  openModal('confirm-modal');
-};
-
-// ---- Tab switching ----
-window.showTab = (name, el) => {
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  el.classList.add('active');
-  if (name === 'keys')     loadKeys();
-  if (name === 'hwid')     loadHwid();
+// ---- Tabs ----
+window.tab = (name, el) => {
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('tab-'+name).classList.add('on');
+  el.classList.add('on');
+  if(name==='keys') loadKeys();
+  if(name==='hwid') loadHwid();
 };
 
 // ---- Toast ----
-let toastTimer;
-window.toast = (msg, isError = false) => {
+let tt;
+window.toast = (msg, isErr=false) => {
   const el = document.getElementById('toast');
-  document.getElementById('toast-msg').textContent = msg;
-  el.classList.toggle('error', isError);
+  document.getElementById('toast-txt').textContent = msg;
+  el.classList.toggle('err', isErr);
   el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+  clearTimeout(tt);
+  tt = setTimeout(()=>el.classList.remove('show'), 3000);
 };
 
-// Close modals on overlay click
-document.querySelectorAll('.modal-overlay').forEach(o => {
-  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
-});
-
-// Enter key on login
-document.getElementById('login-password').addEventListener('keydown', e => {
-  if (e.key === 'Enter') window.doLogin();
-});
+// Enter on login
+document.getElementById('li-pass').addEventListener('keydown', e=>{ if(e.key==='Enter') window.doLogin(); });
 </script>
 </body>
 </html>
