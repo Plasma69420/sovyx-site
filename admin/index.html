@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Sovyx â€” Admin</title>
+<title>Sovyx — Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
@@ -166,7 +166,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:48px;display:flex;ali
 <!-- Setup warning -->
 <div id="setup-warn" style="display:none">
   <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
-  Firebase not configured â€” paste your config into the FIREBASE_CONFIG object in the &lt;script&gt; block.
+  Firebase not configured — paste your config into the FIREBASE_CONFIG object in the &lt;script&gt; block.
 </div>
 
 <!-- Login -->
@@ -180,7 +180,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:48px;display:flex;ali
     <h1>Admin portal</h1>
     <p>Sign in to manage subscriptions, users, and license keys.</p>
     <div class="field"><label>Email</label><input type="email" id="li-email" placeholder="admin@sovyx.cc" autocomplete="username"></div>
-    <div class="field"><label>Password</label><input type="password" id="li-pass" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" autocomplete="current-password"></div>
+    <div class="field"><label>Password</label><input type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password"></div>
     <button class="btn btn-red" style="width:100%;justify-content:center;margin-top:4px" id="li-btn" onclick="doLogin()">Sign in</button>
     <div class="login-err" id="li-err"></div>
   </div>
@@ -211,10 +211,10 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:48px;display:flex;ali
     <!-- USERS -->
     <div class="tab-panel on" id="tab-users">
       <div class="stats-row" id="stats-row">
-        <div class="scard"><div class="scard-label">Total users</div><div class="scard-num" id="st-total">â€”</div></div>
-        <div class="scard"><div class="scard-label">Active subs</div><div class="scard-num" id="st-active">â€”</div></div>
-        <div class="scard"><div class="scard-label">Total credits</div><div class="scard-num" id="st-credits">â€”</div></div>
-        <div class="scard"><div class="scard-label">Plans</div><div class="scard-num" id="st-plans" style="font-size:16px;padding-top:4px">â€”</div></div>
+        <div class="scard"><div class="scard-label">Total users</div><div class="scard-num" id="st-total">—</div></div>
+        <div class="scard"><div class="scard-label">Active subs</div><div class="scard-num" id="st-active">—</div></div>
+        <div class="scard"><div class="scard-label">Total credits</div><div class="scard-num" id="st-credits">—</div></div>
+        <div class="scard"><div class="scard-label">Plans</div><div class="scard-num" id="st-plans" style="font-size:16px;padding-top:4px">—</div></div>
       </div>
 
       <div class="sec-row">
@@ -226,7 +226,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:48px;display:flex;ali
 
       <div class="table-wrap">
         <div class="t-toolbar">
-          <input class="t-search" placeholder="Search email or usernameâ€¦" oninput="filterUsers(this.value)" id="u-search">
+          <input class="t-search" placeholder="Search email or username…" oninput="filterUsers(this.value)" id="u-search">
           <select class="t-filter" onchange="filterUsers(document.getElementById('u-search').value)" id="u-plan-filter">
             <option value="">All plans</option>
             <option value="basic">Basic</option>
@@ -264,7 +264,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:48px;display:flex;ali
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
               </button>
             </div>
-            <div style="font-size:11px;color:var(--dim);margin-top:6px">Key saved â€” assign from Users tab</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:6px">Key saved — assign from Users tab</div>
           </div>
         </div>
 
@@ -475,7 +475,7 @@ window.doLogin = async () => {
   const pass  = document.getElementById('li-pass').value;
   const btn   = document.getElementById('li-btn');
   const err   = document.getElementById('li-err');
-  btn.disabled = true; btn.textContent = 'Signing inâ€¦'; err.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'Signing in…'; err.style.display = 'none';
   try { await signInWithEmailAndPassword(auth, email, pass); }
   catch(e) {
     err.style.display = 'block';
@@ -515,21 +515,21 @@ function updateStats() {
   document.getElementById('st-total').textContent   = allUsers.length;
   document.getElementById('st-active').textContent  = active;
   document.getElementById('st-credits').textContent = credits;
-  document.getElementById('st-plans').textContent   = `${p.basic} Â· ${p.pro} Â· ${p.ultimate}`;
+  document.getElementById('st-plans').textContent   = `${p.basic} · ${p.pro} · ${p.ultimate}`;
 }
 
 // ---- Render users ----
 function renderUsers(list) {
   const el = document.getElementById('users-body');
-  if (!list.length) { el.innerHTML = `<div class="empty">No users yet â€” create one above</div>`; return; }
+  if (!list.length) { el.innerHTML = `<div class="empty">No users yet — create one above</div>`; return; }
   const now = Date.now();
   el.innerHTML = list.map(u => {
     const expTs   = u.expiresAt === 0 ? null : u.expiresAt?.toMillis?.();
     const expired = expTs && expTs < now;
-    const expStr  = u.expiresAt === 0 ? 'Lifetime' : (expTs ? new Date(expTs).toLocaleDateString() : 'â€”');
+    const expStr  = u.expiresAt === 0 ? 'Lifetime' : (expTs ? new Date(expTs).toLocaleDateString() : '—');
     const statusB = expired ? `<span class="badge b-expired">Expired</span>` : `<span class="badge b-active">Active</span>`;
     const keyStr  = u.licenseKey
-      ? `<span class="cell-key">${esc(u.licenseKey).substring(0,20)}â€¦</span>`
+      ? `<span class="cell-key">${esc(u.licenseKey).substring(0,20)}…</span>`
       : `<span class="cell-dim">None</span>`;
     return `<div class="t-row users-grid">
       <div class="cell-user"><span class="un">${esc(u.username||u.email)}</span><span class="em">${esc(u.email)}</span></div>
@@ -561,7 +561,7 @@ function renderKeys(list) {
   const el = document.getElementById('keys-body');
   if (!list.length) { el.innerHTML = `<div class="empty">No unassigned keys</div>`; return; }
   el.innerHTML = list.map(k => {
-    const created = k.createdAt?.toDate?.() ? k.createdAt.toDate().toLocaleDateString() : 'â€”';
+    const created = k.createdAt?.toDate?.() ? k.createdAt.toDate().toLocaleDateString() : '—';
     return `<div class="t-row keys-grid-cols">
       <div class="cell-key">${esc(k.key)}</div>
       <div><span class="badge b-${k.plan}">${k.plan}</span></div>
@@ -580,11 +580,11 @@ function renderHwid(list) {
   const el = document.getElementById('hwid-body');
   if (!list.length) { el.innerHTML = `<div class="empty">No HWID reset requests</div>`; return; }
   el.innerHTML = list.map(r => {
-    const req = r.requestedAt?.toDate?.() ? r.requestedAt.toDate().toLocaleDateString() : 'â€”';
+    const req = r.requestedAt?.toDate?.() ? r.requestedAt.toDate().toLocaleDateString() : '—';
     const st  = r.status === 'done' ? `<span class="badge b-done">Done</span>` : `<span class="badge b-pending">Pending</span>`;
     return `<div class="t-row hwid-grid">
-      <div class="cell-dim">${esc(r.email||r.userId||'â€”')}</div>
-      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim)">${esc(r.oldHwid||'â€”')}</div>
+      <div class="cell-dim">${esc(r.email||r.userId||'—')}</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim)">${esc(r.oldHwid||'—')}</div>
       <div class="cell-dim">${req}</div>
       <div>${st}</div>
       <div class="row-acts">
