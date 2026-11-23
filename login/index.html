@@ -3,387 +3,244 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Sovyx — Sign in</title>
+<title>Log in — Sovyx</title>
+<link rel="icon" href="/logo.webp"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-:root{
-  --bg:#07070b;--s1:#0d0d14;--s2:#131320;--s3:#18182a;
-  --b:rgba(255,255,255,.055);--b2:rgba(255,255,255,.1);--b3:rgba(255,255,255,.18);
-  --red:#e11d48;--red-h:#f43f5e;--pink:#fb7185;
-  --text:#ededf0;--muted:#6b6b80;--dim:#35354a;
-  --green:#3ecf8e;--blue:#60a5fa;--yellow:#fbbf24;
-}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-font-smoothing:antialiased}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
-
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(7,7,11,.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--b);z-index:10}
-.logo{display:flex;align-items:center;gap:7px;font-weight:700;font-size:14.5px;letter-spacing:-.25px;text-decoration:none;color:var(--text)}
-.logo-mark{width:30px;height:30px;object-fit:contain}
-
-/* CARD */
-.card{background:var(--s1);border:1px solid var(--b2);border-radius:14px;padding:40px;width:100%;max-width:420px;margin-top:48px}
-.card-logo{display:flex;align-items:center;gap:8px;margin-bottom:28px;font-weight:700;font-size:15px;letter-spacing:-.25px}
-.card-logo img{width:28px;height:28px}
-h1{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
-.sub{font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.6}
-
-/* TABS */
-.tabs{display:flex;gap:2px;background:var(--s2);border-radius:8px;padding:3px;margin-bottom:24px}
-.tab{flex:1;padding:7px;text-align:center;font-size:13px;font-weight:600;border-radius:6px;cursor:pointer;border:none;background:none;color:var(--muted);font-family:inherit;transition:all .15s}
-.tab.on{background:var(--s3);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.4)}
-
-/* FIELDS */
-.field{margin-bottom:14px}
-.field label{display:block;font-size:11px;font-weight:600;color:var(--dim);letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px}
-.field input{width:100%;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:10px 13px;font-size:13px;color:var(--text);font-family:inherit;outline:none;transition:border-color .15s}
-.field input:focus{border-color:rgba(225,29,72,.5)}
-.field input::placeholder{color:var(--dim)}
-.key-hint{font-size:11px;color:var(--muted);margin-top:5px}
-.key-hint code{font-family:'JetBrains Mono',monospace;color:var(--green);font-size:11px}
-
-/* BUTTON */
-.btn-full{width:100%;padding:11px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .18s;margin-top:4px}
-.btn-red-full{background:var(--red);color:#fff;box-shadow:0 0 22px rgba(225,29,72,.35),inset 0 1px 0 rgba(255,255,255,.14)}
-.btn-red-full:hover{background:var(--red-h);box-shadow:0 0 44px rgba(225,29,72,.6);transform:translateY(-1px)}
-.btn-red-full:disabled{opacity:.5;cursor:default;transform:none}
-
-/* ERROR / SUCCESS */
-.msg{font-size:13px;text-align:center;margin-top:12px;display:none;padding:10px 14px;border-radius:8px}
-.msg.err{color:var(--pink);background:rgba(251,113,133,.08);border:1px solid rgba(251,113,133,.2)}
-.msg.ok{color:var(--green);background:rgba(62,207,142,.08);border:1px solid rgba(62,207,142,.2)}
-
-/* DIVIDER */
-.or{display:flex;align-items:center;gap:10px;margin:20px 0;font-size:12px;color:var(--dim)}
-.or::before,.or::after{content:'';flex:1;height:1px;background:var(--b2)}
-
-/* FORGOT */
-.forgot{text-align:right;margin-top:-8px;margin-bottom:14px}
-.forgot a{font-size:12px;color:var(--muted);text-decoration:none}
-.forgot a:hover{color:var(--text)}
-
-/* DISCORD BUTTON */
-.btn-discord{width:100%;padding:11px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .18s;background:#5865F2;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 0 20px rgba(88,101,242,.3)}
-.btn-discord:hover{background:#4752c4;box-shadow:0 0 36px rgba(88,101,242,.5);transform:translateY(-1px)}
-.btn-discord:disabled{opacity:.5;cursor:default;transform:none}
-.btn-discord svg{flex-shrink:0}
-
-/* SWITCH */
-.switch{text-align:center;font-size:13px;color:var(--muted);margin-top:20px}
-.switch a{color:var(--red);text-decoration:none;cursor:pointer}
-.switch a:hover{color:var(--red-h)}
+body{font-family:'Inter',system-ui,sans-serif;background:#0a0a0a;color:#ededed;font-size:13px;min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit}
+.split{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+.left{position:relative;display:flex;flex-direction:column;padding:28px 40px}
+.right{position:relative;background:#111;border-left:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;justify-content:flex-end;padding:28px 40px 40px;overflow:hidden}
+.right::before{content:'';position:absolute;inset:0;background:radial-gradient(60% 50% at 70% 20%,rgba(225,29,72,.10),transparent 70%),radial-gradient(50% 40% at 20% 90%,rgba(255,255,255,.04),transparent 70%);pointer-events:none}
+.brand{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px}
+.brand img{width:20px;height:20px;object-fit:contain}
+.top-right{position:absolute;top:28px;right:40px;font-size:12px;color:#8a8a8a}
+.top-right a{color:#ededed;font-weight:600;margin-left:4px;cursor:pointer}
+.form-wrap{flex:1;display:flex;align-items:center;justify-content:center}
+.form{width:100%;max-width:400px}
+.form h1{font-size:26px;font-weight:600;letter-spacing:-.6px;text-align:center;margin-bottom:8px}
+.form .lead{color:#8a8a8a;text-align:center;margin-bottom:28px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px 14px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s,border-color .15s}
+.btn-w{background:#f4f4f5;color:#0a0a0a;border:1px solid #f4f4f5}
+.btn-w:hover{background:#fff}
+.btn-o{background:transparent;color:#ededed;border:1px solid rgba(255,255,255,.1)}
+.btn-o:hover{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.02)}
+.btn:disabled{opacity:.55;cursor:default}
+.or{display:flex;align-items:center;gap:12px;color:#555;font-size:11.5px;margin:22px 0}
+.or::before,.or::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08)}
+.field{margin-bottom:16px}
+.lbl{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;font-size:12px;font-weight:600}
+.lbl a{font-weight:400;color:#8a8a8a;cursor:pointer}
+.lbl a:hover{color:#ededed}
+.lbl .opt{font-weight:400;color:#555}
+.inp{position:relative}
+.inp input{width:100%;background:#111;border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:10px 12px;font-size:13px;color:#ededed;font-family:inherit;outline:none;transition:border-color .15s}
+.inp input:focus{border-color:rgba(255,255,255,.3)}
+.inp input::placeholder{color:#444}
+.eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:#666;cursor:pointer;padding:4px;display:grid;place-items:center}
+.eye:hover{color:#ededed}
+.msg{font-size:12px;padding:9px 12px;border-radius:7px;margin-top:12px;display:none;text-align:center}
+.msg.err{display:block;background:rgba(225,29,72,.08);color:#fb7185}
+.msg.ok{display:block;background:rgba(62,207,142,.08);color:#3ecf8e}
+.legal{text-align:center;color:#666;font-size:11.5px;margin-top:26px;line-height:1.6}
+.legal a{color:#ededed;font-weight:500}
+.foot{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:#666}
+.foot nav{display:flex;gap:18px}
+.foot nav a:hover{color:#ededed}
+.pitch{position:relative;max-width:460px}
+.pitch h2{font-size:34px;font-weight:600;letter-spacing:-1.2px;line-height:1.08;margin-bottom:14px}
+.pitch h2 span{color:#8a8a8a}
+.pitch p{color:#8a8a8a;line-height:1.6;max-width:320px;margin-bottom:26px}
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;border-top:1px solid rgba(255,255,255,.08);padding-top:18px}
+.pillars small{display:block;color:#666;font-size:11px;margin-bottom:5px}
+.pillars b{font-weight:600;font-size:12.5px}
+.pane{display:none}.pane.on{display:block}
+@media(max-width:900px){.split{grid-template-columns:1fr}.right{display:none}.left{padding:22px}.top-right{right:22px;top:22px}}
 </style>
 </head>
 <body>
+<div class="split">
+  <div class="left">
+    <a href="/" class="brand"><img src="/logo.webp?v=3" alt=""/>Sovyx</a>
 
-<nav>
-  <a class="logo" href="/">
-    <img class="logo-mark" src="/logo.webp?v=3" alt=""/>
-    sovyx
-  </a>
-</nav>
+    <div class="form-wrap">
+      <!-- SIGN IN -->
+      <div class="form pane on" id="pane-in">
+        <h1>Log in to Sovyx</h1>
+        <p class="lead">Enter your details to open your developer panel.</p>
+        <button class="btn btn-w" id="dc-in-btn" onclick="doDiscordLogin()">
+          <svg width="16" height="16" viewBox="0 0 127.14 96.36" fill="currentColor"><path d="M107.7 8.07A105.15 105.15 0 0081.47 0a72.06 72.06 0 00-3.36 6.83 97.68 97.68 0 00-29.11 0A72.37 72.37 0 0045.64 0a105.89 105.89 0 00-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0032.17 16.15 77.7 77.7 0 006.89-11.11 68.42 68.42 0 01-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0064.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 01-10.87 5.19 77 77 0 006.89 11.1 105.25 105.25 0 0032.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15zM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69z"/></svg>
+          Continue with Discord
+        </button>
+        <div class="or">or</div>
+        <div class="field"><div class="lbl">Email</div><div class="inp"><input type="email" id="in-email" placeholder="you@example.com" autocomplete="username"/></div></div>
+        <div class="field"><div class="lbl">Password <a onclick="doForgot()">Forgot password?</a></div>
+          <div class="inp"><input type="password" id="in-pass" placeholder="••••••••" autocomplete="current-password"/>
+            <button class="eye" type="button" onclick="togglePw('in-pass')" aria-label="Show password"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+        <button class="btn btn-w" id="in-btn" onclick="doSignIn()" style="margin-top:6px">Log in</button>
+        <div class="msg" id="in-err"></div>
+        <p class="legal">By continuing, you agree to Sovyx's <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>.</p>
+      </div>
 
-<div class="card">
-  <div class="card-logo">
-    <img src="/logo.webp?v=3" alt=""/>
-    sovyx
+      <!-- SIGN UP -->
+      <div class="form pane" id="pane-up">
+        <h1>Create your account</h1>
+        <p class="lead">Start licensing your software in a few minutes.</p>
+        <button class="btn btn-w" id="dc-up-btn" onclick="doDiscordLogin()">
+          <svg width="16" height="16" viewBox="0 0 127.14 96.36" fill="currentColor"><path d="M107.7 8.07A105.15 105.15 0 0081.47 0a72.06 72.06 0 00-3.36 6.83 97.68 97.68 0 00-29.11 0A72.37 72.37 0 0045.64 0a105.89 105.89 0 00-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0032.17 16.15 77.7 77.7 0 006.89-11.11 68.42 68.42 0 01-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0064.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 01-10.87 5.19 77 77 0 006.89 11.1 105.25 105.25 0 0032.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15zM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69z"/></svg>
+          Sign up with Discord
+        </button>
+        <div class="or">or</div>
+        <div class="field"><div class="lbl">Username</div><div class="inp"><input id="up-name" placeholder="yourname" autocomplete="nickname"/></div></div>
+        <div class="field"><div class="lbl">Email</div><div class="inp"><input type="email" id="up-email" placeholder="you@example.com" autocomplete="email"/></div></div>
+        <div class="field"><div class="lbl">Password</div>
+          <div class="inp"><input type="password" id="up-pass" placeholder="At least 8 characters" autocomplete="new-password"/>
+            <button class="eye" type="button" onclick="togglePw('up-pass')" aria-label="Show password"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div>
+        <div class="field"><div class="lbl">Subscription key <span class="opt">Optional</span></div><div class="inp"><input id="up-key" placeholder="SVX-PRO-XXXX-XXXX-XXXX" style="text-transform:uppercase;font-family:ui-monospace,monospace"/></div></div>
+        <button class="btn btn-w" id="up-btn" onclick="doSignUp()" style="margin-top:6px">Create account</button>
+        <div class="msg" id="up-err"></div>
+        <p class="legal">By continuing, you agree to Sovyx's <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>.</p>
+      </div>
+    </div>
+
+    <div class="foot"><span>© 2026 Sovyx</span><nav><a href="/docs">Docs</a><a href="/reseller">Resellers</a><a href="/">Home</a></nav></div>
   </div>
 
-  <div class="tabs">
-    <button class="tab on" id="tab-in" onclick="switchTab('in')">Sign in</button>
-    <button class="tab" id="tab-up" onclick="switchTab('up')">Sign up</button>
+  <div class="right">
+    <div class="top-right" id="switch-in">New to Sovyx?<a onclick="switchTab('up')">Create an account</a></div>
+    <div class="top-right" id="switch-up" style="display:none">Already have an account?<a onclick="switchTab('in')">Log in</a></div>
+    <div class="pitch">
+      <h2>Ship your software. <span>We handle who gets to run it.</span></h2>
+      <p>License keys, HWID binding and live sessions through one SDK or REST API.</p>
+      <div class="pillars">
+        <div><small>Licensing</small><b>Keys and HWID locks</b></div>
+        <div><small>Sign-in</small><b>Users and sessions</b></div>
+        <div><small>Resellers</small><b>Their own panel</b></div>
+      </div>
+    </div>
   </div>
-
-  <!-- SIGN IN -->
-  <div id="pane-in">
-    <div class="field">
-      <label>Email</label>
-      <input type="email" id="in-email" placeholder="you@example.com" autocomplete="email"/>
-    </div>
-    <div class="field">
-      <label>Password</label>
-      <input type="password" id="in-pass" placeholder="••••••••" autocomplete="current-password"/>
-    </div>
-    <div class="forgot"><a onclick="doForgot()">Forgot password?</a></div>
-    <button class="btn-full btn-red-full" id="in-btn" onclick="doSignIn()">Sign in</button>
-    <div class="msg err" id="in-err"></div>
-    <div class="or">or</div>
-    <button class="btn-discord" id="dc-in-btn" onclick="doDiscordLogin()">
-      <svg width="20" height="15" viewBox="0 0 71 55" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0)"><path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.44077 45.4204 0.52529C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.52529C25.5141 0.44335 25.4218 0.40109 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C7.41251 50.5 14.4421 53.5 21.5519 55.5C21.6443 55.5168 21.7394 55.4842 21.8003 55.4139C23.2744 53.4051 24.5884 51.2862 25.7067 49.0598C25.7704 48.9325 25.7095 48.7824 25.5757 48.7319C23.5062 47.9469 21.5347 46.9969 19.6314 45.9163C19.4832 45.8309 19.4719 45.6198 19.6075 45.5182C19.9884 45.2318 20.3694 44.9342 20.7334 44.6338C20.8201 44.5631 20.9405 44.5463 21.0439 44.5969C32.3984 49.9019 44.6845 49.9019 55.9015 44.5969C56.0049 44.5435 56.1253 44.5603 56.2148 44.631C56.5789 44.9314 56.9598 45.2318 57.3436 45.5182C57.4792 45.6198 57.4707 45.8309 57.3225 45.9163C55.4192 47.0163 53.4477 47.9469 51.3754 48.729C51.2416 48.7795 51.1835 48.9325 51.2472 49.0598C52.3878 51.2834 53.7018 53.4023 55.1451 55.4111C55.2032 55.4842 55.3011 55.5168 55.3935 55.5C62.5234 53.5 69.5753 50.5 76.6065 45.5576C76.6597 45.5182 76.6933 45.459 76.699 45.3942C78.2179 30.0791 74.1358 16.7757 60.1941 4.9823C60.1746 4.9429 60.141 4.9147 60.1045 4.8978ZM25.4799 37.3415C22.0176 37.3415 19.1393 34.1136 19.1393 30.1693C19.1393 26.225 21.9611 22.9971 25.4799 22.9971C29.0266 22.9971 31.8766 26.252 31.8205 30.1693C31.8205 34.1136 28.9986 37.3415 25.4799 37.3415ZM51.5733 37.3415C48.111 37.3415 45.2327 34.1136 45.2327 30.1693C45.2327 26.225 48.0545 22.9971 51.5733 22.9971C55.12 22.9971 57.97 26.252 57.9139 30.1693C57.9139 34.1136 55.12 37.3415 51.5733 37.3415Z" fill="#ffffff"/></g></svg>
-      Continue with Discord
-    </button>
-  </div>
-
-  <!-- SIGN UP -->
-  <div id="pane-up" style="display:none">
-    <div class="field">
-      <label>Username</label>
-      <input type="text" id="up-name" placeholder="coolreseller" autocomplete="username"/>
-    </div>
-    <div class="field">
-      <label>Email</label>
-      <input type="email" id="up-email" placeholder="you@example.com" autocomplete="email"/>
-    </div>
-    <div class="field">
-      <label>Password</label>
-      <input type="password" id="up-pass" placeholder="8+ characters" autocomplete="new-password"/>
-    </div>
-    <div class="field">
-      <label>Confirm password</label>
-      <input type="password" id="up-pass2" placeholder="••••••••" autocomplete="new-password"/>
-    </div>
-    <div class="field">
-      <label>License key <span style="color:var(--dim);font-size:10px;text-transform:none;letter-spacing:0">(optional — activate later in portal)</span></label>
-      <input type="text" id="up-key" placeholder="SVX-PRO-XXXX-XXXX-XXXX" autocomplete="off" oninput="this.value=this.value.toUpperCase()"/>
-      <div class="key-hint">Get a key from your reseller. Format: <code>SVX-BSC-…</code> / <code>SVX-PRO-…</code> / <code>SVX-ULT-…</code></div>
-    </div>
-    <button class="btn-full btn-red-full" id="up-btn" onclick="doSignUp()">Create account</button>
-    <div class="msg err" id="up-err"></div>
-    <div class="msg ok" id="up-ok"></div>
-    <div class="or">or</div>
-    <button class="btn-discord" id="dc-up-btn" onclick="doDiscordLogin()">
-      <svg width="20" height="15" viewBox="0 0 71 55" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0)"><path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.44077 45.4204 0.52529C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.52529C25.5141 0.44335 25.4218 0.40109 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C7.41251 50.5 14.4421 53.5 21.5519 55.5C21.6443 55.5168 21.7394 55.4842 21.8003 55.4139C23.2744 53.4051 24.5884 51.2862 25.7067 49.0598C25.7704 48.9325 25.7095 48.7824 25.5757 48.7319C23.5062 47.9469 21.5347 46.9969 19.6314 45.9163C19.4832 45.8309 19.4719 45.6198 19.6075 45.5182C19.9884 45.2318 20.3694 44.9342 20.7334 44.6338C20.8201 44.5631 20.9405 44.5463 21.0439 44.5969C32.3984 49.9019 44.6845 49.9019 55.9015 44.5969C56.0049 44.5435 56.1253 44.5603 56.2148 44.631C56.5789 44.9314 56.9598 45.2318 57.3436 45.5182C57.4792 45.6198 57.4707 45.8309 57.3225 45.9163C55.4192 47.0163 53.4477 47.9469 51.3754 48.729C51.2416 48.7795 51.1835 48.9325 51.2472 49.0598C52.3878 51.2834 53.7018 53.4023 55.1451 55.4111C55.2032 55.4842 55.3011 55.5168 55.3935 55.5C62.5234 53.5 69.5753 50.5 76.6065 45.5576C76.6597 45.5182 76.6933 45.459 76.699 45.3942C78.2179 30.0791 74.1358 16.7757 60.1941 4.9823C60.1746 4.9429 60.141 4.9147 60.1045 4.8978ZM25.4799 37.3415C22.0176 37.3415 19.1393 34.1136 19.1393 30.1693C19.1393 26.225 21.9611 22.9971 25.4799 22.9971C29.0266 22.9971 31.8766 26.252 31.8205 30.1693C31.8205 34.1136 28.9986 37.3415 25.4799 37.3415ZM51.5733 37.3415C48.111 37.3415 45.2327 34.1136 45.2327 30.1693C45.2327 26.225 48.0545 22.9971 51.5733 22.9971C55.12 22.9971 57.97 26.252 57.9139 30.1693C57.9139 34.1136 55.12 37.3415 51.5733 37.3415Z" fill="#ffffff"/></g></svg>
-      Sign up with Discord
-    </button>
-  </div>
-
 </div>
 
 <script type="module">
-import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-         sendPasswordResetEmail, onAuthStateChanged }
-                            from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, doc, setDoc, getDocs, updateDoc,
-         query, where, serverTimestamp }
-                            from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { auth, db } from '/assets/fb.js';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { doc, setDoc, getDoc, updateDoc, writeBatch, serverTimestamp, Timestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// ============================================================
-//  PASTE YOUR DISCORD CLIENT ID HERE
-//  discord.com/developers/applications â†’ your app â†’ OAuth2
-// ============================================================
 const DISCORD_CLIENT_ID = '1574173654961488124';
-// ============================================================
+const $ = id => document.getElementById(id);
 
-const FIREBASE_CONFIG = {
-  apiKey:            "AIzaSyBNyhb0w6csyFDuQO1EhNTkfBZUS5pGrnQ",
-  authDomain:        "sovyx-2793f.firebaseapp.com",
-  projectId:         "sovyx-2793f",
-  storageBucket:     "sovyx-2793f.firebasestorage.app",
-  messagingSenderId: "82725494480",
-  appId:             "1:82725494480:web:460ac2e4dd886f067a88d5"
+onAuthStateChanged(auth, u => { if (u && !window._busy) location.href = '/portal'; });
+
+window.switchTab = t => {
+  $('pane-in').classList.toggle('on', t === 'in');
+  $('pane-up').classList.toggle('on', t === 'up');
+  $('switch-in').style.display = t === 'in' ? '' : 'none';
+  $('switch-up').style.display = t === 'up' ? '' : 'none';
+  document.title = (t === 'in' ? 'Log in' : 'Sign up') + ' — Sovyx';
+  history.replaceState(null, '', t === 'up' ? '/login?signup' : '/login');
+};
+if (new URLSearchParams(location.search).has('signup')) switchTab('up');
+
+window.togglePw = id => { const i = $(id); i.type = i.type === 'password' ? 'text' : 'password'; };
+const err = (el, text) => { el.className = 'msg err'; el.textContent = text; };
+
+// ---- Discord (implicit grant) ----
+window.doDiscordLogin = () => {
+  const redirect = encodeURIComponent(location.origin + '/login');
+  location.href = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${redirect}&response_type=token&scope=${encodeURIComponent('identify email')}`;
 };
 
-const app  = initializeApp(FIREBASE_CONFIG);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-
-// If already signed in, go straight to portal
-onAuthStateChanged(auth, u => {
-  if (u && !window._discordHandling) location.href = '/portal';
-});
-
-// ---- Discord OAuth (implicit / token flow) ----
-// Check if Discord just redirected back with a token in the URL hash
 (async () => {
-  const hash = new URLSearchParams(location.hash.slice(1));
-  const token = hash.get('access_token');
+  const token = new URLSearchParams(location.hash.slice(1)).get('access_token');
   if (!token) return;
-
-  // Clear the hash so it doesn't re-trigger on refresh
   history.replaceState(null, '', location.pathname);
-  window._discordHandling = true;
-
-  // Show loading state on whichever Discord button is visible
-  ['dc-in-btn','dc-up-btn'].forEach(id => {
-    const b = document.getElementById(id);
-    if (b) { b.disabled = true; b.textContent = 'Connecting Discord…'; }
-  });
-
+  window._busy = true;
+  ['dc-in-btn', 'dc-up-btn'].forEach(id => { $(id).disabled = true; $(id).lastChild.textContent = ' Connecting Discord…'; });
   try {
-    // 1. Fetch Discord user profile
-    const res  = await fetch('https://discord.com/api/users/@me', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    if (!res.ok) throw new Error('Failed to fetch Discord profile.');
-    const dUser = await res.json();
-
-    const discordId   = dUser.id;
-    const discordName = dUser.username;
-    const discordAvatar = dUser.avatar
-      ? `https://cdn.discordapp.com/avatars/${discordId}/${dUser.avatar}.png`
-      : null;
-    // Use verified email if available, otherwise generate a placeholder
-    const email = dUser.email || `${discordId}@discord.sovyx.cc`;
-    // Deterministic password (user never types this)
-    const pass  = `dcsvx_${discordId}_${discordId.slice(-6)}`;
-
-    // 2. Try sign in first, then create account
+    const res = await fetch('https://discord.com/api/users/@me', { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) throw new Error('Could not read your Discord profile.');
+    const d = await res.json();
+    const discordAvatar = d.avatar ? `https://cdn.discordapp.com/avatars/${d.id}/${d.avatar}.png` : null;
+    const email = d.email || `${d.id}@discord.sovyx.cc`;
+    const pass = `dcsvx_${d.id}_${d.id.slice(-6)}`;
     let uid;
-    try {
-      const cred = await signInWithEmailAndPassword(auth, email, pass);
-      uid = cred.user.uid;
-    } catch(e) {
-      if (e.code === 'auth/invalid-credential' || e.code === 'auth/user-not-found') {
-        const cred = await createUserWithEmailAndPassword(auth, email, pass);
-        uid = cred.user.uid;
-        // Create Firestore user doc
-        await setDoc(doc(db, 'users', uid), {
-          uid, email, username: discordName,
-          plan: 'free', credits: 0,
-          licenseKey: null, hwid: null, expiresAt: null,
-          discordId, discordUsername: discordName, discordAvatar,
-          createdAt: serverTimestamp(),
-        });
-      } else {
-        throw e;
-      }
+    try { uid = (await signInWithEmailAndPassword(auth, email, pass)).user.uid; }
+    catch (e) {
+      if (e.code !== 'auth/invalid-credential' && e.code !== 'auth/user-not-found') throw e;
+      uid = (await createUserWithEmailAndPassword(auth, email, pass)).user.uid;
+      await setDoc(doc(db, 'users', uid), { uid, email, username: d.username, plan: 'free', credits: 0, licenseKey: null, hwid: null, expiresAt: null,
+        discordId: d.id, discordUsername: d.username, discordAvatar, createdAt: serverTimestamp() });
     }
-
-    // 3. Update Discord fields on existing users
-    try {
-      await updateDoc(doc(db, 'users', uid), { discordId, discordUsername: discordName, discordAvatar });
-    } catch {}
-
-    window._discordHandling = false;
+    await updateDoc(doc(db, 'users', uid), { discordId: d.id, discordUsername: d.username, discordAvatar }).catch(() => {});
     location.href = '/portal';
-  } catch(err) {
-    window._discordHandling = false;
-    const errEl = document.getElementById('in-err');
-    errEl.className = 'msg err';
-    errEl.textContent = 'Discord sign-in failed: ' + err.message;
-    errEl.style.display = 'block';
-    ['dc-in-btn','dc-up-btn'].forEach(id => {
-      const b = document.getElementById(id);
-      if (b) { b.disabled = false; b.textContent = id === 'dc-in-btn' ? 'Continue with Discord' : 'Sign up with Discord'; }
-    });
+  } catch (e) {
+    window._busy = false;
+    err($('in-err'), 'Discord sign-in failed: ' + e.message);
+    $('dc-in-btn').disabled = $('dc-up-btn').disabled = false;
+    $('dc-in-btn').lastChild.textContent = ' Continue with Discord';
+    $('dc-up-btn').lastChild.textContent = ' Sign up with Discord';
   }
 })();
 
-// ---- Start Discord OAuth flow ----
-window.doDiscordLogin = () => {
-  if (DISCORD_CLIENT_ID === 'PASTE_YOUR_DISCORD_CLIENT_ID') {
-    alert('Discord Client ID not configured yet. Set DISCORD_CLIENT_ID in /login.');
-    return;
-  }
-  const redirect = encodeURIComponent(location.origin + '/login');
-  const scope    = encodeURIComponent('identify email');
-  location.href  = `https://discord.com/api/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${redirect}&response_type=token&scope=${scope}`;
-};
-
-// ---- Tab switch ----
-window.switchTab = (t) => {
-  document.getElementById('pane-in').style.display = t === 'in' ? '' : 'none';
-  document.getElementById('pane-up').style.display = t === 'up' ? '' : 'none';
-  document.getElementById('tab-in').classList.toggle('on', t === 'in');
-  document.getElementById('tab-up').classList.toggle('on', t === 'up');
-};
-
-// ---- Sign in ----
+// ---- Email sign in ----
 window.doSignIn = async () => {
-  const email = document.getElementById('in-email').value.trim();
-  const pass  = document.getElementById('in-pass').value;
-  const btn   = document.getElementById('in-btn');
-  const err   = document.getElementById('in-err');
-  if (!email || !pass) { showMsg(err, 'Please fill in all fields.'); return; }
-  btn.disabled = true; btn.textContent = 'Signing in…'; err.style.display = 'none';
-  try {
-    await signInWithEmailAndPassword(auth, email, pass);
-    // onAuthStateChanged will redirect
-  } catch(e) {
-    showMsg(err, e.code === 'auth/invalid-credential' ? 'Wrong email or password.' : e.message);
-  } finally { btn.disabled = false; btn.textContent = 'Sign in'; }
+  const email = $('in-email').value.trim(), pass = $('in-pass').value, btn = $('in-btn'), e = $('in-err');
+  e.className = 'msg';
+  if (!email || !pass) return err(e, 'Enter your email and password.');
+  btn.disabled = true; btn.textContent = 'Logging in…';
+  try { await signInWithEmailAndPassword(auth, email, pass); }
+  catch (x) { err(e, x.code === 'auth/invalid-credential' ? 'Wrong email or password.' : x.message); }
+  finally { btn.disabled = false; btn.textContent = 'Log in'; }
+};
+$('in-pass').addEventListener('keydown', e => { if (e.key === 'Enter') window.doSignIn(); });
+
+window.doForgot = async () => {
+  const email = $('in-email').value.trim(), e = $('in-err');
+  if (!email) return err(e, 'Type your email above first.');
+  try { await sendPasswordResetEmail(auth, email); e.className = 'msg ok'; e.textContent = 'Reset link sent — check your inbox.'; }
+  catch (x) { err(e, x.message); }
 };
 
 // ---- Sign up ----
 window.doSignUp = async () => {
-  const name  = document.getElementById('up-name').value.trim();
-  const email = document.getElementById('up-email').value.trim();
-  const pass  = document.getElementById('up-pass').value;
-  const pass2 = document.getElementById('up-pass2').value;
-  const key   = document.getElementById('up-key').value.trim().toUpperCase();
-  const btn   = document.getElementById('up-btn');
-  const err   = document.getElementById('up-err');
-  const ok    = document.getElementById('up-ok');
-  err.style.display = 'none'; ok.style.display = 'none';
-
-  if (!name || !email || !pass) { showMsg(err, 'Please fill in all required fields.'); return; }
-  if (pass.length < 8) { showMsg(err, 'Password must be at least 8 characters.'); return; }
-  if (pass !== pass2)  { showMsg(err, 'Passwords do not match.'); return; }
-
-  btn.disabled = true; btn.textContent = 'Creating account…';
+  const name = $('up-name').value.trim(), email = $('up-email').value.trim(), pass = $('up-pass').value;
+  const key = $('up-key').value.trim().toUpperCase(), btn = $('up-btn'), e = $('up-err');
+  e.className = 'msg';
+  if (!name || !email || !pass) return err(e, 'Fill in username, email and password.');
+  if (pass.length < 8) return err(e, 'Password must be at least 8 characters.');
+  btn.disabled = true; btn.textContent = 'Creating account…'; window._busy = true;
   try {
-    // 1. Validate license key if provided
-    let keyDoc = null, keyPlan = 'free';
+    const uid = (await createUserWithEmailAndPassword(auth, email, pass)).user.uid;
+    await setDoc(doc(db, 'users', uid), { uid, email, username: name, plan: 'free', credits: 0, licenseKey: null, hwid: null, expiresAt: null, createdAt: serverTimestamp() });
+    let keyNote = '';
     if (key) {
-      const q = query(collection(db, 'licenseKeys'), where('key', '==', key), where('assigned', '==', false));
-      const snap = await getDocs(q);
-      if (snap.empty) { showMsg(err, 'License key not found or already used.'); return; }
-      keyDoc = snap.docs[0];
-      keyPlan = keyDoc.data().plan || planFromKey(key);
+      const keyRef = doc(db, 'licenseKeys', key);
+      const ks = await getDoc(keyRef).catch(() => null);
+      if (ks?.exists() && !ks.data().assigned) {
+        const kd = ks.data();
+        const plan = kd.plan || { BSC: 'basic', PRO: 'pro', ULT: 'ultimate' }[key.split('-')[1]] || 'basic';
+        const days = kd.days ?? kd.durationDays ?? 30;
+        const batch = writeBatch(db);
+        batch.update(doc(db, 'users', uid), { plan, licenseKey: key, expiresAt: days === 0 ? 0 : Timestamp.fromMillis(Date.now() + days * 86400000) });
+        batch.update(keyRef, { assigned: true, assignedTo: uid, assignedEmail: email, assignedAt: serverTimestamp() });
+        await batch.commit().catch(() => { keyNote = 'bad'; });
+      } else keyNote = 'bad';
     }
-
-    // 2. Create Firebase Auth account
-    const cred = await createUserWithEmailAndPassword(auth, email, pass);
-    const uid  = cred.user.uid;
-
-    // 3. Create user document
-    const expiresAt = key && keyDoc?.data().durationDays
-      ? new Date(Date.now() + keyDoc.data().durationDays * 86400000)
-      : null;
-
-    await setDoc(doc(db, 'users', uid), {
-      uid, email, username: name,
-      plan:      keyPlan,
-      credits:   0,
-      licenseKey: key || null,
-      hwid:      null,
-      expiresAt: expiresAt ? expiresAt : null,
-      createdAt: serverTimestamp(),
-    });
-
-    // 4. Mark key as assigned
-    if (keyDoc) {
-      await updateDoc(doc(db, 'licenseKeys', keyDoc.id), {
-        assigned: true, assignedTo: uid, assignedAt: serverTimestamp()
-      });
-    }
-
-    // onAuthStateChanged will redirect to portal
-  } catch(e) {
-    if (e.code === 'auth/email-already-in-use') showMsg(err, 'An account with this email already exists.');
-    else if (e.code === 'auth/weak-password')   showMsg(err, 'Password is too weak.');
-    else showMsg(err, e.message);
+    location.href = keyNote ? '/portal#billing' : '/portal';
+  } catch (x) {
+    window._busy = false;
+    err(e, x.code === 'auth/email-already-in-use' ? 'An account with this email already exists.' : x.code === 'auth/weak-password' ? 'Password is too weak.' : x.message);
     btn.disabled = false; btn.textContent = 'Create account';
   }
 };
-
-// ---- Forgot password ----
-window.doForgot = async () => {
-  const email = document.getElementById('in-email').value.trim();
-  const err   = document.getElementById('in-err');
-  if (!email) { showMsg(err, 'Enter your email above first.'); return; }
-  try {
-    await sendPasswordResetEmail(auth, email);
-    err.className = 'msg ok'; err.textContent = 'Password reset email sent!'; err.style.display = 'block';
-  } catch(e) {
-    showMsg(err, e.message);
-  }
-};
-
-function planFromKey(k) {
-  if (k.startsWith('SVX-BSC')) return 'basic';
-  if (k.startsWith('SVX-PRO')) return 'pro';
-  if (k.startsWith('SVX-ULT')) return 'ultimate';
-  return 'free';
-}
-
-function showMsg(el, text) {
-  el.className = 'msg err'; el.textContent = text; el.style.display = 'block';
-}
 </script>
 </body>
 </html>

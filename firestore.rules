@@ -1,0 +1,80 @@
+rules_version = '2';
+// Paste into Firebase console → Firestore → Rules, then Publish.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function me() { return request.auth.uid; }
+    function adminId() { return request.auth.token.email.lower().replace('[^a-z0-9]', '_'); }
+    function isAdmin() {
+      return signedIn() && request.auth.token.email != null
+        && exists(/databases/$(database)/documents/admins/$(adminId()));
+    }
+    function changed() { return request.resource.data.diff(resource.data).affectedKeys(); }
+    // A plan change is only allowed when the same batch claims a real, matching key for this user.
+    function redeemingKey() {
+      let k = getAfter(/databases/$(database)/documents/licenseKeys/$(request.resource.data.licenseKey)).data;
+      return k.assignedTo == me() && k.plan == request.resource.data.plan;
+    }
+
+    match /users/{uid} {
+      allow read: if isAdmin() || (signedIn() && me() == uid);
+      allow create: if signedIn() && me() == uid
+        && request.resource.data.plan == 'free'
+        && request.resource.data.get('credits', 0) == 0
+        && !request.resource.data.get('banned', false);
+      allow update: if isAdmin() || (signedIn() && me() == uid
+        && !changed().hasAny(['banned', 'credits', 'adminNote', 'uid', 'email', 'createdAt'])
+        && (!changed().hasAny(['plan', 'licenseKey', 'expiresAt']) || redeemingKey()));
+      allow delete: if isAdmin();
+    }
+
+    // Subscription keys: document ID is the key itself, so customers can only fetch a key they already know.
+    match /licenseKeys/{key} {
+      allow get: if signedIn();
+      allow list, create, delete: if isAdmin();
+      allow update: if isAdmin() || (signedIn()
+        && resource.data.assigned == false
+        && request.resource.data.assigned == true
+        && request.resource.data.assignedTo == me()
+        && changed().hasOnly(['assigned', 'assignedTo', 'assignedEmail', 'assignedAt']));
+    }
+
+    match /apps/{appId} {
+      allow read, update, delete: if isAdmin() || (signedIn() && resource.data.ownerUid == me());
+      allow create: if signedIn() && request.resource.data.ownerUid == me();
+      match /{sub=**} {
+        allow read, write: if isAdmin()
+          || (signedIn() && get(/databases/$(database)/documents/apps/$(appId)).data.ownerUid == me());
+      }
+    }
+
+    // Admin "Live sessions" page reads every app's sessions at once.
+    match /{path=**}/sessions/{sid} {
+      allow read: if isAdmin();
+    }
+
+    match /hwid_resets/{id} {
+      allow create: if signedIn() && request.resource.data.uid == me() && request.resource.data.status == 'pending';
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == me());
+      allow update, delete: if isAdmin();
+    }
+
+    match /settings/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /admins/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    match /resellers/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    match /activity/{id} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

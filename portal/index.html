@@ -3,368 +3,279 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Sovyx — Portal</title>
+<title>Sovyx — Dashboard</title>
+<link rel="icon" href="/logo.webp"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<style>
-:root{
-  --bg:#07070b;--s1:#0d0d14;--s2:#131320;--s3:#18182a;
-  --b:rgba(255,255,255,.055);--b2:rgba(255,255,255,.1);--b3:rgba(255,255,255,.18);
-  --red:#e11d48;--red-h:#f43f5e;--pink:#fb7185;
-  --text:#ededf0;--muted:#6b6b80;--dim:#35354a;
-  --green:#3ecf8e;--blue:#60a5fa;--yellow:#fbbf24;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{-webkit-font-smoothing:antialiased}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-a{text-decoration:none;color:inherit}
-svg{display:block;flex-shrink:0}
-
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(7,7,11,.92);backdrop-filter:blur(24px);border-bottom:1px solid var(--b)}
-.logo{display:flex;align-items:center;gap:7px;font-weight:700;font-size:14.5px;letter-spacing:-.25px}
-.logo-mark{width:30px;height:30px;object-fit:contain}
-.nav-right{display:flex;align-items:center;gap:10px}
-.nav-email{font-size:12px;color:var(--muted);font-family:'JetBrains Mono',monospace}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .18s;font-family:inherit}
-.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--b2)}
-.btn-ghost:hover{color:var(--text);border-color:var(--b3)}
-
-/* PAGE */
-#loading{display:flex;align-items:center;justify-content:center;min-height:100vh;font-size:14px;color:var(--muted)}
-#app{display:none;padding:72px 28px 48px;max-width:900px;margin:0 auto}
-
-/* PLAN HEADER CARD */
-.plan-card{background:var(--s1);border:1px solid var(--b2);border-radius:14px;padding:28px 32px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.plan-left h2{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px}
-.plan-left p{font-size:13px;color:var(--muted)}
-.plan-badge{font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:inline-block}
-.badge-free{background:rgba(107,107,128,.15);color:var(--muted);border:1px solid var(--dim)}
-.badge-basic{background:rgba(96,165,250,.12);color:var(--blue);border:1px solid rgba(96,165,250,.25)}
-.badge-pro{background:rgba(62,207,142,.12);color:var(--green);border:1px solid rgba(62,207,142,.25)}
-.badge-ultimate{background:rgba(225,29,72,.12);color:var(--pink);border:1px solid rgba(225,29,72,.25)}
-
-/* STATS ROW */
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-bottom:24px;border:1px solid var(--b2);border-radius:12px;overflow:hidden;background:var(--b)}
-.scard{background:var(--s1);padding:18px 22px}
-.scard-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.8px;color:var(--dim);margin-bottom:8px}
-.scard-num{font-size:26px;font-weight:800;letter-spacing:-.6px}
-.scard-sub{font-size:11px;color:var(--muted);margin-top:3px}
-
-/* SECTION */
-.section{background:var(--s1);border:1px solid var(--b2);border-radius:12px;padding:24px 28px;margin-bottom:20px}
-.section h3{font-size:14px;font-weight:700;letter-spacing:-.2px;margin-bottom:16px}
-.info-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--b);font-size:13px}
-.info-row:last-child{border-bottom:none;padding-bottom:0}
-.info-label{color:var(--muted)}
-.info-val{font-weight:500}
-.info-val.mono{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--green)}
-.info-val.dim{color:var(--dim)}
-
-/* KEY ACTIVATE */
-.key-form{display:flex;gap:8px;margin-top:4px}
-.key-input{flex:1;background:var(--s2);border:1px solid var(--b2);border-radius:8px;padding:9px 13px;font-size:13px;color:var(--text);font-family:'JetBrains Mono',monospace;outline:none;transition:border-color .15s}
-.key-input:focus{border-color:rgba(225,29,72,.5)}
-.key-input::placeholder{color:var(--dim);font-family:inherit}
-.btn-sm{padding:9px 16px;font-size:12px;font-weight:700;border-radius:8px;cursor:pointer;border:none;font-family:inherit;white-space:nowrap;transition:all .18s}
-.btn-red-sm{background:var(--red);color:#fff;box-shadow:0 0 14px rgba(225,29,72,.25)}
-.btn-red-sm:hover{background:var(--red-h)}
-.btn-red-sm:disabled{opacity:.5;cursor:default}
-.msg{font-size:12px;margin-top:8px;display:none;padding:8px 12px;border-radius:7px}
-.msg.err{color:var(--pink);background:rgba(251,113,133,.08);border:1px solid rgba(251,113,133,.2)}
-.msg.ok{color:var(--green);background:rgba(62,207,142,.08);border:1px solid rgba(62,207,142,.2)}
-
-/* HWID RESET */
-.hwid-status{font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.6}
-.btn-yellow{background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.2);padding:9px 18px;font-size:12px;font-weight:700;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .15s}
-.btn-yellow:hover{background:rgba(251,191,36,.18)}
-.btn-yellow:disabled{opacity:.5;cursor:default}
-
-/* DANGER */
-.danger-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.danger-info h4{font-size:13px;font-weight:600;margin-bottom:3px}
-.danger-info p{font-size:12px;color:var(--muted)}
-.btn-danger{background:transparent;color:var(--pink);border:1px solid rgba(251,113,133,.25);padding:8px 16px;font-size:12px;font-weight:700;border-radius:8px;cursor:pointer;font-family:inherit;transition:all .15s}
-.btn-danger:hover{background:rgba(251,113,133,.08)}
-
-@media(max-width:600px){
-  .plan-card{flex-direction:column;align-items:flex-start}
-  .stats{grid-template-columns:1fr}
-  .key-form{flex-direction:column}
-}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/assets/panel.css?v=1"/>
 </head>
 <body>
-
-<nav>
-  <a class="logo" href="/">
-    <img class="logo-mark" src="/logo.webp?v=3" alt=""/>
-    sovyx
-  </a>
-  <div class="nav-right">
-    <span class="nav-email" id="nav-email"></span>
-    <button class="btn btn-ghost" onclick="doLogout()">Sign out</button>
-  </div>
-</nav>
-
 <div id="loading">Loading…</div>
 
-<div id="app">
-
-  <!-- PLAN HEADER -->
-  <div class="plan-card">
-    <div class="plan-left">
-      <div class="plan-badge badge-free" id="plan-badge">Free</div>
-      <h2 id="welcome-name">Welcome back</h2>
-      <p id="plan-desc">You're on the free plan.</p>
+<div class="shell" id="app" style="display:none">
+  <aside class="side">
+    <a href="/" class="side-logo"><img src="/logo.webp" alt=""/>Sovyx</a>
+    <div class="ws" id="app-switch" style="cursor:pointer" onclick="openModal('m-apps')">
+      <div class="ws-av" id="ws-av">–</div>
+      <div style="min-width:0;flex:1"><div class="ws-name" id="ws-name">No application</div><div class="ws-sub">Application</div></div>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--dim)"><path d="M8 9l4-4 4 4M16 15l-4 4-4-4"/></svg>
     </div>
-    <a href="/#pricing" class="btn btn-ghost" id="upgrade-btn">Upgrade plan â†’</a>
-  </div>
-
-  <!-- STATS -->
-  <div class="stats">
-    <div class="scard">
-      <div class="scard-label">Credits</div>
-      <div class="scard-num" id="stat-credits">0</div>
-      <div class="scard-sub">available</div>
-    </div>
-    <div class="scard">
-      <div class="scard-label">Plan expires</div>
-      <div class="scard-num" id="stat-expiry" style="font-size:16px;padding-top:5px">—</div>
-      <div class="scard-sub" id="stat-expiry-sub">no active plan</div>
-    </div>
-    <div class="scard">
-      <div class="scard-label">Member since</div>
-      <div class="scard-num" id="stat-joined" style="font-size:16px;padding-top:5px">—</div>
-      <div class="scard-sub">account created</div>
-    </div>
-  </div>
-
-  <!-- ACCOUNT INFO -->
-  <div class="section">
-    <h3>Account</h3>
-    <div class="info-row">
-      <span class="info-label">Username</span>
-      <span class="info-val" id="info-username">—</span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">Email</span>
-      <span class="info-val mono" id="info-email">—</span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">License key</span>
-      <span class="info-val mono" id="info-key">None</span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">HWID</span>
-      <span class="info-val mono dim" id="info-hwid">Not registered</span>
-    </div>
-    <div class="info-row" id="discord-row" style="display:none">
-      <span class="info-label">Discord</span>
-      <span class="info-val" id="info-discord" style="display:flex;align-items:center;gap:8px"></span>
-    </div>
-  </div>
-
-  <!-- ACTIVATE KEY (shown only when no key) -->
-  <div class="section" id="activate-section">
-    <h3>Activate license key</h3>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Enter your key to unlock your plan. Get one from your reseller.</p>
-    <div class="key-form">
-      <input class="key-input" id="key-input" placeholder="SVX-PRO-XXXX-XXXX-XXXX" oninput="this.value=this.value.toUpperCase()"/>
-      <button class="btn-sm btn-red-sm" id="key-btn" onclick="activateKey()">Activate</button>
-    </div>
-    <div class="msg" id="key-msg"></div>
-  </div>
-
-  <!-- HWID RESET -->
-  <div class="section">
-    <h3>HWID reset</h3>
-    <p class="hwid-status" id="hwid-status">Submit a request to reset your hardware ID if you switched machines.</p>
-    <button class="btn-yellow" id="hwid-btn" onclick="requestHwid()">Request HWID reset</button>
-    <div class="msg" id="hwid-msg"></div>
-  </div>
-
-  <!-- DANGER ZONE -->
-  <div class="section">
-    <h3>Account</h3>
-    <div class="danger-row">
-      <div class="danger-info">
-        <h4>Sign out</h4>
-        <p>Sign out of your Sovyx account on this device.</p>
+    <nav id="side-nav"></nav>
+    <div class="side-foot">
+      <div class="ws" style="margin:0">
+        <div class="ws-av" id="me-av">?</div>
+        <div style="min-width:0;flex:1"><div class="ws-name" id="me-name">—</div><div class="ws-sub" id="me-plan">—</div></div>
+        <button class="btn btn-sm" onclick="doLogout()" title="Sign out">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        </button>
       </div>
-      <button class="btn-danger" onclick="doLogout()">Sign out</button>
     </div>
-  </div>
+  </aside>
 
+  <main class="main">
+    <div class="topbar">
+      <div class="crumbs"><span>Workspace</span><span>/</span><span id="crumb-app">—</span><span>/</span><b id="crumb-view">Overview</b></div>
+      <span class="tag" id="top-plan"></span>
+    </div>
+
+    <div id="announce" style="display:none;padding:10px 36px;background:rgba(96,165,250,.07);border-bottom:1px solid var(--b);color:var(--blue);font-size:12.5px"></div>
+    <div class="content">
+
+      <!-- OVERVIEW -->
+      <section class="view on" id="v-overview">
+        <div class="page-h"><div><h1>Overview</h1><p id="ov-welcome">Welcome back.</p></div>
+          <button class="btn btn-w" onclick="openModal('m-newapp')">+ New application</button></div>
+        <div class="stats">
+          <div class="stat"><div class="stat-l">Active sessions <span class="dot"></span></div><div class="stat-n" id="ov-sessions">0</div><div class="stat-s">Heartbeat in the last minute</div></div>
+          <div class="stat"><div class="stat-l">Total users</div><div class="stat-n" id="ov-users">0</div><div class="stat-s">Across this application</div></div>
+          <div class="stat"><div class="stat-l">Total licenses</div><div class="stat-n" id="ov-licenses">0</div><div class="stat-s" id="ov-licenses-s">0 unused</div></div>
+          <div class="stat"><div class="stat-l">Applications</div><div class="stat-n" id="ov-apps">0</div><div class="stat-s" id="ov-apps-s">—</div></div>
+        </div>
+        <div class="card">
+          <div class="tbl-head"><div><h2>Licenses created</h2><p>Last 7 days for the selected application</p></div></div>
+          <div class="chart" id="ov-chart"></div><div class="chart-x" id="ov-chart-x"></div>
+        </div>
+        <div class="grid2">
+          <div class="card"><h3>Needs attention</h3><div class="sub">Things worth a quick look</div><div id="ov-attn"></div></div>
+          <div class="card"><h3>Your plan</h3><div class="sub" id="ov-plan-sub">—</div><div id="ov-limits"></div>
+            <button class="btn btn-sm" style="margin-top:14px" onclick="go('billing')">Manage plan</button></div>
+        </div>
+      </section>
+
+      <!-- APPLICATIONS -->
+      <section class="view" id="v-apps">
+        <div class="page-h"><div><h1>Applications</h1><p>Each application has its own licenses, users and sessions.</p></div>
+          <button class="btn btn-w" onclick="openModal('m-newapp')">+ New application</button></div>
+        <div class="tbl"><table><thead><tr><th>Name</th><th>App ID</th><th>Version</th><th>Created</th><th></th></tr></thead><tbody id="apps-body"></tbody></table></div>
+      </section>
+
+      <!-- LICENSES -->
+      <section class="view" id="v-licenses">
+        <div class="page-h"><div><h1>Licenses</h1><p>Keys your customers redeem inside your software.</p></div>
+          <div style="display:flex;gap:8px"><button class="btn" onclick="exportLicenses()">Export</button><button class="btn btn-w" onclick="openModal('m-genlic')">+ Create licenses</button></div></div>
+        <div class="tbl-head">
+          <div class="seg" id="lic-seg"><button class="on" data-f="">All</button><button data-f="unused">Unused</button><button data-f="used">Used</button><button data-f="banned">Banned</button></div>
+          <div class="search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input placeholder="Search key, user or note" oninput="renderLicenses()" id="lic-q"/></div>
+        </div>
+        <div class="tbl"><table><thead><tr><th>Key</th><th>Duration</th><th>Used by</th><th>HWID</th><th>Status</th><th>Created</th><th></th></tr></thead><tbody id="lic-body"></tbody></table></div>
+      </section>
+
+      <!-- USERS -->
+      <section class="view" id="v-users">
+        <div class="page-h"><div><h1>Users</h1><p>Accounts created when a license is redeemed in your software.</p></div>
+          <button class="btn btn-w" onclick="openModal('m-newuser')">+ Create user</button></div>
+        <div class="tbl-head"><div></div><div class="search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input placeholder="Search username or HWID" oninput="renderUsers()" id="usr-q"/></div></div>
+        <div class="tbl"><table><thead><tr><th>User</th><th>HWID</th><th>Expires</th><th>Last login</th><th>Status</th><th></th></tr></thead><tbody id="usr-body"></tbody></table></div>
+      </section>
+
+      <!-- SESSIONS -->
+      <section class="view" id="v-sessions">
+        <div class="page-h"><div><h1>Sessions</h1></div><button class="btn btn-danger" onclick="endAllSessions()">End all sessions</button></div>
+        <div class="stats">
+          <div class="stat"><div class="stat-l">Live <span class="dot"></span></div><div class="stat-n" id="ss-live">0</div><div class="stat-s">A heartbeat in the last minute</div></div>
+          <div class="stat"><div class="stat-l">Stale</div><div class="stat-n" id="ss-stale">0</div><div class="stat-s">Quiet for over a minute</div></div>
+          <div class="stat"><div class="stat-l">Opened today</div><div class="stat-n" id="ss-today">0</div><div class="stat-s">Since midnight</div></div>
+          <div class="stat"><div class="stat-l">Devices</div><div class="stat-n" id="ss-devices">0</div><div class="stat-s">Distinct HWIDs</div></div>
+        </div>
+        <div class="tbl-head"><div><h2>Connected now<span id="ss-count">0</span></h2><p>Every client signed in to this application, updated live.</p></div>
+          <div class="search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input placeholder="Search by key, IP, HWID or user" oninput="renderSessions()" id="ss-q"/></div></div>
+        <div class="tbl"><table><thead><tr><th>User</th><th>IP address</th><th>HWID</th><th>Heartbeat</th><th>Status</th><th></th></tr></thead><tbody id="ss-body"></tbody></table></div>
+      </section>
+
+      <!-- BLACKLIST -->
+      <section class="view" id="v-blacklist">
+        <div class="page-h"><div><h1>Blacklist</h1><p>Blocked HWIDs and IP addresses can't start a session.</p></div>
+          <button class="btn btn-w" onclick="openModal('m-bl')">+ Add entry</button></div>
+        <div class="tbl"><table><thead><tr><th>Type</th><th>Value</th><th>Reason</th><th>Added</th><th></th></tr></thead><tbody id="bl-body"></tbody></table></div>
+      </section>
+
+      <!-- API KEYS -->
+      <section class="view" id="v-api">
+        <div class="page-h"><div><h1>API keys</h1><p>Use these with the REST API and C++ SDK.</p></div></div>
+        <div class="card"><h3>Application credentials</h3><div class="sub">Embed the App ID in your client. Keep the secret on your server only.</div>
+          <div class="field"><label>App ID</label><div class="code"><span id="api-appid">—</span><button class="btn btn-sm" onclick="copyEl('api-appid')">Copy</button></div></div>
+          <div class="field"><label>App secret</label><div class="code"><span id="api-secret">••••••••••••••••</span><div style="display:flex;gap:6px"><button class="btn btn-sm" onclick="toggleSecret()">Reveal</button><button class="btn btn-sm" onclick="copySecret()">Copy</button></div></div></div>
+          <button class="btn btn-danger btn-sm" onclick="rotateSecret()">Rotate secret</button>
+        </div>
+        <div class="card"><h3>Seller API key</h3><div class="sub">Lets your own backend or store create licenses automatically.</div>
+          <div class="code"><span id="api-seller">—</span><button class="btn btn-sm" onclick="copyEl('api-seller')">Copy</button></div>
+          <button class="btn btn-sm" style="margin-top:12px" onclick="rotateSeller()">Generate new key</button>
+        </div>
+      </section>
+
+      <!-- WEBHOOKS -->
+      <section class="view" id="v-webhooks">
+        <div class="page-h"><div><h1>Webhooks</h1><p>Get a POST request when something happens in this application.</p></div>
+          <button class="btn btn-w" onclick="openModal('m-hook')">+ Add webhook</button></div>
+        <div class="tbl"><table><thead><tr><th>Endpoint</th><th>Events</th><th>Added</th><th></th></tr></thead><tbody id="hook-body"></tbody></table></div>
+      </section>
+
+      <!-- VARIABLES -->
+      <section class="view" id="v-variables">
+        <div class="page-h"><div><h1>Variables</h1><p>Server-side values your client fetches after login. Change them without shipping a new build.</p></div>
+          <button class="btn btn-w" onclick="openModal('m-var')">+ Add variable</button></div>
+        <div class="tbl"><table><thead><tr><th>Name</th><th>Value</th><th>Requires login</th><th></th></tr></thead><tbody id="var-body"></tbody></table></div>
+      </section>
+
+      <!-- DISCORD -->
+      <section class="view" id="v-discord">
+        <div class="page-h"><div><h1>Discord bot</h1><p>Give buyers a role and post license events to your server.</p></div></div>
+        <div class="card" style="max-width:620px">
+          <div class="field"><label>Server (guild) ID</label><input id="dc-guild" placeholder="123456789012345678"/></div>
+          <div class="field"><label>Buyer role ID</label><input id="dc-role" placeholder="Role given when a license is redeemed"/></div>
+          <div class="field"><label>Log channel webhook URL</label><input id="dc-hook" placeholder="https://discord.com/api/webhooks/…"/></div>
+          <div class="row"><div class="field"><label>Post on redeem</label><select id="dc-redeem"><option value="1">Yes</option><option value="0">No</option></select></div>
+            <div class="field"><label>Post on HWID reset</label><select id="dc-hwid"><option value="1">Yes</option><option value="0">No</option></select></div></div>
+          <button class="btn btn-w" onclick="saveDiscord()">Save</button>
+          <div class="hint">Never paste your bot token here. The Sovyx bot is invited to your server separately.</div>
+        </div>
+      </section>
+
+      <!-- RESELLERS -->
+      <section class="view" id="v-resellers">
+        <div class="page-h"><div><h1>Reseller panel</h1><p>Give resellers a balance; they create licenses for this application from their own panel.</p></div>
+          <button class="btn btn-w" onclick="openModal('m-res')">+ Add reseller</button></div>
+        <div class="tbl"><table><thead><tr><th>Reseller</th><th>Balance</th><th>Licenses created</th><th>Allowed durations</th><th>Status</th><th></th></tr></thead><tbody id="res-body"></tbody></table></div>
+      </section>
+
+      <!-- BILLING -->
+      <section class="view" id="v-billing">
+        <div class="page-h"><div><h1>Plan &amp; billing</h1><p>Redeem a Sovyx subscription key to change your plan.</p></div></div>
+        <div class="grid2">
+          <div class="card"><h3>Current plan</h3><div class="sub" id="bill-sub">—</div>
+            <div class="kv"><span>Plan</span><span id="bill-plan">—</span></div>
+            <div class="kv"><span>Expires</span><span id="bill-exp">—</span></div>
+            <div class="kv"><span>Subscription key</span><span class="mono" id="bill-key">—</span></div>
+            <div class="kv"><span>Credits</span><span id="bill-credits">0</span></div>
+          </div>
+          <div class="card"><h3>Redeem key</h3><div class="sub">Keys look like SVX-PRO-XXXX-XXXX-XXXX</div>
+            <div class="field"><input id="key-input" placeholder="SVX-XXX-XXXX-XXXX-XXXX" class="mono" style="text-transform:uppercase"/></div>
+            <button class="btn btn-w btn-block" id="key-btn" onclick="activateKey()">Redeem</button>
+            <div class="msg" id="key-msg"></div>
+          </div>
+        </div>
+        <div class="grid3" id="plan-cards"></div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="view" id="v-settings">
+        <div class="page-h"><div><h1>Settings</h1></div></div>
+        <div class="grid2">
+          <div class="card"><h3>Account</h3><div class="sub">Your Sovyx account</div>
+            <div class="field"><label>Username</label><input id="set-username"/></div>
+            <div class="kv"><span>Email</span><span id="set-email">—</span></div>
+            <div class="kv"><span>Discord</span><span id="set-discord">Not linked</span></div>
+            <div class="kv"><span>Member since</span><span id="set-joined">—</span></div>
+            <button class="btn btn-w btn-sm" style="margin-top:12px" onclick="saveAccount()">Save</button>
+          </div>
+          <div class="card"><h3>Application settings</h3><div class="sub" id="set-app-sub">Selected application</div>
+            <div class="field"><label>Name</label><input id="set-app-name"/></div>
+            <div class="row"><div class="field"><label>Version</label><input id="set-app-ver" placeholder="1.0.0"/></div>
+              <div class="field"><label>HWID lock</label><select id="set-app-hwid"><option value="1">On</option><option value="0">Off</option></select></div></div>
+            <div class="field"><label>Download link (optional)</label><input id="set-app-dl" placeholder="https://…"/></div>
+            <div style="display:flex;gap:8px"><button class="btn btn-w btn-sm" onclick="saveApp()">Save</button><button class="btn btn-danger btn-sm" onclick="deleteApp()">Delete application</button></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LOCKED -->
+      <section class="view" id="v-locked">
+        <div class="locked-box">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="margin:0 auto;color:var(--muted)"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+          <h3 id="lk-title">Locked</h3><p id="lk-body"></p>
+          <button class="btn btn-w" onclick="go('billing')">See plans</button>
+        </div>
+      </section>
+
+      <!-- NO APP -->
+      <section class="view" id="v-noapp">
+        <div class="locked-box"><h3>Create your first application</h3><p>Applications hold your licenses, users and sessions. You need one before using this section.</p>
+          <button class="btn btn-w" onclick="openModal('m-newapp')">+ New application</button></div>
+      </section>
+    </div>
+  </main>
 </div>
 
-<script type="module">
-import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signOut, onAuthStateChanged }
-                            from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc,
-         collection, query, where, getDocs, serverTimestamp }
-                            from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<!-- MODALS -->
+<div class="overlay" id="m-apps"><div class="modal"><h2>Switch application</h2><div id="apps-list"></div>
+  <div class="modal-acts"><button class="btn" onclick="closeModal('m-apps')">Close</button><button class="btn btn-w" onclick="closeModal('m-apps');openModal('m-newapp')">+ New</button></div></div></div>
 
-const FIREBASE_CONFIG = {
-  apiKey:            "AIzaSyBNyhb0w6csyFDuQO1EhNTkfBZUS5pGrnQ",
-  authDomain:        "sovyx-2793f.firebaseapp.com",
-  projectId:         "sovyx-2793f",
-  storageBucket:     "sovyx-2793f.firebasestorage.app",
-  messagingSenderId: "82725494480",
-  appId:             "1:82725494480:web:460ac2e4dd886f067a88d5"
-};
+<div class="overlay" id="m-newapp"><div class="modal"><h2>New application</h2>
+  <div class="field"><label>Name</label><input id="na-name" placeholder="My Loader"/></div>
+  <div class="field"><label>Version</label><input id="na-ver" value="1.0.0"/></div>
+  <div class="modal-acts"><button class="btn" onclick="closeModal('m-newapp')">Cancel</button><button class="btn btn-w" onclick="createApp()">Create</button></div></div></div>
 
-const app  = initializeApp(FIREBASE_CONFIG);
-const auth = getAuth(app);
-const db   = getFirestore(app);
+<div class="overlay" id="m-genlic"><div class="modal"><h2>Create licenses</h2>
+  <div class="row"><div class="field"><label>Amount</label><input type="number" id="gl-qty" value="1" min="1" max="100"/></div>
+    <div class="field"><label>Duration</label><select id="gl-days"><option value="1">1 day</option><option value="7">7 days</option><option value="30" selected>30 days</option><option value="90">90 days</option><option value="365">1 year</option><option value="0">Lifetime</option></select></div></div>
+  <div class="row"><div class="field"><label>Prefix</label><input id="gl-prefix" placeholder="Optional, e.g. NEBULA"/></div>
+    <div class="field"><label>Note</label><input id="gl-note" placeholder="Optional"/></div></div>
+  <div id="gl-out" style="display:none"><div class="tbl-head" style="margin:6px 0 8px"><span class="muted" id="gl-label"></span><button class="btn btn-sm" onclick="copyGenerated()">Copy all</button></div>
+    <textarea id="gl-list" class="input mono" rows="6" readonly style="resize:vertical"></textarea></div>
+  <div class="modal-acts"><button class="btn" onclick="closeModal('m-genlic')">Close</button><button class="btn btn-w" id="gl-btn" onclick="genLicenses()">Create</button></div></div></div>
 
-let currentUser = null, userData = null;
+<div class="overlay" id="m-newuser"><div class="modal"><h2>Create user</h2>
+  <div class="field"><label>Username</label><input id="nu-name"/></div>
+  <div class="field"><label>Duration</label><select id="nu-days"><option value="1">1 day</option><option value="7">7 days</option><option value="30" selected>30 days</option><option value="365">1 year</option><option value="0">Lifetime</option></select></div>
+  <div class="modal-acts"><button class="btn" onclick="closeModal('m-newuser')">Cancel</button><button class="btn btn-w" onclick="createAppUser()">Create</button></div></div></div>
 
-onAuthStateChanged(auth, async u => {
-  if (!u) { location.href = '/login'; return; }
-  currentUser = u;
-  document.getElementById('nav-email').textContent = u.email;
-  document.getElementById('info-email').textContent = u.email;
-  await loadUser(u.uid);
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-});
+<div class="overlay" id="m-extend"><div class="modal"><h2>Extend</h2><input type="hidden" id="ex-id"/><input type="hidden" id="ex-kind"/>
+  <div class="field"><label>Add days</label><input type="number" id="ex-days" value="30" min="1"/></div>
+  <div class="modal-acts"><button class="btn" onclick="closeModal('m-extend')">Cancel</button><button class="btn btn-w" onclick="doExtend()">Extend</button></div></div></div>
 
-async function loadUser(uid) {
-  const snap = await getDoc(doc(db, 'users', uid));
-  if (!snap.exists()) {
-    // First-time user (signed up via admin or directly) — create minimal doc
-    await setDoc(doc(db, 'users', uid), {
-      uid, email: currentUser.email, username: currentUser.email.split('@')[0],
-      plan: 'free', credits: 0, licenseKey: null, hwid: null,
-      expiresAt: null, createdAt: serverTimestamp()
-    });
-    userData = { plan: 'free', credits: 0, licenseKey: null, hwid: null, expiresAt: null, username: currentUser.email.split('@')[0] };
-  } else {
-    userData = snap.data();
-  }
-  renderUser();
-}
+<div class="overlay" id="m-bl"><div class="modal"><h2>Add blacklist entry</h2>
+  <div class="row"><div class="field"><label>Type</label><select id="bl-type"><option value="hwid">HWID</option><option value="ip">IP address</option></select></div>
+    <div class="field"><label>Value</label><input id="bl-val" class="mono"/></div></div>
+  <div class="field"><label>Reason</label><input id="bl-reason" placeholder="Optional"/></div>
+  <div class="modal-acts"><button class="btn" onclick="closeModal('m-bl')">Cancel</button><button class="btn btn-w" onclick="addBlacklist()">Add</button></div></div></div>
 
-function renderUser() {
-  const { username, plan, credits, licenseKey, hwid, expiresAt, createdAt } = userData;
+<div class="overlay" id="m-hook"><div class="modal"><h2>Add webhook</h2>
+  <div class="field"><label>Endpoint URL</label><input id="hk-url" placeholder="https://your-server.com/sovyx"/></div>
+  <div class="field"><label>Events</label>
+    <label style="display:flex;gap:8px;align-items:center;font-weight:400;margin:6px 0"><input type="checkbox" value="license.redeemed" checked style="width:auto"/> license.redeemed</label>
+    <label style="display:flex;gap:8px;align-items:center;font-weight:400;margin:6px 0"><input type="checkbox" value="session.started" style="width:auto"/> session.started</label>
+    <label style="display:flex;gap:8px;align-items:center;font-weight:400;margin:6px 0"><input type="checkbox" value="user.banned" style="width:auto"/> user.banned</label>
+    <label style="display:flex;gap:8px;align-items:center;font-weight:400;margin:6px 0"><input type="checkbox" value="hwid.reset" style="width:auto"/> hwid.reset</label></div>
+  <div class="modal-acts"><button class="btn" onclick="closeModal('m-hook')">Cancel</button><button class="btn btn-w" onclick="addHook()">Add</button></div></div></div>
 
-  // Welcome
-  document.getElementById('welcome-name').textContent = `Welcome back, ${username || 'reseller'}`;
-  document.getElementById('info-username').textContent = username || '—';
+<div class="overlay" id="m-var"><div class="modal"><h2>Add variable</h2>
+  <div class="field"><label>Name</label><input id="vr-name" class="mono" placeholder="motd"/></div>
+  <div class="field"><label>Value</label><textarea id="vr-val" rows="3"></textarea></div>
+  <div class="field"><label>Requires login</label><select id="vr-auth"><option value="1">Yes</option><option value="0">No</option></select></div>
+  <div class="modal-acts"><button class="btn" onclick="closeModal('m-var')">Cancel</button><button class="btn btn-w" onclick="addVar()">Add</button></div></div></div>
 
-  // Plan badge
-  const badgeEl = document.getElementById('plan-badge');
-  const planLabels = { free: 'Free', basic: 'Basic', pro: 'Pro', ultimate: 'Ultimate' };
-  badgeEl.textContent = planLabels[plan] || plan;
-  badgeEl.className = `plan-badge badge-${plan || 'free'}`;
-  document.getElementById('plan-desc').textContent = planDesc(plan);
-  if (plan !== 'free') document.getElementById('upgrade-btn').style.display = 'none';
+<div class="overlay" id="m-res"><div class="modal"><h2 id="res-title">Add reseller</h2><input type="hidden" id="rs-id"/>
+  <div class="row"><div class="field"><label>Name</label><input id="rs-name"/></div><div class="field"><label>Email</label><input id="rs-email" type="email"/></div></div>
+  <div class="row"><div class="field"><label>Balance (licenses)</label><input type="number" id="rs-bal" value="10" min="0"/></div>
+    <div class="field"><label>Status</label><select id="rs-active"><option value="1">Active</option><option value="0">Suspended</option></select></div></div>
+  <div class="field"><label>Allowed durations</label><input id="rs-durs" value="1,7,30,365" placeholder="Days, comma separated (0 = lifetime)"/></div>
+  <div class="modal-acts"><button class="btn" onclick="closeModal('m-res')">Cancel</button><button class="btn btn-w" onclick="saveReseller()">Save</button></div></div></div>
 
-  // Stats
-  document.getElementById('stat-credits').textContent = credits ?? 0;
-  if (expiresAt) {
-    const d = expiresAt.toDate ? expiresAt.toDate() : new Date(expiresAt);
-    document.getElementById('stat-expiry').textContent = d.toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
-    const daysLeft = Math.ceil((d - Date.now()) / 86400000);
-    document.getElementById('stat-expiry-sub').textContent = daysLeft > 0 ? `${daysLeft} days left` : 'Expired';
-    if (daysLeft <= 0) document.getElementById('stat-expiry').style.color = 'var(--pink)';
-  }
-  if (createdAt) {
-    const d = createdAt.toDate ? createdAt.toDate() : new Date(createdAt);
-    document.getElementById('stat-joined').textContent = d.toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'});
-  }
+<div class="overlay" id="m-confirm"><div class="modal"><h2 id="cf-title">Are you sure?</h2><p class="muted" id="cf-body"></p>
+  <div class="modal-acts"><button class="btn" onclick="closeModal('m-confirm')">Cancel</button><button class="btn btn-danger" id="cf-ok">Confirm</button></div></div></div>
 
-  // Info
-  document.getElementById('info-key').textContent = licenseKey || 'None';
-  document.getElementById('info-hwid').textContent = hwid || 'Not registered';
-
-  // Discord
-  if (userData.discordUsername) {
-    document.getElementById('discord-row').style.display = '';
-    const el = document.getElementById('info-discord');
-    if (userData.discordAvatar) {
-      el.innerHTML = `<img src="${userData.discordAvatar}" style="width:20px;height:20px;border-radius:50%"/> ${userData.discordUsername}`;
-    } else {
-      el.textContent = userData.discordUsername;
-    }
-  }
-
-  // Hide activate section if already has a key
-  if (licenseKey) document.getElementById('activate-section').style.display = 'none';
-
-  // HWID status
-  if (hwid) document.getElementById('hwid-status').textContent = `Current HWID: ${hwid.substring(0,16)}…`;
-}
-
-function planDesc(p) {
-  const d = { free: 'You\'re on the free plan.', basic: 'Basic plan — 5 orders/month.', pro: 'Pro plan — 50 orders/month.', ultimate: 'Ultimate plan — unlimited orders.' };
-  return d[p] || 'Active plan.';
-}
-
-// ---- Activate key ----
-window.activateKey = async () => {
-  const key = document.getElementById('key-input').value.trim().toUpperCase();
-  const btn = document.getElementById('key-btn');
-  const msg = document.getElementById('key-msg');
-  msg.style.display = 'none';
-  if (!key) { showMsg(msg, 'err', 'Enter a license key.'); return; }
-  btn.disabled = true; btn.textContent = 'Checking…';
-  try {
-    const q = query(collection(db, 'licenseKeys'), where('key', '==', key), where('assigned', '==', false));
-    const snap = await getDocs(q);
-    if (snap.empty) { showMsg(msg, 'err', 'Key not found or already used.'); return; }
-    const keyDoc = snap.docs[0];
-    const kd = keyDoc.data();
-    const newPlan = kd.plan || planFromKey(key);
-    const expiresAt = kd.durationDays ? new Date(Date.now() + kd.durationDays * 86400000) : null;
-    await updateDoc(doc(db, 'users', currentUser.uid), { plan: newPlan, licenseKey: key, expiresAt });
-    await updateDoc(doc(db, 'licenseKeys', keyDoc.id), { assigned: true, assignedTo: currentUser.uid, assignedAt: serverTimestamp() });
-    userData.plan = newPlan; userData.licenseKey = key; userData.expiresAt = expiresAt;
-    renderUser();
-    showMsg(msg, 'ok', `Key activated! Plan upgraded to ${newPlan}.`);
-    document.getElementById('activate-section').style.display = 'none';
-  } catch(e) {
-    showMsg(msg, 'err', e.message);
-  } finally { btn.disabled = false; btn.textContent = 'Activate'; }
-};
-
-// ---- HWID reset request ----
-window.requestHwid = async () => {
-  const btn = document.getElementById('hwid-btn');
-  const msg = document.getElementById('hwid-msg');
-  msg.style.display = 'none';
-  btn.disabled = true; btn.textContent = 'Submitting…';
-  try {
-    // Check for recent pending request
-    const q = query(collection(db, 'hwid_resets'), where('uid', '==', currentUser.uid), where('status', '==', 'pending'));
-    const existing = await getDocs(q);
-    if (!existing.empty) { showMsg(msg, 'err', 'You already have a pending reset request.'); return; }
-    await addDoc(collection(db, 'hwid_resets'), {
-      uid: currentUser.uid, email: currentUser.email,
-      username: userData.username || '', status: 'pending',
-      requestedAt: serverTimestamp()
-    });
-    showMsg(msg, 'ok', 'Reset request submitted. An admin will process it shortly.');
-  } catch(e) {
-    showMsg(msg, 'err', e.message);
-  } finally { btn.disabled = false; btn.textContent = 'Request HWID reset'; }
-};
-
-window.doLogout = () => signOut(auth).then(() => location.href = '/login');
-
-function planFromKey(k) {
-  if (k.startsWith('SVX-BSC')) return 'basic';
-  if (k.startsWith('SVX-PRO')) return 'pro';
-  if (k.startsWith('SVX-ULT')) return 'ultimate';
-  return 'free';
-}
-
-function showMsg(el, type, text) {
-  el.className = `msg ${type}`; el.textContent = text; el.style.display = 'block';
-}
-</script>
+<div id="toast"><i></i><span id="toast-txt"></span></div>
+<script type="module" src="/portal/portal.js?v=1"></script>
 </body>
 </html>

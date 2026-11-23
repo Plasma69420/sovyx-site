@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Sovyx — The shop built for resellers.</title>
+<title>Sovyx — Licensing for the software you ship</title>
+<meta name="description" content="License keys, HWID locks, sign-in and live sessions for your software through one SDK or REST API."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
@@ -285,171 +286,139 @@ footer{border-top:1px solid var(--b);padding:22px 56px;display:flex;align-items:
 /* RESPONSIVE */
 @media(max-width:1000px){.hero{grid-template-columns:1fr;min-height:auto}.hero-left{padding:112px 32px 52px;border-right:none;border-bottom:1px solid var(--b)}.hero-right{height:380px}.bento{grid-template-columns:1fr 1fr}.bcard.span2{grid-column:span 1}.price-grid{grid-template-columns:1fr 1fr}.reseller-3col{grid-template-columns:1fr}}
 @media(max-width:680px){nav{padding:0 16px}.nav-links{display:none}.section{padding:60px 24px}.cta-band,.footer{padding-left:24px;padding-right:24px}.bento{grid-template-columns:1fr}.price-grid{grid-template-columns:1fr}.reviews-grid{grid-template-columns:1fr}.hero-left{padding:96px 24px 44px}.t-row,.t-row-head{grid-template-columns:1.5fr 1fr 1fr}.t-row>:nth-child(n+4),.t-row-head>:nth-child(n+4){display:none}.app-body{grid-template-columns:1fr}.app-sidebar{display:none}}
+/* ===== NEW NAV + HERO ===== */
+nav.nx{height:52px;padding:0 max(28px,calc((100vw - 1180px)/2))}
+.nx-l{display:flex;align-items:center;gap:28px}
+.nx .nav-links{gap:24px}
+.nx-login{font-size:13px;font-weight:500;color:var(--muted);padding:6px 10px;transition:color .15s}
+.nx-login:hover{color:var(--text)}
+.nx-signup{display:inline-flex;align-items:center;padding:6px 14px;border-radius:8px;background:#f4f4f5;color:#0a0a0a;font-size:13px;font-weight:600;transition:background .15s,transform .15s}
+.nx-signup:hover{background:#fff;transform:translateY(-1px)}
+.hx{position:relative;overflow:hidden;padding:150px 24px 0;text-align:center;border-bottom:1px solid var(--b)}
+.hx-beam{position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:900px;height:760px;pointer-events:none;
+  background:radial-gradient(ellipse 22% 60% at 50% 0%,rgba(255,255,255,.16),rgba(255,255,255,.04) 45%,transparent 70%),
+             radial-gradient(ellipse 50% 40% at 50% 10%,rgba(255,255,255,.05),transparent 70%)}
+.hx-inner{position:relative;max-width:960px;margin:0 auto}
+.hx-pill{display:inline-flex;align-items:center;gap:7px;padding:5px 12px 5px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--b2);font-size:12px;font-weight:600;color:var(--text);margin-bottom:26px;transition:border-color .15s}
+.hx-pill:hover{border-color:var(--b3)}
+.hx-dot{width:6px;height:6px;border-radius:50%;background:var(--red);box-shadow:0 0 8px rgba(225,29,72,.9)}
+.hx h1{font-size:clamp(36px,5.6vw,60px);font-weight:700;letter-spacing:-2.2px;line-height:1.04;margin-bottom:20px}
+.hx p{font-size:15.5px;line-height:1.65;color:var(--muted);max-width:640px;margin:0 auto 30px}
+.hx-cta{display:flex;gap:10px;justify-content:center;align-items:center}
+.hx-big{padding:10px 18px;font-size:14px}
+.hx-ghost{padding:10px 16px;font-size:14px;font-weight:600;color:var(--text);border-radius:8px;transition:background .15s}
+.hx-ghost:hover{background:rgba(255,255,255,.05)}
+.hx-demo-label{position:relative;max-width:1080px;margin:70px auto 12px;text-align:right;font-size:12px;color:var(--muted)}
+.hx-live{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:7px;vertical-align:middle;box-shadow:0 0 6px rgba(62,207,142,.8)}
+.hx-frame{position:relative;display:block;max-width:1080px;margin:0 auto;padding:44px 44px 0;border-radius:14px 14px 0 0;
+  background:linear-gradient(180deg,#3b3f6e 0%,#5a4d7a 45%,#b4566a 80%,#e0874f 100%);transition:transform .3s}
+.hx-frame:hover{transform:translateY(-3px)}
+.dm{display:grid;grid-template-columns:190px 1fr;background:#0b0b0b;border:1px solid rgba(255,255,255,.08);border-bottom:none;border-radius:10px 10px 0 0;height:440px;overflow:hidden;text-align:left;font-size:11px}
+.dm-side{border-right:1px solid rgba(255,255,255,.06);padding:14px 10px;color:#8a8a8a}
+.dm-logo{display:flex;align-items:center;gap:7px;color:#ededed;font-weight:700;font-size:13px;padding:0 6px 12px}
+.dm-logo img{width:16px;height:16px;object-fit:contain}
+.dm-ws{display:flex;align-items:center;gap:7px;color:#ededed;font-weight:600;padding:6px;border:1px solid rgba(255,255,255,.06);border-radius:7px;margin-bottom:6px}
+.dm-av{width:18px;height:18px;border-radius:5px;background:#1f1f1f;display:grid;place-items:center;font-size:9px}
+.dm-caret{margin-left:auto;color:#555}
+.dm-sec{font-size:9.5px;color:#4a4a4a;padding:10px 6px 4px}
+.dm-i{display:flex;align-items:center;padding:5px 6px;border-radius:6px}
+.dm-i.on{background:rgba(255,255,255,.07);color:#ededed}
+.dm-i span{margin-left:auto;color:#4a4a4a}
+.dm-i em{margin-left:auto;font-style:normal;font-size:8.5px;font-weight:600;color:#fb7185}
+.dm-i em.pro{color:#60a5fa}
+.dm-main{padding:18px 32px;color:#ededed}
+.dm-crumb{font-size:10px;color:#666;margin-bottom:18px}
+.dm-crumb b{color:#bbb;font-weight:500}
+.dm-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.dm-head h3{font-size:22px;font-weight:700;letter-spacing:-.6px}
+.dm-btn{background:#f4f4f5;color:#0a0a0a;font-weight:600;font-size:10px;padding:5px 11px;border-radius:999px}
+.dm-stats{display:grid;grid-template-columns:repeat(4,1fr);margin-bottom:26px}
+.dm-stats div{padding:0 16px;border-left:1px solid rgba(255,255,255,.06)}
+.dm-stats div:first-child{border-left:none;padding-left:0}
+.dm-stats small{display:block;color:#777;font-size:10px}
+.dm-stats small i{display:inline-block;width:5px;height:5px;border-radius:50%;background:#3ecf8e;margin-left:4px;vertical-align:middle}
+.dm-stats b{display:block;font-size:24px;font-weight:600;letter-spacing:-.6px;margin:6px 0 2px}
+.dm-stats u{text-decoration:none;color:#3ecf8e;font-size:9.5px}
+.dm-chart-h{display:flex;justify-content:space-between;margin-bottom:8px}
+.dm-chart-h span{color:#666;font-size:10px;border:1px solid rgba(255,255,255,.08);padding:2px 8px;border-radius:6px}
+.dm-tabs{display:flex;gap:14px;color:#555;font-size:10px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:12px}
+.dm-tabs span{padding-bottom:6px}
+.dm-tabs .on{color:#ededed;border-bottom:1px solid #ededed}
+.dm-chart{display:flex;align-items:flex-end;gap:28px;height:150px;padding:0 20px;border-bottom:1px solid rgba(255,255,255,.06)}
+.dm-chart i{flex:1;border-radius:3px 3px 0 0;background:linear-gradient(180deg,#d9d9d9,#3a3a3a)}
+@media(max-width:820px){
+  .nx .nav-links{display:none}
+  .hx{padding-top:120px}
+  .hx-frame{padding:18px 18px 0}
+  .dm{grid-template-columns:1fr;height:360px}
+  .dm-side{display:none}
+  .dm-stats{grid-template-columns:repeat(2,1fr);row-gap:12px}
+  .dm-stats div:nth-child(3){border-left:none;padding-left:0}
+}
 </style>
 </head>
 <body>
 
-<nav id="nav">
-  <a class="logo" href="/"><img class="logo-mark" src="logo.webp?v=3" alt="" width="30" height="30"/>sovyx</a>
-  <ul class="nav-links">
-    <li><a href="#pricing">Pricing</a></li>
-    <li><a href="/docs">Docs</a></li>
-    <li><a href="/integrations">Integrations</a></li>
-    <li><a href="/updates">Updates</a></li>
-  </ul>
+<nav id="nav" class="nx">
+  <div class="nx-l">
+    <a class="logo" href="/"><img class="logo-mark" src="/logo.webp?v=3" alt="" width="26" height="26"/></a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="/docs">Docs</a></li>
+      <li><a href="/updates">Updates</a></li>
+    </ul>
+  </div>
   <div class="nav-actions">
-    <a class="btn btn-ghost" href="/login">Log in</a>
-    <a class="btn btn-red" href="/login">Get started</a>
+    <a class="nx-login" href="/login">Log in</a>
+    <a class="nx-signup" href="/login?signup">Sign up</a>
   </div>
 </nav>
 
 <!-- HERO -->
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-inner">
-    <div class="hero-badge"><span class="hero-badge-dot"></span>Sovyx is live — just launched</div>
-    <h1>The shop behind your<br>reselling business.</h1>
-    <p class="hero-desc">Stock, sell, and automate digital goods — keys, accounts, subscriptions — through your own branded shop, a REST API, or a Discord bot. Everything ships in under four seconds.</p>
-    <div class="hero-actions">
-      <a class="btn btn-white" href="/login">Start for free</a>
-      <a class="btn btn-ghost" href="/docs">Read the docs</a>
-    </div>
-    <div class="hero-meta">
-      <div class="meta-item"><div class="meta-num" data-count="18400" data-suffix="+">18,400+</div><div class="meta-label">Orders fulfilled</div></div>
-      <div class="meta-item"><div class="meta-num" data-count="4200" data-suffix="+">4,200+</div><div class="meta-label">Active resellers</div></div>
-      <div class="meta-item"><div class="meta-num">&lt; 4s</div><div class="meta-label">Avg delivery</div></div>
+<section class="hx">
+  <div class="hx-beam"></div>
+  <div class="hx-inner">
+    <a class="hx-pill" href="/updates"><span class="hx-dot"></span>Sovyx is live <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    <h1>Licensing for the software you ship.</h1>
+    <p>License keys, HWID locks, sign-in and live sessions through one SDK or REST API. Every running copy stays connected, so you can push settings, revoke access or shut it down from your dashboard.</p>
+    <div class="hx-cta">
+      <a class="nx-signup hx-big" href="/login?signup">Start for free</a>
+      <a class="hx-ghost" href="/docs">Read the docs</a>
     </div>
   </div>
 
-  <div class="hero-visual">
-    <div class="app-chrome">
-        <div class="chrome-dot" style="background:#ff5f56"></div>
-        <div class="chrome-dot" style="background:#febc2e"></div>
-        <div class="chrome-dot" style="background:#27c93f"></div>
-        <div class="chrome-url">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          app.sovyx.cc
+  <div class="hx-demo-label"><span class="hx-live"></span>Live preview, click to open your own panel</div>
+  <a class="hx-frame" href="/login?signup" aria-label="Open the Sovyx panel">
+    <div class="dm">
+      <aside class="dm-side">
+        <div class="dm-logo"><img src="/logo.webp?v=3" alt=""/>Sovyx</div>
+        <div class="dm-ws"><span class="dm-av">N</span>Nebula Loader<span class="dm-caret">⌄</span></div>
+        <div class="dm-sec">Workspace</div>
+        <div class="dm-i on">Overview</div><div class="dm-i">Applications<span>3</span></div>
+        <div class="dm-sec">Application</div>
+        <div class="dm-i">Licenses</div><div class="dm-i">Users</div><div class="dm-i">Sessions</div>
+        <div class="dm-sec">Development</div>
+        <div class="dm-i">API keys</div><div class="dm-i">Webhooks<em class="pro">Pro</em></div><div class="dm-i">Variables<em class="pro">Pro</em></div>
+        <div class="dm-sec">Organization</div>
+        <div class="dm-i">Reseller panel<em>Ultimate</em></div><div class="dm-i">Discord bot<em>Ultimate</em></div>
+      </aside>
+      <div class="dm-main">
+        <div class="dm-crumb">Workspace / <b>Overview</b></div>
+        <div class="dm-head"><h3>Overview</h3><span class="dm-btn">+ New application</span></div>
+        <div class="dm-stats">
+          <div><small>Active sessions <i></i></small><b>63</b></div>
+          <div><small>Total users</small><b>1,284</b><u>↗ 10.3%</u></div>
+          <div><small>Total licenses</small><b>847</b><u>↗ 9.7%</u></div>
+          <div><small>Requests today</small><b>4,231</b></div>
         </div>
-      </div>
-      <div class="app-body">
-        <div class="app-sidebar">
-          <div class="sb-logo">
-            <div class="sb-logo-mark"></div>
-            <div class="sb-logo-name">sovyx</div>
-          </div>
-          <div class="wk-sel">
-            <div class="wk-av">M</div>
-            <div class="wk-name">my-shop</div>
-            <div class="wk-cnt">3</div>
-          </div>
-          <div class="sidebar-sec">
-            <div class="sidebar-label">Workspace</div>
-            <div class="sidebar-item active">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-              Overview
-            </div>
-            <div class="sidebar-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-              Orders <span class="sb-badge sb-num">12</span>
-            </div>
-            <div class="sidebar-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="3.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
-              Stock
-            </div>
-            <div class="sidebar-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>
-              Webhooks
-            </div>
-          </div>
-          <div class="sidebar-sec">
-            <div class="sidebar-label">Development</div>
-            <div class="sidebar-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-              API Keys
-            </div>
-            <div class="sidebar-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-              Discord bot <span class="sb-badge sb-red">New</span>
-            </div>
-          </div>
-          <div class="sidebar-sec">
-            <div class="sidebar-label">Management</div>
-            <div class="sidebar-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-              Resellers
-            </div>
-            <div class="sidebar-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
-              Reseller panel
-            </div>
-          </div>
-        </div>
-        <div class="app-main">
-          <div class="app-breadcrumb">Workspace / <span>Overview</span></div>
-          <div class="app-title-row">
-            <div class="app-title">Overview</div>
-            <button class="app-new-btn">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Add stock
-            </button>
-          </div>
-          <div class="stat-row">
-            <div class="scard">
-              <div class="scard-label">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
-                Live orders
-              </div>
-              <div class="scard-num">63</div>
-              <div class="scard-delta" style="color:var(--green)">â†‘ 8.4%</div>
-            </div>
-            <div class="scard">
-              <div class="scard-label">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                Total orders
-              </div>
-              <div class="scard-num">18,412</div>
-              <div class="scard-delta" style="color:var(--green)">â†‘ 10.3%</div>
-            </div>
-            <div class="scard">
-              <div class="scard-label">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="3.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
-                Stock units
-              </div>
-              <div class="scard-num">3,847</div>
-              <div class="scard-delta" style="color:var(--yellow)">â†“ 2.1%</div>
-            </div>
-            <div class="scard">
-              <div class="scard-label">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                API calls
-              </div>
-              <div class="scard-num">4,231</div>
-              <div class="scard-delta" style="color:var(--green)">â†‘ 9.7%</div>
-            </div>
-          </div>
-          <div class="chart-card">
-            <div class="chart-top">
-              <div class="chart-title">Activity</div>
-              <div class="chart-filter">Last 7 days</div>
-            </div>
-            <div class="chart-tabs">
-              <div class="chart-tab on">Orders</div>
-              <div class="chart-tab">Revenue</div>
-              <div class="chart-tab">API calls</div>
-            </div>
-            <div class="bars">
-              <div class="bar" style="height:38%"></div>
-              <div class="bar" style="height:50%"></div>
-              <div class="bar" style="height:44%"></div>
-              <div class="bar" style="height:65%"></div>
-              <div class="bar" style="height:58%"></div>
-              <div class="bar hi" style="height:80%"></div>
-              <div class="bar hi" style="height:92%"></div>
-            </div>
-          </div>
-        </div>
+        <div class="dm-chart-h"><b>Activity over time</b><span>Last 7 days</span></div>
+        <div class="dm-tabs"><span class="on">Sessions</span><span>Users</span><span>Licenses</span></div>
+        <div class="dm-chart"><i style="height:52%"></i><i style="height:56%"></i><i style="height:62%"></i><i style="height:70%"></i><i style="height:67%"></i><i style="height:78%"></i><i style="height:84%"></i></div>
       </div>
     </div>
+  </a>
 </section>
 
 <hr class="divide"/>
@@ -487,7 +456,7 @@ footer{border-top:1px solid var(--b);padding:22px 56px;display:flex;align-items:
 <hr class="divide"/>
 
 <!-- BENTO -->
-<section class="section">
+<section class="section" id="features">
   <div class="sec-label reveal">Features</div>
   <h2 class="sec-h reveal d1">Built to run itself.</h2>
   <p class="sec-p reveal d2">Order comes in. Stock is reserved. Key hits the buyer. Webhook fires. All in under four seconds, no manual step ever.</p>
@@ -581,7 +550,7 @@ footer{border-top:1px solid var(--b);padding:22px 56px;display:flex;align-items:
 <section class="section" id="pricing">
   <div class="sec-label reveal">Pricing</div>
   <h2 class="sec-h reveal d1">Simple pricing.</h2>
-  <p class="sec-p reveal d2">Start free. No card required. Scale when you're ready.</p>
+  <p class="sec-p reveal d2">Start free. No card required. Upgrade when your software takes off.</p>
   <div class="billing-toggle-row reveal">
     <span class="tog-label on" id="lbl-m">Monthly</span>
     <label class="tog"><input type="checkbox" id="billing-cb" onchange="switchBilling(this)"/><span class="tog-track"></span><span class="tog-thumb"></span></label>
@@ -589,10 +558,10 @@ footer{border-top:1px solid var(--b);padding:22px 56px;display:flex;align-items:
     <span class="save-tag">Save 20%</span>
   </div>
   <div class="price-grid">
-    <div class="pcard reveal"><div class="p-tier-row"><div class="p-tier">Free</div></div><div class="p-tag">Explore the shop. No card needed.</div><div class="p-amount">$0</div><div class="p-unit">forever</div><hr class="p-div"/><div class="p-feats"><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>5 orders / month</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Instant delivery</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>7-day warranty</div><div class="p-feat"><span class="dash">—</span>Reseller pricing</div><div class="p-feat"><span class="dash">—</span>API access</div></div><a class="btn btn-ghost p-cta" href="/login">Get started</a></div>
-    <div class="pcard reveal d1"><div class="p-tier-row"><div class="p-tier">Sovyx Pro</div></div><div class="p-tag">For regular buyers who need more room.</div><div class="p-amount"><sub>$</sub><span class="pv" data-m="4.99" data-a="3.99">4.99</span></div><div class="p-unit">per month</div><hr class="p-div"/><div class="p-feats"><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>50 orders / month</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Instant delivery</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>30-day warranty</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Basic API</div><div class="p-feat"><span class="dash">—</span>Reseller pricing</div></div><a class="btn btn-ghost p-cta" href="/login">Get started</a></div>
-    <div class="pcard featured reveal d2"><div class="p-tier-row"><div class="p-tier">Sovyx Ultra</div><span class="p-pop">Popular</span></div><div class="p-tag">Best margins. Built for serious resellers.</div><div class="p-amount"><sub>$</sub><span class="pv" data-m="14.99" data-a="11.99">14.99</span></div><div class="p-unit">per month</div><hr class="p-div"/><div class="p-feats"><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>500 orders / month</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Instant delivery</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>60-day warranty</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Full API + webhooks</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Reseller pricing</div></div><a class="btn btn-red p-cta" href="/login">Get started</a></div>
-    <div class="pcard reveal d3"><div class="p-tier-row"><div class="p-tier">Sovyx Elite</div></div><div class="p-tag">Unlimited orders, SLA, dedicated manager.</div><div class="p-amount"><sub>$</sub><span class="pv" data-m="24.99" data-a="19.99">24.99</span></div><div class="p-unit">per month</div><hr class="p-div"/><div class="p-feats"><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Unlimited orders</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Instant delivery</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>90-day warranty</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Full API + webhooks</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Dedicated manager</div></div><a class="btn btn-ghost p-cta" href="/login">Get started</a></div>
+    <div class="pcard reveal"><div class="p-tier-row"><div class="p-tier">Free</div></div><div class="p-tag">Try Sovyx on one project.</div><div class="p-amount">$0</div><div class="p-unit">forever</div><hr class="p-div"/><div class="p-feats"><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>1 application</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>25 licenses</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Users &amp; live sessions</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>HWID lock</div><div class="p-feat"><span class="dash">&mdash;</span>API keys &amp; SDK</div></div><a class="btn btn-ghost p-cta" href="/login?signup">Get started</a></div>
+    <div class="pcard reveal d1"><div class="p-tier-row"><div class="p-tier">Basic</div></div><div class="p-tag">For a single product that&#39;s selling.</div><div class="p-amount"><sub>$</sub><span class="pv" data-m="4.99" data-a="3.99">4.99</span></div><div class="p-unit">per month</div><hr class="p-div"/><div class="p-feats"><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>2 applications</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>1,000 licenses</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>API keys &amp; C++ SDK</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>HWID lock &amp; resets</div><div class="p-feat"><span class="dash">&mdash;</span>Webhooks &amp; variables</div></div><a class="btn btn-ghost p-cta" href="/login?signup">Get started</a></div>
+    <div class="pcard featured reveal d2"><div class="p-tier-row"><div class="p-tier">Pro</div><span class="p-pop">Popular</span></div><div class="p-tag">Automate everything around your software.</div><div class="p-amount"><sub>$</sub><span class="pv" data-m="14.99" data-a="11.99">14.99</span></div><div class="p-unit">per month</div><hr class="p-div"/><div class="p-feats"><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>5 applications</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>10,000 licenses</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Webhooks &amp; server variables</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>HWID / IP blacklist</div><div class="p-feat"><span class="dash">&mdash;</span>Reseller panel</div></div><a class="btn btn-red p-cta" href="/login?signup">Get started</a></div>
+    <div class="pcard reveal d3"><div class="p-tier-row"><div class="p-tier">Ultimate</div></div><div class="p-tag">Run a reseller network at scale.</div><div class="p-amount"><sub>$</sub><span class="pv" data-m="24.99" data-a="19.99">24.99</span></div><div class="p-unit">per month</div><hr class="p-div"/><div class="p-feats"><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Unlimited applications</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Unlimited licenses</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Reseller panel</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Discord bot</div><div class="p-feat"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Everything in Pro</div></div><a class="btn btn-ghost p-cta" href="/login?signup">Get started</a></div>
   </div>
 </section>
 
@@ -614,8 +583,8 @@ footer{border-top:1px solid var(--b);padding:22px 56px;display:flex;align-items:
 <!-- CTA -->
 <section class="cta-band">
   <div class="cta-glow"></div>
-  <h2 class="reveal">Start selling today.</h2>
-  <p class="reveal d1">Sign up in 30 seconds. No card required. Your first 5 orders are on us.</p>
+  <h2 class="reveal">Protect your software today.</h2>
+  <p class="reveal d1">Create an account in 30 seconds. Free plan included, no card required.</p>
   <div class="cta-row reveal d2">
     <a class="btn btn-red" href="/login">Sign up free <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
     <a class="btn btn-ghost" href="/docs">View docs</a>
