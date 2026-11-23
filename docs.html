@@ -1,601 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Docs — Sovyx</title>
+<meta name="description" content="How to protect your software with Sovyx: keys, HWID locks, sessions and the sign-in API."/>
+<link rel="icon" href="/logo.webp"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<style>
-:root{--bg:#07070b;--s1:#0d0d14;--s2:#131320;--b:rgba(255,255,255,.055);--b2:rgba(255,255,255,.11);--red:#e11d48;--pink:#fb7185;--text:#ededf0;--muted:#6b6b80;--dim:#35354a;--green:#3ecf8e;--blue:#60a5fa;--yellow:#fbbf24}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:'Inter',system-ui,sans-serif;font-feature-settings:'ss01';-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--text);line-height:1}
-a{text-decoration:none;color:inherit}
-
-/* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:rgba(7,7,11,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--b)}
-.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;letter-spacing:-.3px}
-.logo-mark{display:block;width:30px;height:30px;flex-shrink:0;object-fit:contain;mix-blend-mode:screen}
-.nav-links{display:flex;gap:24px;list-style:none}
-.nav-links a{font-size:13.5px;font-weight:500;color:var(--muted);transition:color .2s}
-.nav-links a:hover,.nav-links a.active{color:var(--text)}
-.nav-search{display:flex;align-items:center;gap:8px;padding:5px 12px;border-radius:7px;border:1px solid var(--b2);background:rgba(255,255,255,.03);color:var(--dim);font-size:13px;cursor:pointer;transition:border-color .2s}
-.nav-search:hover{border-color:rgba(255,255,255,.18)}
-.nav-search kbd{font-size:11px;padding:1px 5px;border-radius:4px;background:var(--s2);border:1px solid var(--b2);color:var(--dim)}
-.nav-right{display:flex;align-items:center;gap:10px}
-.btn-sm{padding:6px 14px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .2s}
-.btn-ghost-sm{background:transparent;color:var(--muted);border:1px solid var(--b2)}
-.btn-ghost-sm:hover{color:var(--text);border-color:rgba(255,255,255,.2)}
-.btn-red-sm{background:var(--red);color:#fff;box-shadow:0 0 16px rgba(225,29,72,.25)}
-.btn-red-sm:hover{background:#f43f5e}
-
-/* ── LAYOUT ── */
-.docs-layout{display:grid;grid-template-columns:240px 1fr 180px;min-height:calc(100vh - 52px);margin-top:52px}
-
-/* ── LEFT SIDEBAR ── */
-.docs-sidebar{position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;border-right:1px solid var(--b);padding:20px 0;scrollbar-width:thin;scrollbar-color:var(--dim) transparent}
-.docs-sidebar::-webkit-scrollbar{width:4px}
-.docs-sidebar::-webkit-scrollbar-track{background:transparent}
-.docs-sidebar::-webkit-scrollbar-thumb{background:var(--dim);border-radius:2px}
-.sb-category{padding:12px 20px 6px;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim)}
-.sb-link{display:flex;align-items:center;gap:8px;padding:6px 20px;font-size:13px;color:var(--muted);cursor:pointer;transition:color .2s,background .2s;border-radius:0}
-.sb-link:hover{color:var(--text);background:rgba(255,255,255,.03)}
-.sb-link.active{color:var(--text);font-weight:600;background:rgba(225,29,72,.07)}
-.sb-link.active::before{content:'';position:absolute;left:0;width:2px;height:28px;background:var(--red);border-radius:0 2px 2px 0}
-.sb-link{position:relative}
-.method{font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 5px;border-radius:4px;text-transform:uppercase;flex-shrink:0}
-.m-get{background:rgba(62,207,142,.12);color:var(--green)}
-.m-post{background:rgba(96,165,250,.12);color:var(--blue)}
-.m-put{background:rgba(251,191,36,.12);color:var(--yellow)}
-.m-del{background:rgba(225,29,72,.12);color:var(--red)}
-
-/* ── MAIN CONTENT ── */
-.docs-content{padding:48px 60px;max-width:780px;min-height:100%}
-.doc-next-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid var(--b2);font-size:13px;color:var(--muted);float:right;margin-top:4px;transition:all .2s}
-.doc-next-btn:hover{color:var(--text);border-color:rgba(255,255,255,.2)}
-.doc-h1{font-size:32px;font-weight:800;letter-spacing:-1px;margin-bottom:12px;clear:both}
-.doc-lead{font-size:16px;color:var(--muted);line-height:1.65;margin-bottom:28px}
-.doc-tags{display:flex;gap:8px;margin-bottom:36px}
-.doc-tag{font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:6px;background:var(--s1);border:1px solid var(--b);color:var(--muted)}
-
-/* quick-start cards */
-.qs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:48px}
-.qs-card{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:20px;cursor:default;transition:border-color .2s,background .2s}
-.qs-card:hover{border-color:var(--b2);background:var(--s2)}
-.qs-card-icon{color:var(--muted);margin-bottom:12px}
-.qs-card-title{font-size:14px;font-weight:700;margin-bottom:7px}
-.qs-card-desc{font-size:13px;color:var(--muted);line-height:1.55}
-
-/* sections */
-.doc-section{margin-bottom:48px}
-.doc-h2{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:14px;scroll-margin-top:80px}
-.doc-h3{font-size:16px;font-weight:700;margin-bottom:10px;scroll-margin-top:80px}
-.doc-p{font-size:14.5px;color:rgba(237,237,240,.75);line-height:1.75;margin-bottom:16px}
-.doc-ol,.doc-ul{padding-left:20px;margin-bottom:16px}
-.doc-ol li,.doc-ul li{font-size:14.5px;color:rgba(237,237,240,.75);line-height:1.75;margin-bottom:6px}
-
-/* code */
-.code-block{position:relative;margin:20px 0;border-radius:10px;background:var(--s1);border:1px solid var(--b);overflow:hidden}
-.code-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--b);background:rgba(255,255,255,.02)}
-.code-filename{font-size:12px;color:var(--dim);font-family:'JetBrains Mono',monospace}
-.copy-btn{font-size:11px;color:var(--dim);background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:5px;border:1px solid var(--b2);font-family:inherit;transition:color .2s,border-color .2s}
-.copy-btn:hover{color:var(--text);border-color:rgba(255,255,255,.2)}
-.code-body{padding:18px 20px;overflow-x:auto}
-pre{font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.7;color:rgba(237,237,240,.8)}
-.c-muted{color:var(--dim)}
-.c-str{color:#a3e635}
-.c-kw{color:var(--pink)}
-.c-fn{color:var(--blue)}
-.c-num{color:var(--yellow)}
-.c-comment{color:var(--dim);font-style:italic}
-
-/* callout */
-.callout{display:flex;gap:12px;padding:14px 16px;border-radius:10px;margin:20px 0;font-size:13.5px;line-height:1.6}
-.callout-warn{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);color:rgba(237,237,240,.75)}
-.callout-info{background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.2);color:rgba(237,237,240,.75)}
-.callout-icon{flex-shrink:0;margin-top:1px}
-
-/* table */
-.doc-table-wrap{overflow-x:auto;margin:20px 0}
-.doc-table{width:100%;border-collapse:collapse;font-size:13.5px}
-.doc-table th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--b2)}
-.doc-table td{padding:10px 14px;border-bottom:1px solid var(--b);color:rgba(237,237,240,.7);vertical-align:top}
-.doc-table tr:last-child td{border-bottom:none}
-.doc-table code{font-family:'JetBrains Mono',monospace;font-size:11.5px;padding:2px 6px;background:var(--s2);border-radius:4px;border:1px solid var(--b2)}
-
-/* inline code */
-p code,li code{font-family:'JetBrains Mono',monospace;font-size:12px;padding:2px 6px;background:var(--s2);border-radius:4px;border:1px solid var(--b2);color:var(--pink)}
-
-/* API endpoint block */
-.endpoint-block{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:20px 24px;margin:20px 0}
-.endpoint-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-.endpoint-method{font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px;text-transform:uppercase}
-.endpoint-path{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--text)}
-.endpoint-desc{font-size:13.5px;color:var(--muted);line-height:1.6;margin-bottom:16px}
-.param-label{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
-.param-row{display:flex;align-items:flex-start;gap:12px;padding:8px 0;border-top:1px solid var(--b);font-size:13px}
-.param-name{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text);min-width:120px}
-.param-type{font-size:11px;color:var(--dim);min-width:60px;padding-top:1px}
-.param-required{font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(225,29,72,.12);color:var(--red);font-weight:600}
-.param-optional{font-size:10px;padding:1px 6px;border-radius:4px;background:rgba(255,255,255,.05);color:var(--dim);font-weight:600}
-.param-desc{color:rgba(237,237,240,.6);line-height:1.5}
-
-/* ── RIGHT TOC ── */
-.docs-toc{position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;padding:28px 20px;border-left:1px solid var(--b)}
-.toc-label{font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:14px}
-.toc-link{display:block;font-size:12.5px;color:var(--dim);padding:4px 0;transition:color .2s;line-height:1.4}
-.toc-link:hover,.toc-link.active{color:var(--text)}
-.toc-link.sub{padding-left:12px;font-size:12px}
-
-@media(max-width:1100px){.docs-layout{grid-template-columns:220px 1fr}.docs-toc{display:none}}
-@media(max-width:760px){.docs-layout{grid-template-columns:1fr}.docs-sidebar{display:none}.docs-content{padding:28px 24px}}
-.site-footer{border-top:1px solid var(--b);padding:20px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.foot-logo{display:flex;align-items:center;gap:7px;font-weight:700;font-size:13.5px}
-.foot-links{list-style:none;display:flex;gap:18px;flex-wrap:wrap}
-.foot-links a{font-size:12px;color:var(--dim);transition:color .18s}
-.foot-links a:hover{color:var(--text)}
-.foot-copy{font-size:11.5px;color:var(--dim)}
-#cookie-bar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:999;background:rgba(13,13,20,.96);backdrop-filter:blur(16px);border-top:1px solid rgba(255,255,255,.11);padding:16px 48px;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.ck-text{font-size:13px;color:rgba(237,237,240,.6);max-width:640px;line-height:1.5}
-.ck-text a{color:#fb7185;text-decoration:underline}
-.ck-actions{display:flex;gap:9px;flex-shrink:0}
-.ck-btn{padding:7px 18px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:background .18s}
-.ck-accept{background:#fff;color:#07070b}.ck-accept:hover{background:#e8e8ea}
-.ck-decline{background:rgba(255,255,255,.07);color:rgba(237,237,240,.6);border:1px solid rgba(255,255,255,.11)}.ck-decline:hover{background:rgba(255,255,255,.12)}
-@media(max-width:680px){.site-footer{padding:16px 20px}#cookie-bar{padding:14px 20px}}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/assets/site.css?v=3"/>
 </head>
 <body>
-
-<!-- NAV -->
-<nav>
-  <a class="logo" href="/"><img class="logo-mark" src="/logo.webp" alt="" width="30" height="30"/>sovyx</a>
-  <ul class="nav-links">
-    <li><a href="/">Home</a></li>
-    <li><a href="/#pricing">Pricing</a></li>
-    <li><a href="/docs" class="active">Docs</a></li>
-    <li><a href="/integrations">Integrations</a></li>
-    <li><a href="/updates">Updates</a></li>
-  </ul>
-  <div class="nav-right">
-    <div class="nav-search">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      Search documentation…
-      <kbd>Ctrl K</kbd>
-    </div>
-    <a class="btn-sm btn-ghost-sm" href="/login">Log in</a>
-    <a class="btn-sm btn-red-sm" href="/login">Sign up</a>
+<nav id="nav" class="nx">
+  <div class="nx-l">
+    <a class="logo" href="/"><img class="logo-mark" src="/logo.webp?v=3" alt="Sovyx" width="26" height="26"/></a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/#features">Features</a></li>
+      <li><a href="/#pricing">Pricing</a></li>
+      <li><a href="/docs" class="on">Docs</a></li>
+      <li><a href="/updates">Updates</a></li>
+    </ul>
+  </div>
+  <div class="nav-actions">
+    <a class="nx-login" href="/login">Log in</a>
+    <a class="nx-signup" href="/login?signup">Sign up</a>
   </div>
 </nav>
+<header class="ph"><div class="ph-beam"></div><div class="ph-in"><span class="eyebrow">Documentation</span><h1>Sovyx docs</h1><p>Everything you need to protect your software with keys, device locks and live sessions.</p></div></header><div class="dx"><aside class="dx-nav" id="toc"><b>On this page</b><a href="#quickstart">Quickstart</a><a href="#concepts">Concepts</a><a class="sub" href="#applications">Applications</a><a class="sub" href="#licenses">Licenses</a><a class="sub" href="#hwid">HWID lock</a><a class="sub" href="#sessions">Sessions</a><a class="sub" href="#variables">Variables and blacklist</a><a href="#api">Sign-in API</a><a class="sub" href="#login">Login</a><a class="sub" href="#heartbeat">Heartbeat</a><a class="sub" href="#logout">Logout</a><a class="sub" href="#hwid-reset">HWID reset</a><a class="sub" href="#errors">Errors and limits</a><a href="#examples">Code examples</a><a href="#pages">Customer pages</a><a href="#plans">Plans and limits</a><a href="#bot">Discord bot</a></aside><article class="prose"><h2 id="quickstart">Quickstart</h2><p class="lead">From nothing to a protected program in about ten minutes.</p><ol class="steps-ol"><li><b>Create an account</b>Sign up at <a href="/login?signup">sovyx.cc/login</a> with email or Discord. The Free plan needs no card.</li><li><b>Create an application</b>In your dashboard open <b style="display:inline">Applications</b> and click New application. Each product you sell is its own application. Your <strong>App ID</strong> is shown in the Applications list.</li><li><b>Create licenses</b>Open Licenses and click Create licenses. Choose how many, how long (1 day to lifetime) and an optional prefix. The clock only starts on a key's first use.</li><li><b>Add the sign-in call to your software</b>Send the buyer's key and the PC's ID to <a href="#login">/api/v1/login</a>. Copy-paste examples are <a href="#examples">below</a>.</li><li><b>Publish a download page</b>Open Customer page, pick an address, upload your loader and share the link. Buyers enter their key and the download starts.</li></ol><h2 id="concepts">Concepts</h2><h3 id="applications">Applications</h3><p>An application is one product. It has its own licenses, users, sessions, variables, blacklist and customer page. The App ID is public: you put it in your software. Never put your app secret or seller key in anything you ship.</p><h3 id="licenses">Licenses</h3><p>A license is a key such as <code>NEB-7F3K-Q9XW-2MDP</code>. It is <strong>unused</strong> until someone signs in or downloads with it, then <strong>used</strong>. A <strong>banned</strong> key is refused everywhere. Length runs from 1 day to lifetime, and the countdown starts on first use. You can ban, unban, delete and export keys as CSV from the Licenses page.</p><h3 id="hwid">HWID lock</h3><p>When HWID lock is on (Settings, per application) the first login binds the key to the HWID your software sends. Any other HWID is refused until the lock is reset. It can be reset three ways:</p><ul><li><strong>You</strong>, from the Licenses or Users page.</li><li><strong>Buyers</strong>, from your customer page or the <a href="#hwid-reset">API</a>. You choose whether it is allowed and how many days they must wait between resets (0 to 365).</li><li><strong>Staff</strong> you have given a panel with the manage permission.</li></ul><div class="note"><b>Your software chooses the HWID.</b> Sovyx treats it as an opaque string of 8 to 200 characters, so use something stable for the PC, such as a hash of hardware identifiers. Because it comes from the client, a determined user can fake one. Treat the lock as a strong deterrent, not a guarantee.</div><h3 id="sessions">Sessions</h3><p>A successful login opens a session. There is one session per key: signing in again replaces the old one. Your software pings <a href="#heartbeat">/heartbeat</a> every 30 seconds. A session quiet for over a minute shows as stale. If you end a session, ban the key or the key expires, the next heartbeat fails and your software should close.</p><h3 id="variables">Variables and blacklist</h3><p><strong>Variables</strong> (Pro) are name and value pairs you set in the dashboard. Every login returns them in <code>variables</code>, so you can change a message or setting without shipping a new build. The <strong>blacklist</strong> (Pro) blocks IP addresses and HWIDs: their logins are refused with a 403.</p><div class="note warn"><b>Webhooks are not live yet.</b> You can save endpoints in the dashboard, but events are not delivered. It is on the roadmap.</div><h2 id="api">Sign-in API</h2><p>Your software talks to Sovyx with four JSON requests. Every request is a <code>POST</code> with <code>Content-Type: application/json</code>. No secret is needed in the client: the App ID is public.</p><p>Base URL: <code>https://sovyx-site-production.up.railway.app</code>. Your dashboard's API keys page always shows the current address.</p><h3 id="login">POST /api/v1/login</h3><div class="ep"><div class="ep-h"><span class="ep-m">POST</span>/api/v1/login</div><div class="ep-b"><p>Signs a key in. On the first login it starts the key's countdown and locks it to the PC. Opens a live session.</p><table class="tbl"><thead><tr><th>Field</th><th>Type</th><th></th></tr></thead><tbody><tr><td><code>appId</code></td><td>string</td><td>Your App ID. Required.</td></tr><tr><td><code>key</code></td><td>string</td><td>The buyer's key. Required.</td></tr><tr><td><code>hwid</code></td><td>string</td><td>A stable ID for this PC, 8 to 200 characters. Required.</td></tr><tr><td><code>version</code></td><td>string</td><td>Your software's version, up to 24 characters. Optional.</td></tr></tbody></table><div class="cb"><div class="cb-h"><button type="button" class="cp">Copy</button></div><pre data-lang="json">{
+  &quot;session&quot;: &quot;q8Zr…&quot;,
+  &quot;heartbeatSeconds&quot;: 30,
+  &quot;expiresAt&quot;: &quot;2026-12-23T10:12:44+00:00&quot;,
+  &quot;daysLeft&quot;: 30,
+  &quot;variables&quot;: { &quot;motd&quot;: &quot;Welcome back&quot; }
+}</pre></div></div></div><table class="tbl"><thead><tr><th>Response field</th><th>Meaning</th></tr></thead><tbody><tr><td><code>session</code></td><td>Send this with every heartbeat and logout.</td></tr><tr><td><code>heartbeatSeconds</code></td><td>How often to send a heartbeat.</td></tr><tr><td><code>expiresAt</code></td><td>When the key ends, or <code>null</code> for a lifetime key.</td></tr><tr><td><code>daysLeft</code></td><td>Whole days remaining, or <code>null</code> for lifetime.</td></tr><tr><td><code>variables</code></td><td>Your variables as an object.</td></tr></tbody></table><h3 id="heartbeat">POST /api/v1/heartbeat</h3><div class="ep"><div class="ep-h"><span class="ep-m">POST</span>/api/v1/heartbeat</div><div class="ep-b"><p>Keeps the session alive. Call it every <code>heartbeatSeconds</code>.</p><table class="tbl"><thead><tr><th>Field</th><th>Type</th><th></th></tr></thead><tbody><tr><td><code>appId</code></td><td>string</td><td>Required.</td></tr><tr><td><code>session</code></td><td>string</td><td>From login. Required.</td></tr></tbody></table><div class="cb"><div class="cb-h"><button type="button" class="cp">Copy</button></div><pre data-lang="json">{ &quot;ok&quot;: true }</pre></div></div></div><p>A <code>401</code> means the session ended. A <code>403</code> means the key was banned, removed or expired. Close your program in both cases.</p><h3 id="logout">POST /api/v1/logout</h3><div class="ep"><div class="ep-h"><span class="ep-m">POST</span>/api/v1/logout</div><div class="ep-b"><p>Ends the session. Safe to call twice.</p><table class="tbl"><thead><tr><th>Field</th><th>Type</th><th></th></tr></thead><tbody><tr><td><code>appId</code></td><td>string</td><td>Required.</td></tr><tr><td><code>session</code></td><td>string</td><td>From login. Required.</td></tr></tbody></table><div class="cb"><div class="cb-h"><button type="button" class="cp">Copy</button></div><pre data-lang="json">{ &quot;ok&quot;: true }</pre></div></div></div><h3 id="hwid-reset">POST /api/v1/hwid-reset</h3><div class="ep"><div class="ep-h"><span class="ep-m">POST</span>/api/v1/hwid-reset</div><div class="ep-b"><p>Unlocks a key from its PC so it can sign in on a new one. Also ends its session. Follows your cooldown setting.</p><table class="tbl"><thead><tr><th>Field</th><th>Type</th><th></th></tr></thead><tbody><tr><td><code>appId</code></td><td>string</td><td>Required.</td></tr><tr><td><code>key</code></td><td>string</td><td>The buyer's key. Required.</td></tr></tbody></table><div class="cb"><div class="cb-h"><button type="button" class="cp">Copy</button></div><pre data-lang="json">{ &quot;ok&quot;: true, &quot;cooldownDays&quot;: 7 }</pre></div></div></div><h3 id="errors">Errors and limits</h3><p>Errors are JSON like <code>{ "error": "That key isn't valid." }</code>.</p><table class="tbl"><thead><tr><th>Status</th><th>Meaning</th></tr></thead><tbody><tr><td><code>200</code></td><td>It worked.</td></tr><tr><td><code>400</code></td><td>A field is missing or invalid.</td></tr><tr><td><code>401</code></td><td>The key isn't valid, or the session has ended.</td></tr><tr><td><code>403</code></td><td>The key is banned or expired, the IP or HWID is blacklisted, the key is locked to another PC, or the action is turned off.</td></tr><tr><td><code>404</code></td><td>Unknown application.</td></tr><tr><td><code>409</code></td><td>Nothing to reset: the key isn't locked to a PC yet.</td></tr><tr><td><code>429</code></td><td>Too many attempts, or the reset cooldown hasn't passed. Logins and resets are limited to 30 per IP every 5 minutes.</td></tr><tr><td><code>503</code></td><td>Down for maintenance, or the product isn't set up yet.</td></tr></tbody></table><h2 id="examples">Code examples</h2><p>These show the whole flow: sign in, heartbeat on a timer, sign out. Pick your language.</p><div class="cb"><div class="cb-h"><button type="button" data-lang="python">Python</button><button type="button" data-lang="csharp">C#</button><button type="button" data-lang="cpp">C++</button><button type="button" data-lang="curl">curl</button><button type="button" class="cp">Copy</button></div><pre data-lang="python">import hashlib, os, platform, threading, time, uuid
+import requests
 
-<div class="docs-layout">
+API = &quot;https://sovyx-site-production.up.railway.app&quot;
+APP_ID = &quot;YOUR_APP_ID&quot;          # from the Applications page
 
-  <!-- ── LEFT SIDEBAR ── -->
-  <aside class="docs-sidebar">
 
-    <div class="sb-category">Get started</div>
-    <a class="sb-link active" href="#introduction">Introduction</a>
+def hwid() -&gt; str:
+    # Any stable string for this PC, 8-200 characters.
+    return hashlib.sha256((str(uuid.getnode()) + platform.node()).encode()).hexdigest()
 
-    <div class="sb-category">Authentication</div>
-    <a class="sb-link" href="#auth">API Keys</a>
-    <a class="sb-link" href="#auth">OAuth 2.0</a>
-    <a class="sb-link" href="#rate-limits">Rate limits</a>
 
-    <div class="sb-category">Using the API</div>
-    <a class="sb-link" href="#requests">Making requests</a>
-    <a class="sb-link" href="#errors">Error codes</a>
-    <a class="sb-link" href="#webhooks">Webhooks</a>
+def post(path, body):
+    r = requests.post(API + path, json=body, timeout=10)
+    return r.status_code, r.json()
 
-    <div class="sb-category">Reseller</div>
-    <a class="sb-link" href="#reseller-overview">Reseller API</a>
-    <a class="sb-link" href="#reseller-overview">Reseller panel</a>
 
-    <div class="sb-category">API Reference</div>
-    <a class="sb-link" href="#overview">Overview</a>
+key = input(&quot;Key: &quot;).strip()
+code, info = post(&quot;/api/v1/login&quot;, {&quot;appId&quot;: APP_ID, &quot;key&quot;: key, &quot;hwid&quot;: hwid(), &quot;version&quot;: &quot;1.0.0&quot;})
+if code != 200:
+    raise SystemExit(info[&quot;error&quot;])              # wrong key, banned, expired, other PC...
+print(f&quot;Signed in. {info[&#x27;daysLeft&#x27;]} days left.&quot;)
 
-    <div class="sb-category">Quota</div>
-    <a class="sb-link" href="#quota"><span class="method m-get">GET</span>Plan &amp; usage</a>
 
-    <div class="sb-category">Orders</div>
-    <a class="sb-link" href="#list-orders"><span class="method m-get">GET</span>List orders</a>
-    <a class="sb-link" href="#create-order"><span class="method m-post">POST</span>Create order</a>
-    <a class="sb-link" href="#get-order"><span class="method m-get">GET</span>Get an order</a>
-    <a class="sb-link" href="#cancel-order"><span class="method m-del">DEL</span>Cancel order</a>
+def keep_alive():
+    while True:
+        time.sleep(info[&quot;heartbeatSeconds&quot;])
+        code, reply = post(&quot;/api/v1/heartbeat&quot;, {&quot;appId&quot;: APP_ID, &quot;session&quot;: info[&quot;session&quot;]})
+        if code != 200:                          # session ended, key banned or expired
+            print(reply[&quot;error&quot;])
+            os._exit(1)
 
-    <div class="sb-category">Stock</div>
-    <a class="sb-link" href="#list-stock"><span class="method m-get">GET</span>List stock</a>
-    <a class="sb-link" href="#stock-category"><span class="method m-get">GET</span>Stock by category</a>
 
-    <div class="sb-category">Keys</div>
-    <a class="sb-link" href="#validate-key"><span class="method m-post">POST</span>Validate a key</a>
-    <a class="sb-link" href="#get-key"><span class="method m-get">GET</span>Key details</a>
+threading.Thread(target=keep_alive, daemon=True).start()
 
-    <div class="sb-category">Webhooks</div>
-    <a class="sb-link" href="#list-webhooks"><span class="method m-get">GET</span>List webhooks</a>
-    <a class="sb-link" href="#create-webhook"><span class="method m-post">POST</span>Create webhook</a>
-    <a class="sb-link" href="#delete-webhook"><span class="method m-del">DEL</span>Delete webhook</a>
+# ... run your program here ...
 
-    <div class="sb-category">Account</div>
-    <a class="sb-link" href="#profile"><span class="method m-get">GET</span>Profile</a>
-    <a class="sb-link" href="#balance"><span class="method m-get">GET</span>Balance</a>
+post(&quot;/api/v1/logout&quot;, {&quot;appId&quot;: APP_ID, &quot;session&quot;: info[&quot;session&quot;]})</pre><pre data-lang="csharp" hidden>using System.Net.Http.Json;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 
-  </aside>
+const string Api = &quot;https://sovyx-site-production.up.railway.app&quot;;
+const string AppId = &quot;YOUR_APP_ID&quot;;               // from the Applications page
+using var http = new HttpClient();
 
-  <!-- ── MAIN CONTENT ── -->
-  <main class="docs-content">
-
-    <!-- Introduction -->
-    <div id="introduction">
-      <a class="doc-next-btn" href="#auth">Authentication <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-      <h1 class="doc-h1">Introduction</h1>
-      <p class="doc-lead">Everything you need to integrate Sovyx stock delivery into your app, bot, or storefront.</p>
-      <div class="doc-tags">
-        <span class="doc-tag">REST API</span>
-        <span class="doc-tag">v1</span>
-        <span class="doc-tag">JSON</span>
-      </div>
-
-      <div class="qs-grid">
-        <div class="qs-card">
-          <div class="qs-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
-          <div class="qs-card-title">Quick start</div>
-          <div class="qs-card-desc">Make your first API call and receive stock in under 5 minutes.</div>
-        </div>
-        <div class="qs-card">
-          <div class="qs-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-          <div class="qs-card-title">Authentication</div>
-          <div class="qs-card-desc">API keys, rate limits, and security best practices.</div>
-        </div>
-        <div class="qs-card">
-          <div class="qs-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
-          <div class="qs-card-title">Reseller guide</div>
-          <div class="qs-card-desc">Place bulk orders, manage credit, and use the reseller panel.</div>
-        </div>
-        <div class="qs-card">
-          <div class="qs-card-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></div>
-          <div class="qs-card-title">Webhook events</div>
-          <div class="qs-card-desc">Get notified the moment an order is fulfilled or stock runs low.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Authentication -->
-    <div class="doc-section" id="auth">
-      <h2 class="doc-h2">Authentication</h2>
-      <p class="doc-p">Sovyx uses Bearer token authentication. All API requests must include your API key in the <code>Authorization</code> header.</p>
-
-      <div class="code-block">
-        <div class="code-topbar"><span class="code-filename">HTTP header</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body"><pre><span class="c-muted">Authorization:</span> <span class="c-str">Bearer svx_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxx</span></pre></div>
-      </div>
-
-      <p class="doc-p">You can generate and manage API keys from your dashboard under <strong>Settings → API Keys</strong>. Keys are scoped — a reseller key can only access reseller endpoints.</p>
-
-      <div class="callout callout-warn">
-        <span class="callout-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" color="#fbbf24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
-        <span><strong>Keep your key secret.</strong> Never expose it in client-side code, browser requests, or version control. Use environment variables in production.</span>
-      </div>
-
-      <h3 class="doc-h3" id="rate-limits">Rate limits</h3>
-      <div class="doc-table-wrap"><table class="doc-table">
-        <thead><tr><th>Plan</th><th>Requests / minute</th><th>Requests / day</th></tr></thead>
-        <tbody>
-          <tr><td>Free</td><td>10</td><td>500</td></tr>
-          <tr><td>Sovyx Pro</td><td>100</td><td>10,000</td></tr>
-          <tr><td>Sovyx Ultra</td><td>1,000</td><td>100,000</td></tr>
-          <tr><td>Sovyx Elite</td><td>Unlimited</td><td>Unlimited</td></tr>
-        </tbody>
-      </table></div>
-      <p class="doc-p">When you exceed your rate limit the API returns <code>429 Too Many Requests</code> with a <code>Retry-After</code> header indicating when to retry.</p>
-    </div>
-
-    <!-- Quick Start -->
-    <div class="doc-section" id="requests">
-      <h2 class="doc-h2">Quick Start</h2>
-      <p class="doc-p">The simplest way to place an order. Everything runs automatically — authenticate, pick stock, and receive keys.</p>
-
-      <div class="code-block">
-        <div class="code-topbar"><span class="code-filename">order.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body"><pre><span class="c-comment">// npm install sovyx</span>
-<span class="c-kw">import</span> { <span class="c-fn">Sovyx</span> } <span class="c-kw">from</span> <span class="c-str">'sovyx'</span>;
-
-<span class="c-kw">const</span> client = <span class="c-kw">new</span> <span class="c-fn">Sovyx</span>({
-  apiKey: process.<span class="c-fn">env</span>.<span class="c-str">SOVYX_API_KEY</span>
-});
-
-<span class="c-comment">// 1. Check available stock</span>
-<span class="c-kw">const</span> stock = <span class="c-kw">await</span> client.stock.<span class="c-fn">list</span>({
-  category: <span class="c-str">'accounts'</span>,
-  available: <span class="c-kw">true</span>
-});
-
-<span class="c-comment">// 2. Place an order</span>
-<span class="c-kw">const</span> order = <span class="c-kw">await</span> client.orders.<span class="c-fn">create</span>({
-  product_id: stock[<span class="c-num">0</span>].id,
-  quantity: <span class="c-num">1</span>,
-  deliver_to: <span class="c-str">'discord:123456789'</span>
-});
-
-console.<span class="c-fn">log</span>(order.keys);  <span class="c-comment">// ['xxxx-yyyy-zzzz']</span>
-console.<span class="c-fn">log</span>(order.status); <span class="c-comment">// 'delivered'</span></pre></div>
-      </div>
-
-      <p class="doc-p">Or use the REST API directly from any language:</p>
-
-      <div class="code-block">
-        <div class="code-topbar"><span class="code-filename">curl</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body"><pre><span class="c-fn">curl</span> -X POST https://api.sovyx.cc/v1/orders \
-  -H <span class="c-str">"Authorization: Bearer $SOVYX_API_KEY"</span> \
-  -H <span class="c-str">"Content-Type: application/json"</span> \
-  -d <span class="c-str">'{"product_id":"prod_netflix_4k","quantity":1}'</span></pre></div>
-      </div>
-    </div>
-
-    <!-- Errors -->
-    <div class="doc-section" id="errors">
-      <h2 class="doc-h2">Error Codes</h2>
-      <p class="doc-p">The API returns standard HTTP status codes. All error responses include a JSON body with <code>error.code</code> and <code>error.message</code>.</p>
-
-      <div class="doc-table-wrap"><table class="doc-table">
-        <thead><tr><th>Status</th><th>Code</th><th>Description</th></tr></thead>
-        <tbody>
-          <tr><td>400</td><td><code>bad_request</code></td><td>Missing or invalid parameters</td></tr>
-          <tr><td>401</td><td><code>unauthorized</code></td><td>Invalid or missing API key</td></tr>
-          <tr><td>403</td><td><code>forbidden</code></td><td>Insufficient plan permissions</td></tr>
-          <tr><td>404</td><td><code>not_found</code></td><td>Resource does not exist</td></tr>
-          <tr><td>409</td><td><code>out_of_stock</code></td><td>Product temporarily unavailable</td></tr>
-          <tr><td>429</td><td><code>rate_limited</code></td><td>Too many requests — back off and retry</td></tr>
-          <tr><td>500</td><td><code>internal_error</code></td><td>Server error — contact support</td></tr>
-        </tbody>
-      </table></div>
-    </div>
-
-    <!-- Webhooks -->
-    <div class="doc-section" id="webhooks">
-      <h2 class="doc-h2">Webhooks</h2>
-      <p class="doc-p">Webhooks let your server receive real-time notifications when orders are fulfilled, keys are delivered, or stock runs low. Register an HTTPS endpoint and we'll POST events to it.</p>
-
-      <h3 class="doc-h3">Event types</h3>
-      <div class="doc-table-wrap"><table class="doc-table">
-        <thead><tr><th>Event</th><th>Triggered when</th></tr></thead>
-        <tbody>
-          <tr><td><code>order.fulfilled</code></td><td>An order is completed and keys are ready</td></tr>
-          <tr><td><code>order.failed</code></td><td>An order could not be completed</td></tr>
-          <tr><td><code>key.delivered</code></td><td>A key is sent to the recipient</td></tr>
-          <tr><td><code>stock.low</code></td><td>A product falls below its alert threshold</td></tr>
-          <tr><td><code>stock.empty</code></td><td>A product goes out of stock</td></tr>
-        </tbody>
-      </table></div>
-
-      <div class="code-block">
-        <div class="code-topbar"><span class="code-filename">webhook-handler.js</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body"><pre><span class="c-kw">import</span> { <span class="c-fn">verifySignature</span> } <span class="c-kw">from</span> <span class="c-str">'sovyx'</span>;
-
-app.<span class="c-fn">post</span>(<span class="c-str">'/webhooks/sovyx'</span>, (req, res) => {
-  <span class="c-comment">// Verify the request is from Sovyx</span>
-  <span class="c-kw">const</span> sig = req.headers[<span class="c-str">'svx-signature'</span>];
-  <span class="c-kw">if</span> (!<span class="c-fn">verifySignature</span>(req.body, sig, process.env.<span class="c-str">SOVYX_WEBHOOK_SECRET</span>)) {
-    <span class="c-kw">return</span> res.<span class="c-fn">status</span>(<span class="c-num">401</span>).<span class="c-fn">end</span>();
-  }
-
-  <span class="c-kw">const</span> { event, data } = req.body;
-
-  <span class="c-kw">if</span> (event === <span class="c-str">'order.fulfilled'</span>) {
-    console.<span class="c-fn">log</span>(<span class="c-str">`Order ${data.id} fulfilled — keys: ${data.keys.join(', ')}`</span>);
-  }
-
-  res.<span class="c-fn">status</span>(<span class="c-num">200</span>).<span class="c-fn">end</span>();
-});</pre></div>
-      </div>
-    </div>
-
-    <!-- API Reference -->
-    <div class="doc-section" id="overview">
-      <h2 class="doc-h2">API Reference</h2>
-      <p class="doc-p">Base URL: <code>https://api.sovyx.cc/v1</code></p>
-      <p class="doc-p">All requests and responses use JSON. Timestamps are in ISO 8601 format (UTC).</p>
-    </div>
-
-    <!-- Create Order -->
-    <div class="doc-section" id="create-order">
-      <h3 class="doc-h3">Create order</h3>
-      <div class="endpoint-block">
-        <div class="endpoint-row">
-          <span class="endpoint-method method m-post">POST</span>
-          <span class="endpoint-path">/v1/orders</span>
-        </div>
-        <p class="endpoint-desc">Place a new order for one or more units of a product. Keys are delivered automatically on fulfillment.</p>
-        <div class="param-label">Body parameters</div>
-        <div class="param-row">
-          <span class="param-name">product_id</span>
-          <span class="param-type">string</span>
-          <span class="param-required">required</span>
-          <span class="param-desc">The ID of the product to order. Use <code>GET /v1/stock</code> to list available products.</span>
-        </div>
-        <div class="param-row">
-          <span class="param-name">quantity</span>
-          <span class="param-type">integer</span>
-          <span class="param-required">required</span>
-          <span class="param-desc">Number of units to purchase. Must be ≥ 1. Reseller plans allow up to 500 per request.</span>
-        </div>
-        <div class="param-row">
-          <span class="param-name">deliver_to</span>
-          <span class="param-type">string</span>
-          <span class="param-optional">optional</span>
-          <span class="param-desc">Delivery target. Format: <code>discord:USER_ID</code>, <code>telegram:CHAT_ID</code>, or <code>email:addr@example.com</code>. Defaults to your account's registered Discord.</span>
-        </div>
-        <div class="param-row">
-          <span class="param-name">metadata</span>
-          <span class="param-type">object</span>
-          <span class="param-optional">optional</span>
-          <span class="param-desc">Arbitrary key-value pairs attached to the order. Useful for correlating with your own records.</span>
-        </div>
-      </div>
-
-      <div class="code-block">
-        <div class="code-topbar"><span class="code-filename">Response · 201 Created</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body"><pre>{
-  <span class="c-str">"id"</span>: <span class="c-str">"ord_01HXYZ"</span>,
-  <span class="c-str">"status"</span>: <span class="c-str">"delivered"</span>,
-  <span class="c-str">"product_id"</span>: <span class="c-str">"prod_netflix_4k"</span>,
-  <span class="c-str">"quantity"</span>: <span class="c-num">1</span>,
-  <span class="c-str">"keys"</span>: [<span class="c-str">"email@example.com:password123"</span>],
-  <span class="c-str">"delivered_at"</span>: <span class="c-str">"2026-11-22T14:03:12Z"</span>,
-  <span class="c-str">"created_at"</span>: <span class="c-str">"2026-11-22T14:03:10Z"</span>
-}</pre></div>
-      </div>
-    </div>
-
-    <!-- List Stock -->
-    <div class="doc-section" id="list-stock">
-      <h3 class="doc-h3">List stock</h3>
-      <div class="endpoint-block">
-        <div class="endpoint-row">
-          <span class="endpoint-method method m-get">GET</span>
-          <span class="endpoint-path">/v1/stock</span>
-        </div>
-        <p class="endpoint-desc">Returns all available products with their current stock levels and pricing.</p>
-        <div class="param-label">Query parameters</div>
-        <div class="param-row">
-          <span class="param-name">category</span>
-          <span class="param-type">string</span>
-          <span class="param-optional">optional</span>
-          <span class="param-desc">Filter by category. One of: <code>accounts</code>, <code>keys</code>, <code>tools</code>.</span>
-        </div>
-        <div class="param-row">
-          <span class="param-name">available</span>
-          <span class="param-type">boolean</span>
-          <span class="param-optional">optional</span>
-          <span class="param-desc">When <code>true</code>, only return products currently in stock.</span>
-        </div>
-        <div class="param-row">
-          <span class="param-name">limit</span>
-          <span class="param-type">integer</span>
-          <span class="param-optional">optional</span>
-          <span class="param-desc">Number of results per page (default: 20, max: 100).</span>
-        </div>
-      </div>
-
-      <div class="code-block">
-        <div class="code-topbar"><span class="code-filename">Response · 200 OK</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body"><pre>{
-  <span class="c-str">"data"</span>: [
-    {
-      <span class="c-str">"id"</span>: <span class="c-str">"prod_netflix_4k"</span>,
-      <span class="c-str">"name"</span>: <span class="c-str">"Netflix Premium 4K"</span>,
-      <span class="c-str">"category"</span>: <span class="c-str">"accounts"</span>,
-      <span class="c-str">"price"</span>: <span class="c-num">4.99</span>,
-      <span class="c-str">"reseller_price"</span>: <span class="c-num">2.49</span>,
-      <span class="c-str">"stock"</span>: <span class="c-num">143</span>,
-      <span class="c-str">"warranty_days"</span>: <span class="c-num">30</span>
-    }
-  ],
-  <span class="c-str">"total"</span>: <span class="c-num">42</span>,
-  <span class="c-str">"page"</span>: <span class="c-num">1</span>
-}</pre></div>
-      </div>
-    </div>
-
-    <!-- Balance -->
-    <div class="doc-section" id="balance">
-      <h3 class="doc-h3">Get balance</h3>
-      <div class="endpoint-block">
-        <div class="endpoint-row">
-          <span class="endpoint-method method m-get">GET</span>
-          <span class="endpoint-path">/v1/account/balance</span>
-        </div>
-        <p class="endpoint-desc">Returns your current credit balance and usage for the billing period.</p>
-      </div>
-      <div class="code-block">
-        <div class="code-topbar"><span class="code-filename">Response · 200 OK</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
-        <div class="code-body"><pre>{
-  <span class="c-str">"balance"</span>: <span class="c-num">47.50</span>,
-  <span class="c-str">"currency"</span>: <span class="c-str">"USD"</span>,
-  <span class="c-str">"plan"</span>: <span class="c-str">"pro"</span>,
-  <span class="c-str">"orders_this_month"</span>: <span class="c-num">34</span>,
-  <span class="c-str">"orders_limit"</span>: <span class="c-num">50</span>,
-  <span class="c-str">"reset_at"</span>: <span class="c-str">"2026-12-01T00:00:00Z"</span>
-}</pre></div>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- ── RIGHT TOC ── -->
-  <aside class="docs-toc">
-    <div class="toc-label">On this page</div>
-    <a class="toc-link" href="#introduction">Introduction</a>
-    <a class="toc-link" href="#auth">Authentication</a>
-    <a class="toc-link sub" href="#rate-limits">Rate limits</a>
-    <a class="toc-link" href="#requests">Quick Start</a>
-    <a class="toc-link" href="#errors">Error codes</a>
-    <a class="toc-link" href="#webhooks">Webhooks</a>
-    <a class="toc-link" href="#overview">API reference</a>
-    <a class="toc-link sub" href="#create-order">Create order</a>
-    <a class="toc-link sub" href="#list-stock">List stock</a>
-    <a class="toc-link sub" href="#balance">Get balance</a>
-  </aside>
-
-</div>
-
-<script>
-// Copy code buttons
-function copyCode(btn) {
-  const pre = btn.closest('.code-block').querySelector('pre');
-  navigator.clipboard.writeText(pre.innerText).then(() => {
-    btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = 'Copy', 2000);
-  });
+static string Hwid()                              // any stable string, 8-200 characters
+{
+    var raw = Environment.MachineName + Environment.UserName + Environment.ProcessorCount;
+    return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(raw)));
 }
 
-// Active TOC on scroll
-const tocLinks = document.querySelectorAll('.toc-link');
-const sbLinks = document.querySelectorAll('.sb-link');
-const sections = document.querySelectorAll('[id]');
+Console.Write(&quot;Key: &quot;);
+var key = Console.ReadLine()!.Trim();
 
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const id = entry.target.id;
-      tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
-      sbLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+var res = await http.PostAsJsonAsync($&quot;{Api}/api/v1/login&quot;, new { appId = AppId, key, hwid = Hwid(), version = &quot;1.0.0&quot; });
+var json = JsonDocument.Parse(await res.Content.ReadAsStringAsync()).RootElement;
+if (!res.IsSuccessStatusCode) { Console.WriteLine(json.GetProperty(&quot;error&quot;).GetString()); return; }
+
+var session = json.GetProperty(&quot;session&quot;).GetString()!;
+var every = json.GetProperty(&quot;heartbeatSeconds&quot;).GetInt32();
+Console.WriteLine($&quot;Signed in. {json.GetProperty(&quot;daysLeft&quot;)} days left.&quot;);
+
+_ = Task.Run(async () =&gt;
+{
+    while (true)
+    {
+        await Task.Delay(TimeSpan.FromSeconds(every));
+        var hb = await http.PostAsJsonAsync($&quot;{Api}/api/v1/heartbeat&quot;, new { appId = AppId, session });
+        if (!hb.IsSuccessStatusCode) Environment.Exit(1);   // ended, banned or expired
     }
-  });
-}, { rootMargin: '-20% 0px -70% 0px' });
-
-sections.forEach(s => observer.observe(s));
-
-// Sidebar link navigation
-sbLinks.forEach(link => {
-  link.addEventListener('click', e => {
-    e.preventDefault();
-    const target = document.querySelector(link.getAttribute('href'));
-    if (target) target.scrollIntoView({ behavior: 'smooth' });
-  });
 });
-(function(){const b=document.getElementById('cookie-bar');if(!b||localStorage.getItem('sv_cookie'))return;b.style.display='flex';document.getElementById('ck-accept').onclick=()=>{localStorage.setItem('sv_cookie','1');b.style.display='none';};document.getElementById('ck-decline').onclick=()=>{localStorage.setItem('sv_cookie','0');b.style.display='none';};})();
-</script>
 
-<footer class="site-footer">
-  <div class="foot-logo"><img src="/logo.webp" alt="" width="22" height="22" style="display:block;object-fit:contain;mix-blend-mode:screen;flex-shrink:0"/>sovyx</div>
+// ... run your program here ...
+
+await http.PostAsJsonAsync($&quot;{Api}/api/v1/logout&quot;, new { appId = AppId, session });</pre><pre data-lang="cpp" hidden>// libcurl + nlohmann/json
+#include &lt;curl/curl.h&gt;
+#include &lt;nlohmann/json.hpp&gt;
+#include &lt;string&gt;
+using json = nlohmann::json;
+
+static size_t sink(char* p, size_t size, size_t n, void* out) {
+    static_cast&lt;std::string*&gt;(out)-&gt;append(p, size * n);
+    return size * n;
+}
+
+// Posts JSON, returns the HTTP status and fills `reply`.
+long post(const std::string&amp; path, const json&amp; body, json&amp; reply) {
+    CURL* c = curl_easy_init();
+    std::string out, payload = body.dump();
+    curl_slist* headers = curl_slist_append(nullptr, &quot;Content-Type: application/json&quot;);
+    curl_easy_setopt(c, CURLOPT_URL, (&quot;https://sovyx-site-production.up.railway.app&quot; + path).c_str());
+    curl_easy_setopt(c, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(c, CURLOPT_POSTFIELDS, payload.c_str());
+    curl_easy_setopt(c, CURLOPT_WRITEFUNCTION, sink);
+    curl_easy_setopt(c, CURLOPT_WRITEDATA, &amp;out);
+    curl_easy_perform(c);
+    long status = 0;
+    curl_easy_getinfo(c, CURLINFO_RESPONSE_CODE, &amp;status);
+    curl_slist_free_all(headers);
+    curl_easy_cleanup(c);
+    reply = json::parse(out, nullptr, false);
+    return status;
+}
+
+// Sign in once at startup:
+//   json r;
+//   long code = post(&quot;/api/v1/login&quot;,
+//       {{&quot;appId&quot;, &quot;YOUR_APP_ID&quot;}, {&quot;key&quot;, key}, {&quot;hwid&quot;, hwid}, {&quot;version&quot;, &quot;1.0.0&quot;}}, r);
+//   if (code != 200) { /* show r[&quot;error&quot;] and exit */ }
+//   std::string session = r[&quot;session&quot;];
+//
+// Then every r[&quot;heartbeatSeconds&quot;] seconds (on a thread):
+//   code = post(&quot;/api/v1/heartbeat&quot;, {{&quot;appId&quot;, &quot;YOUR_APP_ID&quot;}, {&quot;session&quot;, session}}, r);
+//   if (code != 200) { /* close the program */ }</pre><pre data-lang="curl" hidden># Sign in
+curl -X POST https://sovyx-site-production.up.railway.app/api/v1/login \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;appId&quot;:&quot;YOUR_APP_ID&quot;,&quot;key&quot;:&quot;BUYERS-KEY&quot;,&quot;hwid&quot;:&quot;THIS-PCS-ID&quot;,&quot;version&quot;:&quot;1.0.0&quot;}&#x27;
+
+# Keep the session alive (every 30 seconds)
+curl -X POST https://sovyx-site-production.up.railway.app/api/v1/heartbeat \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;appId&quot;:&quot;YOUR_APP_ID&quot;,&quot;session&quot;:&quot;SESSION-FROM-LOGIN&quot;}&#x27;
+
+# Sign out
+curl -X POST https://sovyx-site-production.up.railway.app/api/v1/logout \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;appId&quot;:&quot;YOUR_APP_ID&quot;,&quot;session&quot;:&quot;SESSION-FROM-LOGIN&quot;}&#x27;
+
+# Reset the HWID lock on a key
+curl -X POST https://sovyx-site-production.up.railway.app/api/v1/hwid-reset \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;appId&quot;:&quot;YOUR_APP_ID&quot;,&quot;key&quot;:&quot;BUYERS-KEY&quot;}&#x27;</pre></div><p>The Python, C# and C++ samples are starting points. Adapt the HWID to your own needs and add real error handling.</p><h2 id="pages">Customer pages</h2><p>Every application can have a branded page at <code>sovyx.cc/b/yourname</code> where buyers enter a key to download your loader.</p><ol><li>Open <strong>Customer page</strong> in your dashboard and pick an address (2 to 32 lowercase letters, numbers or dashes).</li><li>Set the name, tagline, accent color, background, button text, version, an optional announcement and your Discord and support links.</li><li>Upload your logo (PNG, JPG, WEBP or GIF, up to 2 MB) and your loader (up to 50 MB on Free, 250 MB on paid plans). Save.</li></ol><p>When a buyer enters a valid key the download starts. Banned or expired keys are refused, and an unused key starts its countdown. Each download link works once and expires after 5 minutes. The page also has a <strong>Reset my HWID</strong> button that follows your cooldown setting.</p><h2 id="plans">Plans and limits</h2><table class="tbl"><thead><tr><th>Plan</th><th>Applications</th><th>Licenses per app</th><th>Adds</th></tr></thead><tbody><tr><td>Free</td><td>1</td><td>25</td><td>Customer page, HWID lock, live sessions</td></tr><tr><td>Basic</td><td>2</td><td>1,000</td><td>API keys page</td></tr><tr><td>Pro</td><td>5</td><td>10,000</td><td>Variables, blacklist, webhook endpoints (delivery planned)</td></tr><tr><td>Ultimate</td><td>Unlimited</td><td>Unlimited</td><td>Reseller panel section</td></tr></tbody></table><p>Paid plans are bought with a key from our <a href="https://discord.gg/ar6zmuxpu" target="_blank" rel="noopener">Discord</a>. Redeem it on the Plan and billing page of your dashboard. See <a href="/#pricing">pricing</a>.</p><h2 id="bot">Discord bot</h2><p>The Sovyx bot runs in the <a href="https://discord.gg/ar6zmuxpu" target="_blank" rel="noopener">Sovyx Discord</a>. It opens purchase and support tickets, delivers your key by DM once payment is confirmed, and adds a few commands:</p><table class="tbl"><thead><tr><th>Command</th><th>Who</th><th>What it does</th></tr></thead><tbody><tr><td><code>/redeem</code></td><td>Everyone</td><td>Applies a Sovyx plan key to your account. Sign in to the site with Discord once first.</td></tr><tr><td><code>/hwid-reset</code></td><td>Everyone</td><td>Asks staff to reset the device lock on your Sovyx account.</td></tr><tr><td><code>/panel</code></td><td>Staff</td><td>Posts the Buy and Support buttons in a channel.</td></tr><tr><td><code>/genkey</code></td><td>Staff</td><td>Creates plan keys.</td></tr><tr><td><code>/lookup</code></td><td>Staff</td><td>Looks up a key or a member's account.</td></tr><tr><td><code>/revoke</code></td><td>Staff</td><td>Deletes a key and moves its account back to Free.</td></tr><tr><td><code>/close</code></td><td>Everyone in a ticket</td><td>Closes the ticket and saves a transcript.</td></tr></tbody></table></article></div><div class="pgend"></div><section class="cta"><h2>Questions? Ask in Discord.</h2><p>We usually reply within a few hours.</p><div class="cta-row"><a class="nx-signup" style="padding:11px 20px;font-size:14px" href="/login?signup">Create an account</a><a class="btn btn-o" href="https://discord.gg/ar6zmuxpu" target="_blank" rel="noopener"><svg viewBox="0 0 127.14 96.36" fill="currentColor"><path d="M107.7 8.07A105.15 105.15 0 0081.47 0a72.06 72.06 0 00-3.36 6.83 97.68 97.68 0 00-29.11 0A72.37 72.37 0 0045.64 0a105.89 105.89 0 00-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0032.17 16.15 77.7 77.7 0 006.89-11.11 68.42 68.42 0 01-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0064.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 01-10.87 5.19 77 77 0 006.89 11.1 105.25 105.25 0 0032.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15zM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69z"/></svg>Join the Discord</a></div></section>
+<footer>
+  <div class="foot-logo"><img src="/logo.webp?v=3" alt="" width="22" height="22" style="object-fit:contain"/>Sovyx</div>
   <ul class="foot-links">
+    <li><a href="/#pricing">Pricing</a></li>
+    <li><a href="/docs">Docs</a></li>
+    <li><a href="/integrations">Integrations</a></li>
+    <li><a href="/updates">Updates</a></li>
     <li><a href="/about">About</a></li>
+    <li><a href="https://discord.gg/ar6zmuxpu" target="_blank" rel="noopener">Discord</a></li>
     <li><a href="/terms">Terms</a></li>
     <li><a href="/privacy">Privacy</a></li>
     <li><a href="/refunds">Refunds</a></li>
-    <li><a href="/docs">Docs</a></li>
-    <li><a href="/login">Log in</a></li>
   </ul>
-  <span class="foot-copy">© 2026 Sovyx</span>
+  <span class="foot-copy">&copy; 2026 Sovyx</span>
 </footer>
-
 <div id="cookie-bar">
-  <p class="ck-text">We use cookies to operate the platform and understand how the site is used. See our <a href="/privacy">Privacy Policy</a>.</p>
-  <div class="ck-actions">
-    <button class="ck-btn ck-decline" id="ck-decline">Decline optional</button>
-    <button class="ck-btn ck-accept" id="ck-accept">Accept all</button>
-  </div>
+  <p class="ck-text">We use cookies to run the site and remember your choices. See our <a href="/privacy">Privacy Policy</a>.</p>
+  <div class="ck-actions"><button class="ck-btn" id="ck-decline">Decline optional</button><button class="ck-btn ck-accept" id="ck-accept">Accept all</button></div>
 </div>
+<script src="/assets/site.js?v=1"></script>
 </body>
 </html>

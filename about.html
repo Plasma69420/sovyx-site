@@ -1,161 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>About — Sovyx</title>
+<meta name="description" content="Sovyx gives software sellers keys, HWID locks, live sessions and downloads through one SDK or REST API."/>
+<link rel="icon" href="/logo.webp"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet"/>
-<style>
-:root{--bg:#07070b;--s1:#0d0d14;--b:rgba(255,255,255,.055);--b2:rgba(255,255,255,.11);--red:#e11d48;--pink:#fb7185;--text:#ededf0;--muted:#6b6b80;--dim:#35354a}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',system-ui,sans-serif;font-feature-settings:'ss01';-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--text)}
-a{text-decoration:none;color:inherit}
-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:58px;border-bottom:1px solid var(--b);background:rgba(7,7,11,.82);backdrop-filter:blur(14px)}
-.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;letter-spacing:-.3px}
-.logo-mark{display:block;width:30px;height:30px;flex-shrink:0;object-fit:contain;mix-blend-mode:screen}
-.nav-links{display:flex;align-items:center;gap:28px;font-size:13.5px;color:var(--muted)}
-.nav-links a:hover{color:var(--text)}
-.nav-actions{display:flex;align-items:center;gap:10px}
-.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:background .18s,transform .15s,color .18s;text-decoration:none}
-.btn-ghost{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--b2)}
-.btn-ghost:hover{background:rgba(255,255,255,.1)}
-.btn-red{background:var(--red);color:#fff}
-.btn-red:hover{background:#c8193f;transform:translateY(-1px)}
-
-.page-wrap{max-width:720px;margin:0 auto;padding:80px 32px 120px}
-.page-eyebrow{font-size:12px;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--red);margin-bottom:16px}
-.page-title{font-size:clamp(32px,4vw,52px);font-weight:800;letter-spacing:-1.5px;line-height:1.05;margin-bottom:24px}
-.page-subtitle{font-size:17px;line-height:1.65;color:rgba(237,237,240,.6);margin-bottom:60px;max-width:580px}
-
-.founder-card{display:flex;align-items:flex-start;gap:24px;padding:28px;border:1px solid var(--b2);border-radius:14px;background:var(--s1);margin-bottom:48px}
-.founder-avatar{width:64px;height:64px;border-radius:12px;background:linear-gradient(135deg,rgba(225,29,72,.3),rgba(225,29,72,.08));border:1px solid rgba(225,29,72,.25);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:var(--red)}
-.founder-info{flex:1}
-.founder-name{font-size:18px;font-weight:800;letter-spacing:-.4px;margin-bottom:4px}
-.founder-role{font-size:13px;color:var(--muted);margin-bottom:12px}
-.founder-tags{display:flex;flex-wrap:wrap;gap:7px}
-.tag{font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--b);color:rgba(237,237,240,.55)}
-.tag-red{background:rgba(225,29,72,.1);border-color:rgba(225,29,72,.2);color:var(--pink)}
-
-.story-section{margin-bottom:48px}
-.story-section h2{font-size:20px;font-weight:800;letter-spacing:-.4px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--b)}
-.story-section p{font-size:15px;line-height:1.75;color:rgba(237,237,240,.65);margin-bottom:14px}
-.story-section p:last-child{margin-bottom:0}
-.story-section p strong{color:rgba(237,237,240,.88);font-weight:600}
-
-.stack-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:4px}
-.stack-item{padding:16px 18px;border:1px solid var(--b);border-radius:10px;background:rgba(255,255,255,.02)}
-.stack-item-label{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-.stack-item-val{font-size:14px;font-weight:600;color:var(--text)}
-.stack-item-desc{font-size:12px;color:var(--dim);margin-top:3px}
-
-.mission-quote{border-left:2px solid var(--red);padding:20px 24px;margin:32px 0;background:rgba(225,29,72,.04);border-radius:0 10px 10px 0}
-.mission-quote p{font-size:17px;font-weight:500;line-height:1.6;color:rgba(237,237,240,.75);font-style:italic}
-
-footer{border-top:1px solid var(--b);padding:22px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.foot-logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
-.foot-links{list-style:none;display:flex;gap:20px;flex-wrap:wrap}
-.foot-links a{font-size:13px;color:var(--muted);transition:color .2s}
-.foot-links a:hover{color:var(--text)}
-.foot-copy{font-size:12px;color:var(--dim)}
-
-@media(max-width:680px){nav{padding:0 16px}.page-wrap{padding:48px 20px 80px}.stack-grid{grid-template-columns:1fr}.founder-card{flex-direction:column;gap:16px}footer{padding:16px 20px}}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/assets/site.css?v=3"/>
 </head>
 <body>
-<nav>
-  <a class="logo" href="/"><img class="logo-mark" src="/logo.webp" alt="" width="30" height="30"/>sovyx</a>
-  <div class="nav-links">
-    <a href="/#pricing">Pricing</a>
-    <a href="/docs">Docs</a>
-    <a href="/integrations">Integrations</a>
-    <a href="/updates">Updates</a>
+<nav id="nav" class="nx">
+  <div class="nx-l">
+    <a class="logo" href="/"><img class="logo-mark" src="/logo.webp?v=3" alt="Sovyx" width="26" height="26"/></a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/#features">Features</a></li>
+      <li><a href="/#pricing">Pricing</a></li>
+      <li><a href="/docs">Docs</a></li>
+      <li><a href="/updates">Updates</a></li>
+    </ul>
   </div>
   <div class="nav-actions">
-    <a class="btn btn-ghost" href="/login">Log in</a>
-    <a class="btn btn-red" href="/login">Get started</a>
+    <a class="nx-login" href="/login">Log in</a>
+    <a class="nx-signup" href="/login?signup">Sign up</a>
   </div>
 </nav>
-
-<div class="page-wrap">
-  <div class="page-eyebrow">About Sovyx</div>
-  <h1 class="page-title">Built by someone who<br>does this for real.</h1>
-  <p class="page-subtitle">Sovyx was created by a founder who has been in the digital goods space since day one — selling, reselling, and running operations for some of the most recognised brands in the market.</p>
-
-  <div class="founder-card">
-    <div class="founder-avatar">S</div>
-    <div class="founder-info">
-      <div class="founder-name">Sovyx — Founder & Developer</div>
-      <div class="founder-role">Builder · Reseller · Developer</div>
-      <div class="founder-tags">
-        <span class="tag tag-red">Founder</span>
-        <span class="tag">Web Development</span>
-        <span class="tag">Digital Commerce</span>
-        <span class="tag">API Design</span>
-        <span class="tag">Heat Market</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="story-section">
-    <h2>The story</h2>
-    <p>It started the same way it starts for most people in this space — as a reseller. Working with <strong>heat brands</strong>, running fulfilment, handling customers, managing stock. The kind of operational work most people don't see behind the scenes of a successful reselling setup.</p>
-    <p>At some point the question became obvious: <strong>what about the brands themselves?</strong> What if a brand wanted to open up reselling — to bring in a network of people selling their products — but had no clean way to do it? No dedicated infrastructure. No white-label shop. No API to connect their bot or Discord server.</p>
-    <p>Looking around, nothing existed that actually solved it properly. Existing tools were either generic e-commerce platforms that weren't built for digital goods, or manual systems that broke at scale. <strong>So Sovyx was built from scratch</strong> — purpose-built for the digital goods reselling model from day one.</p>
-  </div>
-
-  <div class="mission-quote">
-    <p>"I wanted a platform that actually understood how this business works — fast delivery, automated stock, reseller tiers, API access. Everything I'd wished existed when I was operating on the other side of it."</p>
-  </div>
-
-  <div class="story-section">
-    <h2>What Sovyx is built in</h2>
-    <p>The platform is built and maintained entirely in-house. No outsourced development, no agency. Every line is written by the founder directly — which means the product is shaped by someone who actually understands the market it serves.</p>
-    <div class="stack-grid">
-      <div class="stack-item">
-        <div class="stack-item-label">Front-end</div>
-        <div class="stack-item-val">HTML · CSS · JavaScript</div>
-        <div class="stack-item-desc">Hand-coded, no frameworks — fast and lean</div>
-      </div>
-      <div class="stack-item">
-        <div class="stack-item-label">Back-end</div>
-        <div class="stack-item-val">Node.js · REST API</div>
-        <div class="stack-item-desc">Custom API powering all orders and delivery</div>
-      </div>
-      <div class="stack-item">
-        <div class="stack-item-label">Infrastructure</div>
-        <div class="stack-item-val">Cloud-hosted · CDN</div>
-        <div class="stack-item-desc">Sub-4s delivery SLA globally</div>
-      </div>
-      <div class="stack-item">
-        <div class="stack-item-label">Integrations</div>
-        <div class="stack-item-val">Discord · Webhooks · API</div>
-        <div class="stack-item-desc">Plug into your existing stack instantly</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="story-section">
-    <h2>The approach</h2>
-    <p>Sovyx is run with the same discipline you'd expect from a much larger operation. <strong>Every feature ships because it solves a real problem</strong> — not because it looks good on a landing page. Response times are fast. Issues get addressed. The product keeps getting better.</p>
-    <p>This isn't a side project. It's a fully operational platform built to handle real volume, real resellers, and real brands who need reliable infrastructure for their digital goods business.</p>
-  </div>
-</div>
-
+<header class="ph"><div class="ph-beam"></div><div class="ph-in"><span class="eyebrow">About</span><h1>Licensing for people who ship software.</h1><p>Sovyx gives software sellers the server behind their product: keys, device locks, sessions, downloads and reseller access.</p></div></header><section class="blk"><div class="wrap" style="max-width:760px"><div class="prose rv"><h2>Why Sovyx exists</h2><p>Sovyx started from the selling side of the software business: reselling, running fulfilment and answering buyers every day. It showed how much of that work comes down to the same few jobs: handing out keys, tying them to a device, knowing who is running what, and fixing it when someone changes PC.</p><p>The tools available were either general e-commerce platforms or a pile of scripts and spreadsheets that broke as soon as volume grew. So Sovyx was built to do just those jobs well, and to give every seller the same server behind their software that the big teams build for themselves.</p><h2>How it's built</h2><p>Sovyx is built and maintained in-house, and it is deliberately small.</p></div></div><div class="wrap" style="max-width:760px;margin-top:20px"><div class="grid2 rv"><div class="card"><h3>Website</h3><p>Hand-written HTML, CSS and JavaScript. No frameworks.</p></div><div class="card"><h3>Server</h3><p>A small Python service that handles sign-in, sessions, downloads and the Discord bot.</p></div><div class="card"><h3>Data</h3><p>Google Firebase stores accounts, keys and settings, with rules that keep each seller's data private.</p></div><div class="card"><h3>Hosting</h3><p>GitHub Pages for the site and Railway for the server.</p></div></div></div></section><section class="blk wrap"><div class="sh"><h2>What we care about.</h2></div><div class="grid3 rv"><div class="card"><h3>Simple to add</h3><p>One call to sign in, one to keep alive, one to sign out. If you can send an HTTP request, you can protect your software.</p></div><div class="card"><h3>You stay in control</h3><p>Ban a key, reset a device lock or end a session in a click, and the running program finds out within seconds.</p></div><div class="card"><h3>Fair from the start</h3><p>The Free plan is real: one application, 25 licenses, a customer page and HWID locks. Pay when you grow.</p></div></div></section><section class="cta"><h2>Come say hello.</h2><p>Questions, ideas or bugs, we read everything in the Discord.</p><div class="cta-row"><a class="nx-signup" style="padding:11px 20px;font-size:14px" href="/login?signup">Start for free</a><a class="btn btn-o" href="https://discord.gg/ar6zmuxpu" target="_blank" rel="noopener"><svg viewBox="0 0 127.14 96.36" fill="currentColor"><path d="M107.7 8.07A105.15 105.15 0 0081.47 0a72.06 72.06 0 00-3.36 6.83 97.68 97.68 0 00-29.11 0A72.37 72.37 0 0045.64 0a105.89 105.89 0 00-26.25 8.09C2.79 32.65-1.71 56.6.54 80.21a105.73 105.73 0 0032.17 16.15 77.7 77.7 0 006.89-11.11 68.42 68.42 0 01-10.85-5.18c.91-.66 1.8-1.34 2.66-2a75.57 75.57 0 0064.32 0c.87.71 1.76 1.39 2.66 2a68.68 68.68 0 01-10.87 5.19 77 77 0 006.89 11.1 105.25 105.25 0 0032.19-16.14c2.64-27.38-4.51-51.11-18.9-72.15zM42.45 65.69C36.18 65.69 31 60 31 53s5-12.74 11.43-12.74S54 46 53.89 53s-5.05 12.69-11.44 12.69zm42.24 0C78.41 65.69 73.25 60 73.25 53s5-12.74 11.44-12.74S96.23 46 96.12 53s-5.04 12.69-11.43 12.69z"/></svg>Join the Discord</a></div></section>
 <footer>
-  <div class="foot-logo"><img class="logo-mark" src="/logo.webp" alt="" width="22" height="22" style="mix-blend-mode:screen"/>sovyx</div>
+  <div class="foot-logo"><img src="/logo.webp?v=3" alt="" width="22" height="22" style="object-fit:contain"/>Sovyx</div>
   <ul class="foot-links">
+    <li><a href="/#pricing">Pricing</a></li>
+    <li><a href="/docs">Docs</a></li>
+    <li><a href="/integrations">Integrations</a></li>
+    <li><a href="/updates">Updates</a></li>
     <li><a href="/about">About</a></li>
+    <li><a href="https://discord.gg/ar6zmuxpu" target="_blank" rel="noopener">Discord</a></li>
     <li><a href="/terms">Terms</a></li>
     <li><a href="/privacy">Privacy</a></li>
     <li><a href="/refunds">Refunds</a></li>
-    <li><a href="/docs">Docs</a></li>
-    <li><a href="/login">Log in</a></li>
   </ul>
-  <span class="foot-copy">© 2026 Sovyx</span>
+  <span class="foot-copy">&copy; 2026 Sovyx</span>
 </footer>
-<script>
-(function(){const b=document.getElementById('cookie-bar');if(!b)return;if(localStorage.getItem('sv_cookie'))return b.remove();b.style.display='flex';document.getElementById('ck-accept').onclick=function(){localStorage.setItem('sv_cookie','1');b.remove()};document.getElementById('ck-decline').onclick=function(){localStorage.setItem('sv_cookie','0');b.remove()}})();
-</script>
+<div id="cookie-bar">
+  <p class="ck-text">We use cookies to run the site and remember your choices. See our <a href="/privacy">Privacy Policy</a>.</p>
+  <div class="ck-actions"><button class="ck-btn" id="ck-decline">Decline optional</button><button class="ck-btn ck-accept" id="ck-accept">Accept all</button></div>
+</div>
+<script src="/assets/site.js?v=1"></script>
 </body>
 </html>

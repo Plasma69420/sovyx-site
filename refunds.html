@@ -1,75 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Refund Policy — Sovyx</title>
+<meta name="description" content="When Sovyx subscriptions can be refunded."/>
+<link rel="icon" href="/logo.webp"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet"/>
-<style>
-:root{--bg:#07070b;--s1:#0d0d14;--b:rgba(255,255,255,.055);--b2:rgba(255,255,255,.11);--red:#e11d48;--pink:#fb7185;--text:#ededf0;--muted:#6b6b80;--dim:#35354a}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',system-ui,sans-serif;font-feature-settings:'ss01';-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--text)}
-a{text-decoration:none;color:inherit}
-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:58px;border-bottom:1px solid var(--b);background:rgba(7,7,11,.82);backdrop-filter:blur(14px)}
-.logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;letter-spacing:-.3px}
-.logo-mark{display:block;width:30px;height:30px;flex-shrink:0;object-fit:contain;mix-blend-mode:screen}
-.nav-links{display:flex;align-items:center;gap:28px;font-size:13.5px;color:var(--muted)}
-.nav-links a:hover{color:var(--text)}
-.nav-actions{display:flex;align-items:center;gap:10px}
-.btn{display:inline-flex;align-items:center;padding:8px 18px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:background .18s;text-decoration:none}
-.btn-ghost{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--b2)}
-.btn-ghost:hover{background:rgba(255,255,255,.1)}
-.btn-red{background:var(--red);color:#fff}
-.btn-red:hover{background:#c8193f}
-
-.page-wrap{max-width:720px;margin:0 auto;padding:80px 32px 120px}
-.legal-eyebrow{font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--red);margin-bottom:12px}
-.legal-title{font-size:36px;font-weight:800;letter-spacing:-1px;margin-bottom:10px}
-.legal-updated{font-size:13px;color:var(--dim);margin-bottom:48px}
-.legal-section{margin-bottom:40px}
-.legal-section h2{font-size:17px;font-weight:700;letter-spacing:-.3px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--b)}
-.legal-section p,.legal-section li{font-size:14.5px;line-height:1.75;color:rgba(237,237,240,.62);margin-bottom:12px}
-.legal-section li{margin-left:20px;margin-bottom:8px}
-.legal-section strong{color:rgba(237,237,240,.86);font-weight:600}
-.legal-section a{color:var(--pink);text-decoration:underline}
-
-.info-box{padding:18px 22px;border-radius:10px;border:1px solid;margin:20px 0;font-size:14px;line-height:1.6}
-.info-box.red{border-color:rgba(225,29,72,.25);background:rgba(225,29,72,.06);color:rgba(237,237,240,.7)}
-.info-box.green{border-color:rgba(34,197,94,.2);background:rgba(34,197,94,.05);color:rgba(237,237,240,.7)}
-.info-box strong{color:rgba(237,237,240,.88)}
-
-footer{border-top:1px solid var(--b);padding:22px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.foot-logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
-.foot-links{list-style:none;display:flex;gap:20px;flex-wrap:wrap}
-.foot-links a{font-size:13px;color:var(--muted);transition:color .2s}
-.foot-links a:hover{color:var(--text)}
-.foot-copy{font-size:12px;color:var(--dim)}
-
-@media(max-width:680px){nav{padding:0 16px}.page-wrap{padding:48px 20px 80px}footer{padding:16px 20px}}
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/assets/site.css?v=3"/>
 </head>
 <body>
-<nav>
-  <a class="logo" href="/"><img class="logo-mark" src="/logo.webp" alt="" width="30" height="30"/>sovyx</a>
-  <div class="nav-links">
-    <a href="/#pricing">Pricing</a>
-    <a href="/docs">Docs</a>
-    <a href="/integrations">Integrations</a>
-    <a href="/updates">Updates</a>
+<nav id="nav" class="nx">
+  <div class="nx-l">
+    <a class="logo" href="/"><img class="logo-mark" src="/logo.webp?v=3" alt="Sovyx" width="26" height="26"/></a>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/#features">Features</a></li>
+      <li><a href="/#pricing">Pricing</a></li>
+      <li><a href="/docs">Docs</a></li>
+      <li><a href="/updates">Updates</a></li>
+    </ul>
   </div>
   <div class="nav-actions">
-    <a class="btn btn-ghost" href="/login">Log in</a>
-    <a class="btn btn-red" href="/login">Get started</a>
+    <a class="nx-login" href="/login">Log in</a>
+    <a class="nx-signup" href="/login?signup">Sign up</a>
   </div>
 </nav>
-
-<div class="page-wrap">
-  <div class="legal-eyebrow">Legal</div>
-  <h1 class="legal-title">Refund Policy</h1>
-  <div class="legal-updated">Last updated: November 2026</div>
-
-  <div class="legal-section">
+<header class="ph"><div class="ph-beam"></div><div class="ph-in"><span class="eyebrow">Legal</span><h1>Refund Policy</h1><div class="upd">Last updated: November 2026</div></div></header><div class="lg"><aside class="dx-nav" id="toc"></aside><div><div class="legal-section">
     <h2>Overview</h2>
     <p>This policy covers refunds for Sovyx platform subscriptions. It does not govern the digital goods transactions your end-customers make through your Sovyx shop — that is governed by your own shop's policies.</p>
     <div class="info-box red">
@@ -123,20 +82,26 @@ footer{border-top:1px solid var(--b);padding:22px 48px;display:flex;align-items:
   <div class="legal-section">
     <h2>Contact</h2>
     <p>Billing questions or refund requests: <strong>billing@sovyx.cc</strong></p>
-  </div>
-</div>
-
+  </div></div></div><div class="pgend"></div>
 <footer>
-  <div class="foot-logo"><img class="logo-mark" src="/logo.webp" alt="" width="22" height="22" style="mix-blend-mode:screen"/>sovyx</div>
+  <div class="foot-logo"><img src="/logo.webp?v=3" alt="" width="22" height="22" style="object-fit:contain"/>Sovyx</div>
   <ul class="foot-links">
+    <li><a href="/#pricing">Pricing</a></li>
+    <li><a href="/docs">Docs</a></li>
+    <li><a href="/integrations">Integrations</a></li>
+    <li><a href="/updates">Updates</a></li>
     <li><a href="/about">About</a></li>
+    <li><a href="https://discord.gg/ar6zmuxpu" target="_blank" rel="noopener">Discord</a></li>
     <li><a href="/terms">Terms</a></li>
     <li><a href="/privacy">Privacy</a></li>
     <li><a href="/refunds">Refunds</a></li>
-    <li><a href="/docs">Docs</a></li>
-    <li><a href="/login">Log in</a></li>
   </ul>
-  <span class="foot-copy">© 2026 Sovyx</span>
+  <span class="foot-copy">&copy; 2026 Sovyx</span>
 </footer>
+<div id="cookie-bar">
+  <p class="ck-text">We use cookies to run the site and remember your choices. See our <a href="/privacy">Privacy Policy</a>.</p>
+  <div class="ck-actions"><button class="ck-btn" id="ck-decline">Decline optional</button><button class="ck-btn ck-accept" id="ck-accept">Accept all</button></div>
+</div>
+<script src="/assets/site.js?v=1"></script>
 </body>
 </html>
