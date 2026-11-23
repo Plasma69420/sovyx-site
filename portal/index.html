@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="/assets/panel.css?v=2"/>
+<link rel="stylesheet" href="/assets/panel.css?v=3"/>
 <link rel="stylesheet" href="/b/brand.css?v=1"/>
 </head>
 <body>
@@ -116,7 +116,12 @@
             <div class="card"><h3>Branding</h3><div class="sub">How the page looks.</div>
               <div class="field"><label>Brand name</label><input id="br-name" maxlength="40" placeholder="Nebula"/></div>
               <div class="field"><label>Tagline</label><input id="br-tagline" maxlength="90" placeholder="Enter your key to download the loader."/></div>
-              <div class="field"><label>Logo URL</label><input id="br-logo" placeholder="https://… (PNG, SVG or WEBP)"/></div>
+              <div class="field"><label>Logo</label>
+                <div class="logo-row"><div class="logo-thumb" id="br-logo-thumb">?</div>
+                  <div style="flex:1;min-width:0"><div style="display:flex;gap:8px;flex-wrap:wrap"><label class="btn btn-sm" for="br-logo-file" style="cursor:pointer">Upload logo</label><input type="file" id="br-logo-file" accept="image/png,image/jpeg,image/webp,image/gif" hidden/>
+                    <button class="btn btn-sm btn-danger" id="br-logo-remove" type="button" onclick="removeLogo()" style="display:none">Remove</button></div>
+                    <div class="hint" id="br-logo-hint">PNG, JPG, WEBP or GIF, up to 2 MB. Square images look best.</div></div></div>
+                <input id="br-logo" placeholder="…or paste an image link (https://)" style="margin-top:10px"/></div>
               <div class="row"><div class="field"><label>Accent color</label><div class="color-row"><input type="color" id="br-accent" value="#e11d48"/><input id="br-accent-hex" maxlength="7" class="mono"/></div></div>
                 <div class="field"><label>Background</label><select id="br-theme"><option value="spotlight">Spotlight</option><option value="gradient">Accent glow</option><option value="dark">Plain dark</option></select></div></div>
               <div class="row"><div class="field"><label>Button text</label><input id="br-button" maxlength="24" placeholder="Download"/></div>
@@ -311,6 +316,6 @@
   <div class="modal-acts"><button class="btn" onclick="closeModal('m-confirm')">Cancel</button><button class="btn btn-danger" id="cf-ok">Confirm</button></div></div></div>
 
 <div id="toast"><i></i><span id="toast-txt"></span></div>
-<script type="module" src="/portal/portal.js?v=3"></script>
+<script type="module" src="/portal/portal.js?v=4"></script>
 </body>
 </html>

@@ -139,6 +139,70 @@ async def delete_loader(request: web.Request) -> web.Response:
     return web.json_response({"ok": True})
 
 
+LOGO_MAX = 2 * 1024 ** 2
+
+
+def sniff_image(head: bytes) -> str | None:
+    if head.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "image/png"
+    if head.startswith(b"\xff\xd8\xff"):
+        return "image/jpeg"
+    if head[:6] in (b"GIF87a", b"GIF89a"):
+        return "image/gif"
+    if head[:4] == b"RIFF" and head[8:12] == b"WEBP":
+        return "image/webp"
+    return None
+
+
+async def upload_logo(request: web.Request) -> web.Response:
+    _, app, _ = await owner_app(request)
+    app_id = request.match_info["app_id"]
+    reader = await request.multipart()
+    field = await reader.next()
+    while field is not None and field.name != "file":
+        field = await reader.next()
+    if field is None:
+        return err(400, "No file received.")
+    data = bytearray()
+    while chunk := await field.read_chunk(256 * 1024):
+        data += chunk
+        if len(data) > LOGO_MAX:
+            return err(413, "Logo is too large (max 2 MB).")
+    kind = sniff_image(bytes(data[:16]))
+    if not kind:
+        return err(400, "Use a PNG, JPG, WEBP or GIF image.")
+    folder = loader_dir(app_id)
+    folder.mkdir(parents=True, exist_ok=True)
+    (folder / "logo.bin").write_bytes(bytes(data))
+    (folder / "logo.type").write_text(kind)
+    version = hashlib.sha256(data).hexdigest()[:10]
+    url = f"/api/logo/{app_id}?v={version}"
+    await asyncio.to_thread(db.collection("apps").document(app_id).update, {"logoVersion": version})
+    log.info("Logo uploaded for %s (%d bytes)", app_id, len(data))
+    return web.json_response({"url": url, "size": len(data), "type": kind})
+
+
+async def delete_logo(request: web.Request) -> web.Response:
+    await owner_app(request)
+    app_id = request.match_info["app_id"]
+    folder = loader_dir(app_id)
+    for f in ("logo.bin", "logo.type"):
+        (folder / f).unlink(missing_ok=True)
+    await asyncio.to_thread(db.collection("apps").document(app_id).update, {"logoVersion": firestore.DELETE_FIELD})
+    return web.json_response({"ok": True})
+
+
+async def serve_logo(request: web.Request) -> web.StreamResponse:
+    folder = loader_dir(request.match_info["app_id"])
+    path, kind = folder / "logo.bin", folder / "logo.type"
+    if not path.exists() or not kind.exists():
+        return err(404, "No logo.")
+    return web.FileResponse(path, headers={
+        "Content-Type": kind.read_text().strip(), "X-Content-Type-Options": "nosniff",
+        "Cache-Control": "public, max-age=300", "Cross-Origin-Resource-Policy": "cross-origin",
+    })
+
+
 def _check_and_activate(app_id: str, key: str, ip: str) -> dict:
     """Validate a license for an app and activate it on first use. Blocking."""
     blocked = db.collection("apps").document(app_id).collection("blacklist").where("value", "==", ip).limit(1).get()
@@ -231,6 +295,9 @@ async def start() -> None:
         web.get("/health", health),
         web.post("/api/apps/{app_id}/loader", upload_loader),
         web.delete("/api/apps/{app_id}/loader", delete_loader),
+        web.post("/api/apps/{app_id}/logo", upload_logo),
+        web.delete("/api/apps/{app_id}/logo", delete_logo),
+        web.get("/api/logo/{app_id}", serve_logo),
         web.post("/api/b/{slug}/redeem", redeem),
         web.get("/api/dl/{token}", download),
         web.route("OPTIONS", "/{tail:.*}", health),

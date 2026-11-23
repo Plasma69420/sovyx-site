@@ -25,11 +25,70 @@ function formData() {
   };
 }
 
+function renderLogo() {
+  const url = $('br-logo').value.trim();
+  const thumb = $('br-logo-thumb');
+  thumb.replaceChildren();
+  if (/^https:\/\/\S+$/i.test(url)) {
+    const img = document.createElement('img');
+    img.alt = ''; img.src = url;
+    img.onerror = () => { if (img.isConnected) thumb.textContent = '!'; };
+    thumb.append(img);
+  } else thumb.textContent = ($('br-name').value.trim()[0] || '?').toUpperCase();
+  $('br-logo-remove').style.display = url ? '' : 'none';
+}
+
 function preview() {
   const d = formData();
   renderBrand($('br-preview'), d, { preview: true });
   $('br-preview-url').textContent = d.slug ? `sovyx.cc/b/${d.slug}` : '';
+  renderLogo();
 }
+
+const OWN_LOGO = () => `${API_BASE}/api/logo/${S.app.id}`;
+
+async function persistLogo(url) {
+  $('br-logo').value = url;
+  if (S.app.brandSlug) {
+    await updateDoc(doc(db, 'brands', S.app.brandSlug), { logoUrl: url, updatedAt: serverTimestamp() });
+    if (current) current.logoUrl = url;
+  }
+  preview();
+}
+
+$('br-logo-file').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
+  if (!/^image\/(png|jpeg|webp|gif)$/.test(file.type)) return toast('Use a PNG, JPG, WEBP or GIF image', true);
+  if (file.size > 2 * 1048576) return toast('Logo must be under 2 MB', true);
+  const hint = $('br-logo-hint');
+  hint.textContent = 'Uploading…';
+  try {
+    const token = await auth.currentUser.getIdToken();
+    const body = new FormData(); body.append('file', file);
+    const res = await fetch(`${API_BASE}/api/apps/${S.app.id}/logo`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `Upload failed (${res.status})`);
+    await persistLogo(API_BASE + data.url);
+    toast(S.app.brandSlug ? 'Logo uploaded and live' : 'Logo uploaded. Save your page address to publish it');
+  } catch (err) {
+    toast(err.message === 'Failed to fetch' ? 'Couldn’t reach the upload server. Try again.' : err.message, true);
+  } finally { hint.textContent = 'PNG, JPG, WEBP or GIF, up to 2 MB. Square images look best.'; }
+});
+
+window.removeLogo = async () => {
+  const url = $('br-logo').value.trim();
+  try {
+    if (url.startsWith(OWN_LOGO())) {
+      const token = await auth.currentUser.getIdToken();
+      const res = await fetch(`${API_BASE}/api/apps/${S.app.id}/logo`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) throw new Error('Couldn’t remove the logo. Try again.');
+    }
+    await persistLogo('');
+    toast('Logo removed');
+  } catch (err) { toast(err.message, true); }
+};
 
 function fill(b) {
   $('br-slug').value = b.slug || '';
