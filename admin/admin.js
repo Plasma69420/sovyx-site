@@ -102,6 +102,11 @@ const all = async (name, ...q) => {
   try { return (await getDocs(q.length ? query(collection(db, name), ...q) : collection(db, name))).docs.map(d => ({ id: d.id, ...d.data() })); }
   catch (e) { console.warn(name, e.message); return []; }
 };
+const tryAll = async name => {
+  try { return (await getDocs(collection(db, name))).docs.map(d => ({ id: d.id, ...d.data() })); }
+  catch (e) { console.warn(name, e.message); return null; }
+};
+
 async function refresh() {
   [users, keys, resellers, apps, hwids, activity, products, panels] = await Promise.all([
     all('users'), all('licenseKeys'), all('resellers'), all('apps'),
@@ -568,7 +573,9 @@ $('ac-seg').addEventListener('click', e => { if (e.target.tagName !== 'BUTTON') 
 
 window.openGrant = () => {
   if (!products.length) return toast('Add your products first', true);
-  $('ga-people').innerHTML = users.map(u => `<option value="${esc(u.email)}">${esc(u.username || '')}</option>`).join('');
+  const fillPeople = () => { $('ga-people').innerHTML = users.map(u => `<option value="${esc(u.email)}">${esc(u.username || u.discordUsername || '')}</option>`).join(''); };
+  fillPeople();
+  tryAll('users').then(us => { if (us?.length) { users = us; fillPeople(); } });
   $('ga-person').value = '';
   $('ga-products').innerHTML = [...products].sort((a, b) => (a.order ?? 99) - (b.order ?? 99)).map(p =>
     `<label class="chk"><input type="checkbox" value="${p.id}"${p.active === false ? ' disabled' : ''}/>${esc(p.name)}${p.active === false ? ' <span class="dimc">(off)</span>' : ''}</label>`).join('');
@@ -596,10 +603,22 @@ function expiryFrom(sel, dateStr) {
   return Timestamp.fromMillis(now() + parseInt(sel) * 86400000);
 }
 
+const norm = v => String(v || '').trim().toLowerCase();
+function findPerson(q) {
+  if (!q) return null;
+  const exact = f => users.find(x => norm(x[f]) === q);
+  const hit = exact('email') || exact('username') || exact('discordUsername');
+  if (hit) return hit;
+  if (q.length < 3) return null;
+  const part = users.filter(x => [x.email, x.username, x.discordUsername].some(v => norm(v).includes(q)));
+  return part.length === 1 ? part[0] : null;
+}
+
 window.saveGrant = async () => {
   const person = $('ga-person').value.trim().toLowerCase();
-  const u = users.find(x => (x.email || '').toLowerCase() === person) || users.find(x => (x.username || '').toLowerCase() === person);
-  if (!u) return toast('Pick someone from the list. They need a Sovyx account first.', true);
+  let u = findPerson(person);
+  if (!u && person) { const us = await tryAll('users'); if (us?.length) { users = us; u = findPerson(person); } }
+  if (!u) return toast(`No Sovyx account found for “${$('ga-person').value.trim()}”. Check the spelling, or ask them to sign in once at sovyx.cc/login.`, true);
   const picks = [...document.querySelectorAll('#ga-products input:checked')].map(i => i.value);
   if (!picks.length) return toast('Choose at least one product', true);
   const expiresAt = expiryFrom($('ga-dur').value, $('ga-date').value);
@@ -624,7 +643,10 @@ window.saveGrant = async () => {
     closeModal('m-grant');
     toast(`${added ? added + ' panel(s) given' : ''}${added && updated ? ', ' : ''}${updated ? updated + ' updated' : ''}`);
     log('Panel access given', `${u.email}: ${picks.length} product(s)${canGenerate ? `, ${credits} credits` : ', access only'}`);
-    [panels, users] = await Promise.all([all('panelAccess'), all('users')]); renderAccess();
+    const [np, nu] = await Promise.all([tryAll('panelAccess'), tryAll('users')]);
+    if (np) panels = np;
+    if (nu?.length) users = nu;
+    renderAccess();
   } catch (e) { toast(e.message, true); }
   finally { btn.disabled = false; }
 };

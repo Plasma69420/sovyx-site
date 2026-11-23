@@ -225,7 +225,7 @@
   <div class="modal-acts"><button class="btn" onclick="closeModal('m-product')">Cancel</button><button class="btn btn-w" onclick="saveProduct()">Save</button></div></div></div>
 
 <div class="overlay" id="m-grant"><div class="modal" style="max-width:540px"><h2>Give panel access</h2>
-  <div class="field"><label>Person</label><input id="ga-person" list="ga-people" placeholder="Type an email or username" autocomplete="off"/><datalist id="ga-people"></datalist>
+  <div class="field"><label>Person</label><input id="ga-person" list="ga-people" placeholder="Type an email, username or Discord name" autocomplete="off"/><datalist id="ga-people"></datalist>
     <div class="hint">They need a Sovyx account first (sovyx.cc/login).</div></div>
   <div class="field"><label style="display:flex;justify-content:space-between;align-items:center">Products <label class="chk" style="font-weight:500"><input type="checkbox" id="ga-all" onchange="toggleAllProducts(this.checked)"/>Select all</label></label>
     <div class="chk-grid" id="ga-products"></div></div>
@@ -266,6 +266,6 @@
   <div class="modal-acts"><button class="btn" onclick="closeModal('m-confirm')">Cancel</button><button class="btn btn-danger" id="cf-ok">Confirm</button></div></div></div>
 
 <div id="toast"><i></i><span id="toast-txt"></span></div>
-<script type="module" src="/admin/admin.js?v=3"></script>
+<script type="module" src="/admin/admin.js?v=4"></script>
 </body>
 </html>
