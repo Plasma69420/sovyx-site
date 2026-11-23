@@ -90,12 +90,12 @@ async function loadApps() {
   S.app = S.apps.find(a => a.id === saved) || S.apps[0] || null;
 }
 
-function selectApp(id) {
+function selectApp(id, view = S.view) {
   S.app = S.apps.find(a => a.id === id) || null;
   if (S.app) localStorage.setItem('svx_app', S.app.id);
   closeModal('m-apps');
   renderChrome();
-  go(S.view);
+  go(view);
 }
 window.selectApp = selectApp;
 
@@ -111,7 +111,7 @@ window.createApp = async () => {
   closeModal('m-newapp');
   await loadApps();
   toast('Application created');
-  selectApp(ref.id);
+  selectApp(ref.id, 'overview');
 };
 
 window.saveApp = async () => {
@@ -220,7 +220,7 @@ loaders.apps = () => {
   $('apps-body').innerHTML = S.apps.length ? S.apps.map(a => `<tr>
     <td><div class="u-cell"><div class="av">${esc(initials(a.name))}</div><span class="u-name">${esc(a.name)}</span>${S.app?.id === a.id ? '<span class="tag t-live">Selected</span>' : ''}</div></td>
     <td class="mono muted">${esc(a.id)}</td><td class="muted">${esc(a.version || '—')}</td><td class="muted">${fmtDate(a.createdAt)}</td>
-    <td><div class="acts"><button class="btn btn-sm" onclick="selectApp('${a.id}')">Open</button></div></td></tr>`).join('')
+    <td><div class="acts"><button class="btn btn-sm" onclick="selectApp('${a.id}','overview')">Open</button></div></td></tr>`).join('')
     : '<tr><td colspan="5" class="empty">No applications yet</td></tr>';
 };
 
