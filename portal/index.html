@@ -8,7 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="/assets/panel.css?v=1"/>
+<link rel="stylesheet" href="/assets/panel.css?v=2"/>
+<link rel="stylesheet" href="/b/brand.css?v=1"/>
 </head>
 <body>
 <div id="loading">Loading…</div>
@@ -101,6 +102,40 @@
         <div class="tbl-head"><div><h2>Connected now<span id="ss-count">0</span></h2><p>Every client signed in to this application, updated live.</p></div>
           <div class="search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input placeholder="Search by key, IP, HWID or user" oninput="renderSessions()" id="ss-q"/></div></div>
         <div class="tbl"><table><thead><tr><th>User</th><th>IP address</th><th>HWID</th><th>Heartbeat</th><th>Status</th><th></th></tr></thead><tbody id="ss-body"></tbody></table></div>
+      </section>
+
+      <!-- CUSTOMER PAGE -->
+      <section class="view" id="v-brand">
+        <div class="page-h"><div><h1>Customer page</h1><p>Your own branded page where buyers enter their key and download your loader.</p></div>
+          <div style="display:flex;gap:8px"><a class="btn" id="br-open" target="_blank" rel="noopener" style="display:none">Open page ↗</a><button class="btn btn-w" id="br-save" onclick="saveBrand()">Save changes</button></div></div>
+        <div class="brand-grid">
+          <div>
+            <div class="card"><h3>Page address</h3><div class="sub">Share this link with your buyers.</div>
+              <div class="field"><div class="slug-row"><span>sovyx.cc/b/</span><input id="br-slug" placeholder="yourbrand" maxlength="32" autocomplete="off"/></div>
+                <div class="hint">Lowercase letters, numbers and dashes.</div></div></div>
+            <div class="card"><h3>Branding</h3><div class="sub">How the page looks.</div>
+              <div class="field"><label>Brand name</label><input id="br-name" maxlength="40" placeholder="Nebula"/></div>
+              <div class="field"><label>Tagline</label><input id="br-tagline" maxlength="90" placeholder="Enter your key to download the loader."/></div>
+              <div class="field"><label>Logo URL</label><input id="br-logo" placeholder="https://… (PNG, SVG or WEBP)"/></div>
+              <div class="row"><div class="field"><label>Accent color</label><div class="color-row"><input type="color" id="br-accent" value="#e11d48"/><input id="br-accent-hex" maxlength="7" class="mono"/></div></div>
+                <div class="field"><label>Background</label><select id="br-theme"><option value="spotlight">Spotlight</option><option value="gradient">Accent glow</option><option value="dark">Plain dark</option></select></div></div>
+              <div class="row"><div class="field"><label>Button text</label><input id="br-button" maxlength="24" placeholder="Download"/></div>
+                <div class="field"><label>Version shown</label><input id="br-version" maxlength="20" placeholder="1.0.0"/></div></div>
+              <div class="field"><label>Announcement</label><input id="br-announce" maxlength="140" placeholder="Optional banner, e.g. Updated for the latest game patch"/></div></div>
+            <div class="card"><h3>Links</h3><div class="sub">Shown after a successful download.</div>
+              <div class="field"><label>Discord invite</label><input id="br-discord" placeholder="https://discord.gg/…"/></div>
+              <div class="field"><label>Support / store link</label><input id="br-support" placeholder="https://…"/></div></div>
+            <div class="card"><h3>Loader file</h3><div class="sub" id="ld-limit">Buyers download this after entering a valid key. Links expire after 5 minutes and work once.</div>
+              <div id="ld-current" class="kv" style="display:none"><span id="ld-name"></span><span class="muted" id="ld-meta"></span></div>
+              <label class="drop" id="ld-drop"><input type="file" id="ld-file" hidden/><span id="ld-drop-text">Click to choose a file, or drop it here</span></label>
+              <div class="progress" id="ld-progress" style="display:none"><i id="ld-bar"></i></div>
+              <div style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-w btn-sm" id="ld-upload" onclick="uploadLoader()" disabled>Upload</button>
+                <button class="btn btn-danger btn-sm" id="ld-delete" onclick="deleteLoader()" style="display:none">Remove file</button></div>
+              <div class="msg" id="ld-msg"></div></div>
+          </div>
+          <div class="brand-preview-wrap"><div class="tbl-head"><h2>Live preview</h2><span class="muted" id="br-preview-url"></span></div>
+            <div class="brand-preview"><div id="br-preview"></div></div></div>
+        </div>
       </section>
 
       <!-- BLACKLIST -->
@@ -276,6 +311,6 @@
   <div class="modal-acts"><button class="btn" onclick="closeModal('m-confirm')">Cancel</button><button class="btn btn-danger" id="cf-ok">Confirm</button></div></div></div>
 
 <div id="toast"><i></i><span id="toast-txt"></span></div>
-<script type="module" src="/portal/portal.js?v=1"></script>
+<script type="module" src="/portal/portal.js?v=2"></script>
 </body>
 </html>

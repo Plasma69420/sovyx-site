@@ -15,6 +15,9 @@ export const fbApp = initializeApp(FIREBASE_CONFIG);
 export const auth  = getAuth(fbApp);
 export const db    = getFirestore(fbApp);
 
+// Railway service that stores loaders and issues one-time download links.
+export const API_BASE = "https://sovyx-site-production.up.railway.app";
+
 export const PLAN_RANK  = { free: 0, basic: 1, pro: 2, ultimate: 3 };
 export const PLAN_LABEL = { free: 'Free', basic: 'Basic', pro: 'Pro', ultimate: 'Ultimate' };
 

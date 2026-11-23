@@ -54,6 +54,16 @@ service cloud.firestore {
       allow read: if isAdmin();
     }
 
+    // Public seller pages at sovyx.cc/b/<slug>. Anyone can read; only the owner of the linked app can write.
+    match /brands/{slug} {
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.ownerUid == me()
+        && get(/databases/$(database)/documents/apps/$(request.resource.data.appId)).data.ownerUid == me();
+      allow update: if isAdmin() || (signedIn() && resource.data.ownerUid == me()
+        && request.resource.data.ownerUid == me() && request.resource.data.appId == resource.data.appId);
+      allow delete: if isAdmin() || (signedIn() && resource.data.ownerUid == me());
+    }
+
     match /hwid_resets/{id} {
       allow create: if signedIn() && request.resource.data.uid == me() && request.resource.data.status == 'pending';
       allow read: if isAdmin() || (signedIn() && resource.data.uid == me());

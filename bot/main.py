@@ -3,6 +3,7 @@ import logging
 import discord
 from discord.ext import commands
 
+import api
 import config
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -16,6 +17,7 @@ class SovyxBot(commands.Bot):
         super().__init__(command_prefix=commands.when_mentioned, intents=intents)
 
     async def setup_hook(self):
+        await api.start()
         await self.load_extension("cogs.tickets")
         await self.load_extension("cogs.keys")
         if config.GUILD_ID:

@@ -4,6 +4,7 @@ import { doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, collection, query, w
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { S, LIMITS, PLAN_FEATURES, loaders } from './state.js';
 import './sections.js';
+import './brand.js';
 
 const I = {
   grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
@@ -11,6 +12,7 @@ const I = {
   key:'<circle cx="8" cy="15" r="4"/><path d="M10.8 12.2L20 3M16 7l3 3M14 9l2 2"/>',
   users:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>',
   pulse:'<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/>',
   ban:'<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>',
   code:'<path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/>',
   hook:'<path d="M18 16.98h-5.99c-1.1 0-1.95.94-2.48 1.9A4 4 0 012 17c.01-.7.2-1.4.57-2"/><path d="M6 17l3.13-5.78c.53-.97.1-2.18-.5-3.1a4 4 0 116.89-4.06"/><path d="M12 6l3.13 5.73C15.66 12.7 16.9 13 18 13a4 4 0 010 8"/>',
@@ -29,6 +31,7 @@ const NAV = [
   { id: 'licenses',  label: 'Licenses',       icon: 'key',   min: 'free',     needsApp: true },
   { id: 'users',     label: 'Users',          icon: 'users', min: 'free',     needsApp: true },
   { id: 'sessions',  label: 'Sessions',       icon: 'pulse', min: 'free',     needsApp: true },
+  { id: 'brand',     label: 'Customer page',  icon: 'globe', min: 'free',     needsApp: true },
   { sec: 'Development' },
   { id: 'api',       label: 'API keys',       icon: 'code',  min: 'basic',    needsApp: true },
   { id: 'webhooks',  label: 'Webhooks',       icon: 'hook',  min: 'pro',      needsApp: true },
