@@ -248,8 +248,8 @@ onAuthStateChanged(auth, u => {
       await updateDoc(doc(db, 'users', uid), { discordId, discordUsername: discordName, discordAvatar });
     } catch {}
 
-    // onAuthStateChanged redirect will fire
     window._discordHandling = false;
+    location.href = '/portal';
   } catch(err) {
     window._discordHandling = false;
     const errEl = document.getElementById('in-err');
