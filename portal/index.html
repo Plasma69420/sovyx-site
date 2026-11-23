@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="/assets/panel.css?v=6"/>
+<link rel="stylesheet" href="/assets/panel.css?v=7"/>
 <link rel="stylesheet" href="/b/brand.css?v=2"/>
 </head>
 <body>
@@ -216,7 +216,8 @@
       <!-- WEBHOOKS -->
       <section class="view" id="v-webhooks">
         <div class="page-h"><div><h1>Webhooks</h1><p>Get a POST request when something happens in this application.</p></div>
-          <button class="btn btn-w" onclick="openModal('m-hook')">+ Add webhook</button></div>
+          <div class="acts"><button class="btn" onclick="showDeliveries()">Deliveries</button><button class="btn btn-w" onclick="openModal('m-hook')">+ Add webhook</button></div></div>
+        <p class="muted" style="margin:-4px 0 14px;font-size:13px">Each request is signed with the webhook’s secret and retried for up to 30 minutes if your server is down. <a href="/docs#webhooks" style="text-decoration:underline">How to verify them</a></p>
         <div class="tbl"><table><thead><tr><th>Endpoint</th><th>Events</th><th>Added</th><th></th></tr></thead><tbody id="hook-body"></tbody></table></div>
       </section>
 
@@ -344,11 +345,24 @@
 <div class="overlay" id="m-hook"><div class="modal"><h2>Add webhook</h2>
   <div class="field"><label>Endpoint URL</label><input id="hk-url" placeholder="https://your-server.com/sovyx"/></div>
   <div class="field"><label>Events</label>
-    <label style="display:flex;gap:8px;align-items:center;font-weight:400;margin:6px 0"><input type="checkbox" value="license.redeemed" checked style="width:auto"/> license.redeemed</label>
-    <label style="display:flex;gap:8px;align-items:center;font-weight:400;margin:6px 0"><input type="checkbox" value="session.started" style="width:auto"/> session.started</label>
-    <label style="display:flex;gap:8px;align-items:center;font-weight:400;margin:6px 0"><input type="checkbox" value="user.banned" style="width:auto"/> user.banned</label>
-    <label style="display:flex;gap:8px;align-items:center;font-weight:400;margin:6px 0"><input type="checkbox" value="hwid.reset" style="width:auto"/> hwid.reset</label></div>
+    <label style="display:flex;gap:8px;align-items:flex-start;font-weight:400;margin:8px 0"><input type="checkbox" value="license.redeemed" checked style="width:auto;margin-top:3px"/><span><span class="mono">license.redeemed</span><br><span class="muted" style="font-size:12px">A key is activated for the first time</span></span></label>
+    <label style="display:flex;gap:8px;align-items:flex-start;font-weight:400;margin:8px 0"><input type="checkbox" value="session.started" style="width:auto;margin-top:3px"/><span><span class="mono">session.started</span><br><span class="muted" style="font-size:12px">Someone signs in successfully</span></span></label>
+    <label style="display:flex;gap:8px;align-items:flex-start;font-weight:400;margin:8px 0"><input type="checkbox" value="login.blocked" style="width:auto;margin-top:3px"/><span><span class="mono">login.blocked</span><br><span class="muted" style="font-size:12px">A sign-in is refused (banned, expired, wrong PC)</span></span></label>
+    <label style="display:flex;gap:8px;align-items:flex-start;font-weight:400;margin:8px 0"><input type="checkbox" value="hwid.reset" style="width:auto;margin-top:3px"/><span><span class="mono">hwid.reset</span><br><span class="muted" style="font-size:12px">A key’s PC lock is cleared</span></span></label>
+    <label style="display:flex;gap:8px;align-items:flex-start;font-weight:400;margin:8px 0"><input type="checkbox" value="key.banned" style="width:auto;margin-top:3px"/><span><span class="mono">key.banned</span><br><span class="muted" style="font-size:12px">You ban a key from the dashboard</span></span></label>
+    <label style="display:flex;gap:8px;align-items:flex-start;font-weight:400;margin:8px 0"><input type="checkbox" value="keys.created" style="width:auto;margin-top:3px"/><span><span class="mono">keys.created</span><br><span class="muted" style="font-size:12px">New keys are generated for a panel</span></span></label></div>
+  <p class="muted" style="font-size:12px;margin:0 0 4px">https only, port 443 or 8443, public addresses only.</p>
   <div class="modal-acts"><button class="btn" onclick="closeModal('m-hook')">Cancel</button><button class="btn btn-w" onclick="addHook()">Add</button></div></div></div>
+
+<div class="overlay" id="m-hooksecret"><div class="modal"><h2>Signing secret</h2>
+  <p class="muted" id="hs-url" style="word-break:break-all;font-size:13px"></p>
+  <div class="field"><label>Secret</label><input id="hs-secret" class="mono" readonly onclick="this.select()"/></div>
+  <p class="muted" style="font-size:12px">Use this to check the <span class="mono">X-Sovyx-Signature</span> header on each request. Keep it private.</p>
+  <div class="modal-acts"><button class="btn" onclick="closeModal('m-hooksecret')">Close</button><button class="btn btn-w" onclick="copy(document.getElementById('hs-secret').value)">Copy</button></div></div></div>
+
+<div class="overlay" id="m-hooklog"><div class="modal" style="max-width:720px"><h2>Recent deliveries</h2>
+  <div class="tbl" style="max-height:60vh;overflow:auto"><table><thead><tr><th>Result</th><th>Event</th><th>Host</th><th>Detail</th><th>When</th></tr></thead><tbody id="hd-body"></tbody></table></div>
+  <div class="modal-acts"><button class="btn" onclick="closeModal('m-hooklog')">Close</button></div></div></div>
 
 <div class="overlay" id="m-var"><div class="modal"><h2>Add variable</h2>
   <div class="field"><label>Name</label><input id="vr-name" class="mono" placeholder="motd"/></div>
@@ -367,6 +381,6 @@
   <div class="modal-acts"><button class="btn" onclick="closeModal('m-confirm')">Cancel</button><button class="btn btn-danger" id="cf-ok">Confirm</button></div></div></div>
 
 <div id="toast"><i></i><span id="toast-txt"></span></div>
-<script type="module" src="/portal/portal.js?v=9"></script>
+<script type="module" src="/portal/portal.js?v=10"></script>
 </body>
 </html>

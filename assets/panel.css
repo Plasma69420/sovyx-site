@@ -61,8 +61,6 @@ svg{flex-shrink:0}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;border:1px solid var(--b2);background:transparent;color:var(--text);transition:all .15s;white-space:nowrap}
 .btn:hover{border-color:var(--b3);background:rgba(255,255,255,.03)}
 .btn:disabled{opacity:.5;cursor:default}
-.btn-w{background:#f4f4f5;color:#0a0a0a;border-color:#f4f4f5}
-.btn-w:hover{background:#fff;border-color:#fff}
 .btn-danger{color:var(--pink);border-color:rgba(225,29,72,.35)}
 .btn-danger:hover{background:rgba(225,29,72,.08);border-color:rgba(225,29,72,.5)}
 .btn-sm{padding:4px 10px;font-size:11.5px;border-radius:6px}
@@ -196,3 +194,11 @@ tbody tr:hover{background:rgba(255,255,255,.015)}
   .content,.topbar{padding-left:18px;padding-right:18px}
   .tbl{overflow-x:auto}
 }
+
+/* red theme */
+::selection{background:rgba(225,29,72,.4);color:#fff}
+.btn-w{background:var(--red,#e11d48);border-color:var(--red,#e11d48);color:#fff}
+.btn-w:hover{background:#f43f5e;border-color:#f43f5e}
+.side-item.on{color:#fff;background:rgba(225,29,72,.14);box-shadow:inset 2px 0 0 #e11d48}
+.seg button.on{background:rgba(225,29,72,.18);color:#fff}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#e11d48}

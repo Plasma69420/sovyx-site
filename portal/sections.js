@@ -1,5 +1,5 @@
-import { db, API_BASE, PLAN_LABEL, esc, $, toMs, fmtDate, ago, initials, randBlock, randHex, toast, closeModal, openModal, confirmBox, copy } from '/assets/fb.js';
-import { collection, doc, getDocs, addDoc, updateDoc, deleteDoc, writeBatch, onSnapshot, serverTimestamp, Timestamp }
+import { auth, db, API_BASE, PLAN_LABEL, esc, $, toMs, fmtDate, ago, initials, randBlock, randHex, toast, closeModal, openModal, confirmBox, copy } from '/assets/fb.js';
+import { collection, doc, getDocs, addDoc, updateDoc, deleteDoc, writeBatch, onSnapshot, serverTimestamp, Timestamp, query, orderBy, limit }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { S, LIMITS, loaders } from './state.js';
 
@@ -8,6 +8,14 @@ const ref = (name, id) => doc(db, 'apps', S.app.id, name, id);
 const fetchAll = async name => (await getDocs(col(name))).docs.map(d => ({ id: d.id, ...d.data() }));
 const durLabel = d => d === 0 ? 'Lifetime' : d === 1 ? '1 day' : d % 365 === 0 ? (d / 365) + 'y' : d + ' days';
 const expiry = days => days === 0 ? 0 : Timestamp.fromMillis(Date.now() + days * 86400000);
+// Tell the server about an action taken here so the seller's webhooks hear about it too (best effort).
+async function reportEvent(type, key) {
+  try {
+    if (!['pro', 'ultimate'].includes(S.plan) || !auth.currentUser) return;
+    const token = await auth.currentUser.getIdToken();
+    fetch(`${API_BASE}/api/apps/${S.app.id}/events`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ type, key }) }).catch(() => {});
+  } catch { /* webhooks are optional; never block the action */ }
+}
 const empty = (n, t) => `<tr><td colspan="${n}" class="empty">${t}</td></tr>`;
 
 // ---------- Licenses ----------
@@ -81,11 +89,17 @@ window.exportLicenses = () => {
   a.click();
 };
 
-window.resetLicHwid = async id => { await updateDoc(ref('licenses', id), { hwid: null }); toast('HWID reset'); loaders.licenses(); };
+window.resetLicHwid = async id => {
+  const l = licenses.find(x => x.id === id);
+  await updateDoc(ref('licenses', id), { hwid: null }); toast('HWID reset'); loaders.licenses();
+  if (l) reportEvent('hwid.reset', l.key);
+};
 window.toggleLicBan = async id => {
   const l = licenses.find(x => x.id === id);
-  await updateDoc(ref('licenses', id), { status: l.status === 'banned' ? (l.usedBy ? 'used' : 'unused') : 'banned' });
+  const banning = l.status !== 'banned';
+  await updateDoc(ref('licenses', id), { status: banning ? 'banned' : (l.usedBy ? 'used' : 'unused') });
   loaders.licenses();
+  if (banning) reportEvent('key.banned', l.key);
 };
 window.delLicense = id => confirmBox('Delete this license? Anyone using it loses access.', async () => {
   await deleteDoc(ref('licenses', id)); toast('License deleted'); loaders.licenses();
@@ -238,23 +252,59 @@ window.rotateSeller = async () => {
 };
 
 // ---------- Webhooks ----------
+let hooks = [];
 loaders.webhooks = async () => {
-  const list = await fetchAll('webhooks');
-  $('hook-body').innerHTML = list.length ? list.map(h => `<tr>
-    <td class="mono">${esc(h.url)}</td><td>${(h.events || []).map(e => `<span class="tag t-off" style="margin-right:4px">${esc(e)}</span>`).join('')}</td>
+  hooks = await fetchAll('webhooks');
+  $('hook-body').innerHTML = hooks.length ? hooks.map(h => `<tr>
+    <td class="mono" style="max-width:300px;overflow:hidden;text-overflow:ellipsis">${esc(h.url)}</td>
+    <td>${(h.events || []).map(e => `<span class="tag t-off" style="margin:0 4px 4px 0">${esc(e)}</span>`).join('')}</td>
     <td class="muted">${fmtDate(h.createdAt)}</td>
-    <td><div class="acts"><button class="btn btn-sm btn-danger" onclick="delHook('${h.id}')">Delete</button></div></td></tr>`).join('')
-    : empty(4, 'No webhooks yet');
+    <td><div class="acts"><button class="btn btn-sm" id="ht-${h.id}" onclick="testHook('${h.id}')">Send test</button>
+      <button class="btn btn-sm" onclick="showHookSecret('${h.id}')">Secret</button>
+      <button class="btn btn-sm btn-danger" onclick="delHook('${h.id}')">Delete</button></div></td></tr>`).join('')
+    : empty(4, 'No webhooks yet — add one to hear about redeemed keys, new sessions and blocked sign-ins');
 };
 window.addHook = async () => {
   const url = $('hk-url').value.trim();
-  if (!/^https:\/\//i.test(url)) return toast('Use an https:// URL', true);
+  if (!/^https:\/\/[^/\s]+/i.test(url)) return toast('Use an https:// URL', true);
+  if (hooks.length >= 25) return toast('You can have up to 25 webhooks per application.', true);
   const events = [...document.querySelectorAll('#m-hook input[type=checkbox]:checked')].map(c => c.value);
   if (!events.length) return toast('Pick at least one event', true);
-  await addDoc(col('webhooks'), { url, events, createdAt: serverTimestamp() });
-  $('hk-url').value = ''; closeModal('m-hook'); toast('Webhook added'); loaders.webhooks();
+  const secret = randHex(24);
+  await addDoc(col('webhooks'), { url, events, secret, createdAt: serverTimestamp() });
+  $('hk-url').value = ''; closeModal('m-hook'); toast('Webhook added'); await loaders.webhooks();
+  const h = hooks.find(x => x.secret === secret); if (h) showHookSecret(h.id);
 };
-window.delHook = async id => { await deleteDoc(ref('webhooks', id)); loaders.webhooks(); };
+window.delHook = id => confirmBox('Delete this webhook? Nothing more will be sent to it.', async () => {
+  await deleteDoc(ref('webhooks', id)); loaders.webhooks();
+});
+window.showHookSecret = async id => {
+  const h = hooks.find(x => x.id === id); if (!h) return;
+  if (!h.secret) { h.secret = randHex(24); await updateDoc(ref('webhooks', id), { secret: h.secret }); }
+  $('hs-url').textContent = h.url; $('hs-secret').value = h.secret; openModal('m-hooksecret');
+};
+window.testHook = async id => {
+  const btn = $('ht-' + id); btn.disabled = true; const label = btn.textContent; btn.textContent = 'Sending…';
+  try {
+    const token = await auth.currentUser.getIdToken();
+    const r = await fetch(`${API_BASE}/api/apps/${S.app.id}/webhooks/${id}/test`, { method: 'POST', headers: { Authorization: 'Bearer ' + token } });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) toast(j.error || 'Couldn’t send the test.', true);
+    else if (j.ok) toast(`Test delivered (HTTP ${j.status})`);
+    else toast(`Test failed: ${j.error || 'no response'}`, true);
+  } catch { toast('Couldn’t reach the Sovyx API.', true); }
+  finally { btn.disabled = false; btn.textContent = label; }
+};
+window.showDeliveries = async () => {
+  $('hd-body').innerHTML = empty(5, 'Loading…'); openModal('m-hooklog');
+  const snap = await getDocs(query(col('webhookLog'), orderBy('at', 'desc'), limit(50)));
+  const rows = snap.docs.map(d => d.data());
+  $('hd-body').innerHTML = rows.length ? rows.map(l => `<tr>
+    <td><span class="tag ${l.ok ? 't-live' : 't-bad'}">${l.ok ? 'Delivered' : 'Failed'}</span></td>
+    <td class="mono">${esc(l.event)}</td><td class="mono dimc">${esc(l.host)}</td>
+    <td class="muted">${l.ok ? 'HTTP ' + esc(l.status) : esc(l.error || 'Failed')}${l.attempts > 1 ? ' · ' + esc(l.attempts) + ' tries' : ''}</td>
+    <td class="muted">${ago(l.at)}</td></tr>`).join('') : empty(5, 'Nothing sent yet');
+};
 
 // ---------- Variables ----------
 loaders.variables = async () => {

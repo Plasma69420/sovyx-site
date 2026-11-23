@@ -13,6 +13,7 @@ from firebase_admin import firestore
 
 from db import db
 from util import client_ip, err, plog
+from webhooks import emit
 
 LIMIT, WINDOW = 30, 300
 HEARTBEAT_SECONDS = 30
@@ -74,12 +75,14 @@ def _login(app_id: str, key: str, hwid: str, ip: str, version: str) -> dict:
     blacklist = app_ref.collection("blacklist")
     for value in (ip, hwid):
         if blacklist.where("value", "==", value).limit(1).get():
+            emit(app_id, "login.blocked", {"reason": "blacklisted", "ip": ip, "hwid": hwid, "key": key})
             return {"error": (403, "Access denied.")}
     snap = _find_license(app_ref, key)
     if not snap:
         return {"error": (401, "That key isn't valid.")}
     ref, lic = snap.reference, snap.to_dict()
     if (problem := _license_problem(lic)):
+        emit(app_id, "login.blocked", {"reason": "banned" if "banned" in problem else "expired", "key": key, "ip": ip, "hwid": hwid})
         return {"error": (403, problem)}
 
     now, update, expires = datetime.now(timezone.utc), {}, lic.get("expiresAt")
@@ -88,10 +91,12 @@ def _login(app_id: str, key: str, hwid: str, ip: str, version: str) -> dict:
         expires = None if days == 0 else now + timedelta(days=days)
         update.update(status="used", usedBy=lic.get("usedBy") or "software login", activatedAt=firestore.SERVER_TIMESTAMP, expiresAt=expires)
         plog(app_id, f"Key {key} activated by its first login", "buyer", "redeem")
+        emit(app_id, "license.redeemed", {"key": key, "via": "login", "ip": ip, "days": days})
 
     bound, locked = lic.get("hwid"), ad.get("hwidLock") is not False
     if locked and bound and bound != hwid:
         plog(app_id, f"Blocked a login for {key}: different device", "buyer", "blocked")
+        emit(app_id, "login.blocked", {"reason": "hwid_mismatch", "key": key, "ip": ip, "hwid": hwid})
         return {"error": (403, "This key is locked to another device. Ask for an HWID reset.")}
     if not bound:
         update["hwid"] = hwid
@@ -106,6 +111,7 @@ def _login(app_id: str, key: str, hwid: str, ip: str, version: str) -> dict:
         "username": _masked(key), "ip": ip, "hwid": hwid, "licenseId": snap.id, "tokenHash": hashlib.sha256(token.encode()).hexdigest(),
         "startedAt": firestore.SERVER_TIMESTAMP, "lastSeen": firestore.SERVER_TIMESTAMP, "version": version,
     })
+    emit(app_id, "session.started", {"key": key, "ip": ip, "hwid": hwid, "version": version or None})
     variables = {}
     for v in app_ref.collection("variables").limit(100).get():
         d = v.to_dict()
@@ -178,6 +184,7 @@ def reset_hwid(app_id: str, key: str) -> dict:
     ref.update({"hwid": None, "lastHwidReset": firestore.SERVER_TIMESTAMP, "hwidResets": firestore.Increment(1)})
     app_ref.collection("sessions").document(snap.id).delete()
     plog(app_id, f"Buyer reset the HWID of {key}", "buyer", "hwid")
+    emit(app_id, "hwid.reset", {"key": key, "by": "buyer"})
     return {"ok": {"ok": True, "cooldownDays": cooldown}}
 
 

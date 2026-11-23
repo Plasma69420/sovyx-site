@@ -16,9 +16,10 @@ from aiohttp import web
 from firebase_admin import auth as fb_auth
 from firebase_admin import firestore
 
+import webhooks
 from clientapi import ROUTES as CLIENT_ROUTES
 from db import db
-from util import client_ip, err, plog as _plog
+from util import client_ip, err, owner_app, plog as _plog
 
 log = logging.getLogger("sovyx.api")
 
@@ -62,25 +63,6 @@ async def cors(request: web.Request, handler):
         resp.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type"
         resp.headers["Access-Control-Allow-Methods"] = "GET, POST, DELETE, OPTIONS"
     return resp
-
-
-async def owner_app(request: web.Request) -> tuple[str, dict, dict]:
-    """Verify the Firebase ID token and that the caller owns the app. Returns (uid, app, user)."""
-    header = request.headers.get("Authorization", "")
-    if not header.startswith("Bearer "):
-        raise web.HTTPUnauthorized(text="sign in required")
-    try:
-        decoded = await asyncio.to_thread(fb_auth.verify_id_token, header[7:])
-    except Exception:
-        raise web.HTTPUnauthorized(text="invalid session, sign in again")
-    uid, app_id = decoded["uid"], request.match_info["app_id"]
-    snap = await asyncio.to_thread(db.collection("apps").document(app_id).get)
-    if not snap.exists or snap.get("ownerUid") != uid:
-        raise web.HTTPForbidden(text="not your application")
-    user = (await asyncio.to_thread(db.collection("users").document(uid).get)).to_dict() or {}
-    if user.get("banned"):
-        raise web.HTTPForbidden(text="account suspended")
-    return uid, snap.to_dict(), user
 
 
 async def upload_loader(request: web.Request) -> web.Response:
@@ -228,6 +210,7 @@ async def panel_generate(request: web.Request) -> web.Response:
     result = await asyncio.to_thread(_panel_generate, grant_id, uid, email, days, qty, note)
     if "error" in result:
         return err(*result["error"])
+    webhooks.emit(result["appId"], "keys.created", {"count": len(result["keys"]), "days": days, "by": email, "keys": result["keys"][:50]})
     app = await asyncio.to_thread(db.collection("apps").document(result["appId"]).get)
     return web.json_response({"keys": result["keys"], "credits": result["credits"], "cost": result["cost"],
                               "page": (app.to_dict() or {}).get("brandSlug") if app.exists else None})
@@ -295,6 +278,10 @@ async def panel_key_action(request: web.Request) -> web.Response:
         update, text = {"status": "used" if lic.get("usedBy") else "unused"}, f"Unbanned {lic['key']}"
     await asyncio.to_thread(ref.update, update)
     await asyncio.to_thread(_plog, app_id, text, email, "key")
+    if action == "reset-hwid":
+        webhooks.emit(app_id, "hwid.reset", {"key": lic["key"], "by": email})
+    elif action == "ban":
+        webhooks.emit(app_id, "key.banned", {"key": lic["key"], "by": email})
     return web.json_response({"ok": True, **update})
 
 
@@ -435,6 +422,7 @@ def _check_and_activate(app_id: str, key: str, ip: str) -> dict:
     ref.update(update)
     if lic.get("status", "unused") == "unused":
         _plog(app_id, f"Key {key} activated from the download page", "buyer", "redeem")
+        webhooks.emit(app_id, "license.redeemed", {"key": key, "via": "download page", "ip": ip})
     return {"ok": True}
 
 
@@ -503,6 +491,8 @@ async def start() -> None:
         log.warning("DATA_DIR not writable; using %s (files are lost on redeploy — attach a Railway volume at /data)", DATA_DIR)
     app = web.Application(middlewares=[cors], client_max_size=max(MAX_BYTES.values()) + 1024 ** 2)
     app.add_routes(CLIENT_ROUTES)
+    app.add_routes(webhooks.ROUTES)
+    webhooks.start(asyncio.get_running_loop())
     app.add_routes([
         web.get("/health", health),
         web.post("/api/apps/{app_id}/loader", upload_loader),

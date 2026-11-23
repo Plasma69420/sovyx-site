@@ -16,12 +16,12 @@ nav.nx.scrolled{background:rgba(10,10,10,.82);backdrop-filter:blur(20px);-webkit
 .nav-links a:hover,.nav-links a.on{color:var(--text)}
 .nav-actions{display:flex;align-items:center;gap:6px}
 .nx-login{font-size:13px;font-weight:500;color:var(--muted);padding:6px 10px;transition:color .15s}.nx-login:hover{color:var(--text)}
-.nx-signup{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:8px;background:#f4f4f5;color:#0a0a0a;font-size:13px;font-weight:600;transition:background .15s,transform .15s}
+.nx-signup{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:8px;background:var(--red);color:#fff;font-size:13px;font-weight:600;transition:background .15s,transform .15s}
 .nx-signup:hover{background:#fff;transform:translateY(-1px)}
 
 /* buttons + tags */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:background .15s,border-color .15s,transform .15s;font-family:inherit}
-.btn-w{background:#f4f4f5;color:#0a0a0a}.btn-w:hover{background:#fff;transform:translateY(-1px)}
+.btn-w{background:var(--red);color:#fff}
 .btn-o{background:transparent;color:var(--text);border-color:var(--b2)}.btn-o:hover{border-color:var(--b3);background:rgba(255,255,255,.03)}
 .btn svg{width:16px;height:16px}
 .tg{display:inline-block;font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
@@ -169,3 +169,16 @@ footer{margin-top:0;border-top:1px solid var(--b);padding:26px max(24px,calc((10
   .tbl,.lg table{display:block;overflow-x:auto}
   footer{flex-direction:column;align-items:flex-start}
 }
+
+/* red theme */
+::selection{background:rgba(225,29,72,.4);color:#fff}
+a:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.nx-signup:hover,.btn-w:hover{background:#f43f5e;transform:translateY(-1px)}
+.btn-w{box-shadow:0 6px 22px -8px rgba(225,29,72,.7)}
+.nav-links a.on{color:var(--pink)}
+.eyebrow{color:var(--pink);border-color:rgba(225,29,72,.35);background:rgba(225,29,72,.08)}
+.dx-nav a.on{color:var(--pink);border-left-color:var(--red)}
+.prose a,.card a.more{color:var(--pink);text-decoration-color:rgba(251,113,133,.45)}
+.prose a:hover{text-decoration-color:var(--pink)}
+.steps-ol li::before{border-color:rgba(225,29,72,.55);color:var(--pink)}
+.note{border-left-color:var(--red);background:rgba(225,29,72,.05)}
