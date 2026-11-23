@@ -1,4 +1,4 @@
-import { auth, db, PLAN_LABEL, esc, $, toMs, fmtDate, ago, initials, randBlock, toast, openModal, closeModal, confirmBox, copy } from '/assets/fb.js';
+import { auth, db, PLAN_LABEL, esc, $, toMs, fmtDate, ago, initials, randBlock, randHex, toast, openModal, closeModal, confirmBox, copy } from '/assets/fb.js';
 import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { collection, collectionGroup, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, writeBatch, query, where, orderBy, limit, serverTimestamp, Timestamp }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -21,6 +21,9 @@ const NAV = [
   { id: 'users', label: 'Customers', icon: 'users' },
   { id: 'keys', label: 'Subscription keys', icon: 'key' },
   { id: 'resellers', label: 'Resellers', icon: 'store' },
+  { sec: 'Strive' },
+  { id: 'products', label: 'Products', icon: 'box' },
+  { id: 'access', label: 'Panel access', icon: 'users' },
   { sec: 'Platform' },
   { id: 'apps', label: 'Applications', icon: 'box' },
   { id: 'sessions', label: 'Live sessions', icon: 'pulse' },
@@ -30,7 +33,7 @@ const NAV = [
   { id: 'settings', label: 'Settings', icon: 'gear' },
 ];
 
-let users = [], keys = [], resellers = [], apps = [], hwids = [], activity = [], settings = {};
+let users = [], keys = [], resellers = [], apps = [], hwids = [], activity = [], settings = {}, products = [], panels = [];
 let view = 'dash', uFilter = '', kFilter = '', lastKeys = [];
 const now = () => Date.now();
 const isPaid = u => (u.plan && u.plan !== 'free') && !(toMs(u.expiresAt) && toMs(u.expiresAt) < now());
@@ -91,7 +94,7 @@ function go(v) {
   $('crumb').textContent = n.label;
   document.querySelectorAll('.view').forEach(s => s.classList.toggle('on', s.id === 'v-' + n.id));
   renderNav();
-  ({ dash: renderDash, users: renderUsers, keys: renderKeys, resellers: renderResellers, apps: renderApps, sessions: loadSessions, hwid: renderHwid, activity: renderActivity, settings: renderSettings })[n.id]?.();
+  ({ dash: renderDash, users: renderUsers, keys: renderKeys, resellers: renderResellers, products: renderProducts, access: renderAccess, apps: renderApps, sessions: loadSessions, hwid: renderHwid, activity: renderActivity, settings: renderSettings })[n.id]?.();
 }
 window.go = go;
 
@@ -100,9 +103,9 @@ const all = async (name, ...q) => {
   catch (e) { console.warn(name, e.message); return []; }
 };
 async function refresh() {
-  [users, keys, resellers, apps, hwids, activity] = await Promise.all([
+  [users, keys, resellers, apps, hwids, activity, products, panels] = await Promise.all([
     all('users'), all('licenseKeys'), all('resellers'), all('apps'),
-    all('hwid_resets'), all('activity', orderBy('at', 'desc'), limit(200)),
+    all('hwid_resets'), all('activity', orderBy('at', 'desc'), limit(200)), all('products'), all('panelAccess'),
   ]);
   const s = await getDoc(doc(db, 'settings', 'site')).catch(() => null);
   const p = await getDoc(doc(db, 'settings', 'plans')).catch(() => null);
@@ -165,7 +168,7 @@ window.editUser = id => {
   const u = users.find(x => x.id === id);
   $('eu-id').value = id; $('eu-email').textContent = u.email;
   $('eu-name').value = u.username || ''; $('eu-plan').value = u.plan || 'free';
-  $('eu-credits').value = u.credits || 0; $('eu-note').value = u.adminNote || '';
+  $('eu-credits').value = u.credits || 0; $('eu-note').value = u.adminNote || ''; $('eu-mode').value = u.portalMode === 'products' ? 'products' : 'full';
   const m = toMs(u.expiresAt);
   $('eu-exp').value = m ? new Date(m).toISOString().slice(0, 10) : '';
   openModal('m-user');
@@ -178,7 +181,7 @@ window.saveUser = async () => {
   const id = $('eu-id').value, u = users.find(x => x.id === id);
   const exp = $('eu-exp').value;
   const data = { username: $('eu-name').value.trim(), plan: $('eu-plan').value, credits: parseInt($('eu-credits').value) || 0,
-    expiresAt: exp ? Timestamp.fromDate(new Date(exp + 'T23:59:59')) : 0, adminNote: $('eu-note').value.trim() };
+    expiresAt: exp ? Timestamp.fromDate(new Date(exp + 'T23:59:59')) : 0, adminNote: $('eu-note').value.trim(), portalMode: $('eu-mode').value };
   await updateDoc(doc(db, 'users', id), data);
   Object.assign(u, data); closeModal('m-user'); toast('Customer saved');
   log('Customer edited', `${u.email} → ${PLAN_LABEL[data.plan]}`); renderUsers();
@@ -426,3 +429,211 @@ async function purge(name, filter, label) {
 window.purgeUnusedKeys = () => confirmBox('Delete every unused subscription key?', () => purge('licenseKeys', k => !k.assigned, 'Unused keys purged'));
 window.purgeHwid = () => confirmBox('Delete all approved and denied HWID requests?', () => purge('hwid_resets', r => r.status === 'done' || r.status === 'denied', 'HWID requests cleared'));
 window.purgeActivity = () => confirmBox('Clear the whole activity log?', () => purge('activity', () => true, 'Activity log cleared'));
+
+// ---------- Strive products ----------
+const DURS = [[1, '1 day'], [7, '7 days'], [30, '30 days'], [90, '90 days'], [0, 'Lifetime']];
+const DEFAULT_COSTS = { 1: 1, 7: 3, 30: 8, 90: 20, 0: 50 };
+const SEED = [['Fortnite Private', 'FNP'], ['Fortnite Slotted', 'FNS'], ['Fortnite AI', 'FNA'], ['Temp Spoofer', 'TSP'], ['Perm Spoofer', 'PSP'],
+  ['R6 Private', 'R6P'], ['Rust', 'RST'], ['Retrac', 'RTC'], ['Roblox', 'RBX']];
+const slugify = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const durShort = d => d === 0 ? 'Life' : d + 'd';
+const costText = c => DURS.filter(([d]) => c?.[d] > 0).map(([d]) => `${durShort(d)} ${c[d]}`).join(' · ') || 'No prices set';
+
+async function makeProductApp(name) {
+  const ref = await addDoc(collection(db, 'apps'), {
+    ownerUid: auth.currentUser.uid, name, version: '1.0.0', secret: randHex(24), sellerKey: randHex(16), hwidLock: true, createdAt: serverTimestamp(),
+  });
+  return ref.id;
+}
+
+function renderProducts() {
+  const counts = {}; panels.forEach(p => counts[p.productId] = (counts[p.productId] || 0) + 1);
+  const list = [...products].sort((a, b) => (a.order ?? 99) - (b.order ?? 99) || (a.name || '').localeCompare(b.name || ''));
+  $('pr-seed').style.display = list.length ? 'none' : '';
+  $('pr-body').innerHTML = list.length ? list.map(p => `<tr>
+    <td><div class="u-name">${esc(p.name)}</div><div class="u-sub">${esc(p.prefix || '')}-XXXX-XXXX-XXXX</div></td>
+    <td class="muted">${esc(costText(p.costs))}</td>
+    <td>${counts[p.id] || 0}</td>
+    <td>${p.appId ? '<span class="tag t-live">Ready</span>' : '<span class="tag t-warn">No app</span>'}</td>
+    <td>${p.active === false ? '<span class="tag t-off">Off</span>' : '<span class="tag t-live">On</span>'}</td>
+    <td><div class="acts"><button class="btn btn-sm" onclick="openProduct('${p.id}')">Edit</button>
+      <button class="btn btn-sm btn-danger" onclick="delProduct('${p.id}')">Delete</button></div></td></tr>`).join('')
+    : empty(6, 'No products yet. Click “Add the Strive products” above.');
+}
+
+window.seedProducts = async () => {
+  const btn = $('pr-seed-btn'); btn.disabled = true;
+  try {
+    let made = 0;
+    for (const [i, [name, prefix]] of SEED.entries()) {
+      const id = slugify(name);
+      if (products.some(p => p.id === id)) continue;
+      const appId = await makeProductApp(name);
+      await setDoc(doc(db, 'products', id), { name, prefix, active: true, appId, costs: { ...DEFAULT_COSTS }, order: i, createdAt: serverTimestamp() });
+      made++;
+    }
+    products = await all('products'); apps = await all('apps');
+    toast(`${made} products added`); log('Products added', `${made} Strive products`); renderProducts();
+  } catch (e) { toast(e.message, true); }
+  finally { btn.disabled = false; }
+};
+
+window.openProduct = id => {
+  const p = products.find(x => x.id === id) || { active: true, costs: { ...DEFAULT_COSTS } };
+  $('pd-id').value = id || ''; $('pd-title').textContent = id ? 'Edit product' : 'Add product';
+  $('pd-name').value = p.name || ''; $('pd-prefix').value = p.prefix || ''; $('pd-active').value = p.active === false ? '0' : '1';
+  DURS.forEach(([d]) => { $('pd-c-' + d).value = p.costs?.[d] > 0 ? p.costs[d] : ''; });
+  $('pd-note').textContent = id ? (p.appId ? 'Linked to an application in your portal. Open sovyx.cc/portal to upload the download and set up its customer page.' : 'This product has no application yet, so panels can’t make keys for it.') : 'An application is created for it automatically.';
+  openModal('m-product');
+};
+
+window.saveProduct = async () => {
+  const id = $('pd-id').value, name = $('pd-name').value.trim();
+  const prefix = $('pd-prefix').value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+  if (!name) return toast('Give the product a name', true);
+  if (prefix.length < 2) return toast('Key prefix needs 2–8 letters or numbers', true);
+  const costs = {};
+  for (const [d] of DURS) { const v = parseInt($('pd-c-' + d).value); if (v > 0) costs[d] = v; }
+  if (!Object.keys(costs).length) return toast('Set a credit price for at least one duration', true);
+  const data = { name, prefix, active: $('pd-active').value === '1', costs };
+  try {
+    if (id) await updateDoc(doc(db, 'products', id), data);
+    else {
+      const newId = slugify(name);
+      if (products.some(p => p.id === newId)) return toast('A product with that name already exists', true);
+      const appId = await makeProductApp(name);
+      await setDoc(doc(db, 'products', newId), { ...data, appId, order: products.length, createdAt: serverTimestamp() });
+    }
+    closeModal('m-product'); toast('Product saved'); log('Product saved', name);
+    [products, apps] = await Promise.all([all('products'), all('apps')]); renderProducts();
+  } catch (e) { toast(e.message, true); }
+};
+
+window.delProduct = id => {
+  const p = products.find(x => x.id === id), n = panels.filter(x => x.productId === id).length;
+  if (n) return toast(`${n} panel(s) use ${p.name}. Remove them first, or switch the product off.`, true);
+  confirmBox(`Delete ${p.name}? Its application and keys stay in your portal.`, async () => {
+    await deleteDoc(doc(db, 'products', id)); products = products.filter(x => x.id !== id);
+    log('Product deleted', p.name); renderProducts();
+  });
+};
+
+// ---------- Panel access ----------
+let acFilter = '';
+const userOf = uid => users.find(u => u.id === uid);
+const panelState = g => g.status === 'suspended' ? ['Suspended', 't-warn'] : (toMs(g.expiresAt) && toMs(g.expiresAt) < now()) ? ['Expired', 't-bad'] : ['Active', 't-live'];
+
+function renderAccess() {
+  const sel = $('ac-prod'), keep = sel.value;
+  sel.innerHTML = '<option value="">All products</option>' + [...products].sort((a, b) => (a.order ?? 99) - (b.order ?? 99)).map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
+  sel.value = products.some(p => p.id === keep) ? keep : '';
+  const q = $('ac-q').value.toLowerCase();
+  const list = panels.filter(g => !sel.value || g.productId === sel.value)
+    .filter(g => !acFilter || panelState(g)[0].toLowerCase() === acFilter)
+    .filter(g => !q || [g.email, g.username, g.productName].some(v => (v || '').toLowerCase().includes(q)))
+    .sort((a, b) => (a.email || '').localeCompare(b.email || '') || (a.productName || '').localeCompare(b.productName || ''));
+  const active = panels.filter(g => panelState(g)[0] === 'Active');
+  $('ac-active').textContent = active.length;
+  $('ac-people').textContent = `${new Set(panels.map(g => g.uid)).size} people`;
+  $('ac-credits').textContent = panels.reduce((s, g) => s + (g.credits || 0), 0);
+  $('ac-keys').textContent = panels.reduce((s, g) => s + (g.keysMade || 0), 0);
+  $('ac-soon').textContent = active.filter(g => { const m = toMs(g.expiresAt); return m && m - now() < 7 * 86400000; }).length;
+  $('ac-body').innerHTML = list.length ? list.map(g => {
+    const [label, cls] = panelState(g), u = userOf(g.uid);
+    return `<tr>
+      <td><div class="u-cell"><div class="av">${esc(initials(g.username || g.email))}</div><div><div class="u-name">${esc(g.username || g.email)}</div><div class="u-sub">${esc(g.email || '')}</div></div></div>${u?.portalMode === 'products' ? '<span class="tag t-off" style="margin-top:6px">Products-only portal</span>' : ''}</td>
+      <td>${esc(g.productName || g.productId)}</td>
+      <td>${g.canGenerate !== false ? '<span class="tag t-pro">Reseller</span>' : '<span class="tag t-off">Access only</span>'}${g.canDownload === false ? ' <span class="tag t-warn">No download</span>' : ''}</td>
+      <td>${g.canGenerate !== false ? (g.credits || 0) : '<span class="dimc">—</span>'}</td><td class="muted">${g.keysMade || 0}</td>
+      <td class="muted">${g.expiresAt === 0 || g.expiresAt == null ? 'Never' : fmtDate(g.expiresAt)}</td>
+      <td><span class="tag ${cls}">${label}</span></td>
+      <td><div class="acts"><button class="btn btn-sm" onclick="editPanel('${g.id}')">Manage</button>
+        <button class="btn btn-sm btn-danger" onclick="delPanel('${g.id}')">Remove</button></div></td></tr>`;
+  }).join('') : empty(8, panels.length ? 'No panels match' : 'Nobody has a panel yet. Click “Give access”.');
+}
+window.renderAccess = renderAccess;
+$('ac-seg').addEventListener('click', e => { if (e.target.tagName !== 'BUTTON') return; acFilter = e.target.dataset.f; $('ac-seg').querySelectorAll('button').forEach(b => b.classList.toggle('on', b === e.target)); renderAccess(); });
+
+window.openGrant = () => {
+  if (!products.length) return toast('Add your products first', true);
+  $('ga-people').innerHTML = users.map(u => `<option value="${esc(u.email)}">${esc(u.username || '')}</option>`).join('');
+  $('ga-person').value = '';
+  $('ga-products').innerHTML = [...products].sort((a, b) => (a.order ?? 99) - (b.order ?? 99)).map(p =>
+    `<label class="chk"><input type="checkbox" value="${p.id}"${p.active === false ? ' disabled' : ''}/>${esc(p.name)}${p.active === false ? ' <span class="dimc">(off)</span>' : ''}</label>`).join('');
+  $('ga-all').checked = false;
+  $('ga-gen').checked = true; $('ga-dl').checked = true; $('ga-credits').value = 0; $('ga-dur').value = '30'; $('ga-date').style.display = 'none'; $('ga-date').value = '';
+  $('ga-portal').value = 'keep'; $('ga-note').value = '';
+  openModal('m-grant');
+};
+window.toggleAllProducts = on => document.querySelectorAll('#ga-products input:not(:disabled)').forEach(i => { i.checked = on; });
+window.grantPreset = kind => {
+  $('ga-gen').checked = kind === 'reseller'; $('ga-dl').checked = true;
+  $('ga-portal').value = kind === 'reseller' ? 'keep' : 'products';
+  if (kind !== 'reseller') $('ga-credits').value = 0;
+};
+$('ga-dur').addEventListener('change', () => { $('ga-date').style.display = $('ga-dur').value === 'custom' ? '' : 'none'; });
+
+function expiryFrom(sel, dateStr) {
+  if (sel === '0') return 0;
+  if (sel === 'custom') return dateStr ? Timestamp.fromDate(new Date(dateStr + 'T23:59:59')) : null;
+  return Timestamp.fromMillis(now() + parseInt(sel) * 86400000);
+}
+
+window.saveGrant = async () => {
+  const person = $('ga-person').value.trim().toLowerCase();
+  const u = users.find(x => (x.email || '').toLowerCase() === person) || users.find(x => (x.username || '').toLowerCase() === person);
+  if (!u) return toast('Pick someone from the list. They need a Sovyx account first.', true);
+  const picks = [...document.querySelectorAll('#ga-products input:checked')].map(i => i.value);
+  if (!picks.length) return toast('Choose at least one product', true);
+  const expiresAt = expiryFrom($('ga-dur').value, $('ga-date').value);
+  if (expiresAt === null) return toast('Pick the end date', true);
+  const canGenerate = $('ga-gen').checked, canDownload = $('ga-dl').checked;
+  const credits = Math.max(0, parseInt($('ga-credits').value) || 0);
+  const btn = $('ga-save'); btn.disabled = true;
+  try {
+    let added = 0, updated = 0;
+    for (const productId of picks) {
+      const prod = products.find(p => p.id === productId), gid = `${u.id}_${productId}`, old = panels.find(g => g.id === gid);
+      await setDoc(doc(db, 'panelAccess', gid), {
+        uid: u.id, email: u.email, username: u.username || '', productId, productName: prod.name, canGenerate, canDownload,
+        credits: (old?.credits || 0) + (canGenerate ? credits : 0), expiresAt, status: 'active', note: $('ga-note').value.trim(),
+        keysMade: old?.keysMade || 0, createdAt: old?.createdAt || serverTimestamp(), createdBy: auth.currentUser.email,
+      });
+      old ? updated++ : added++;
+    }
+    const mode = $('ga-portal').value;
+    if (mode !== 'keep') await updateDoc(doc(db, 'users', u.id), { portalMode: mode });
+    closeModal('m-grant');
+    toast(`${added ? added + ' panel(s) given' : ''}${added && updated ? ', ' : ''}${updated ? updated + ' updated' : ''}`);
+    log('Panel access given', `${u.email}: ${picks.length} product(s)${canGenerate ? `, ${credits} credits` : ', access only'}`);
+    [panels, users] = await Promise.all([all('panelAccess'), all('users')]); renderAccess();
+  } catch (e) { toast(e.message, true); }
+  finally { btn.disabled = false; }
+};
+
+window.editPanel = id => {
+  const g = panels.find(x => x.id === id), m = toMs(g.expiresAt);
+  $('ep-id').value = id; $('ep-who').textContent = `${g.username || g.email} · ${g.productName}`;
+  $('ep-credits').value = g.credits || 0; $('ep-add').value = '';
+  $('ep-exp').value = m ? new Date(m).toISOString().slice(0, 10) : '';
+  $('ep-gen').checked = g.canGenerate !== false; $('ep-dl').checked = g.canDownload !== false;
+  $('ep-status').value = g.status === 'suspended' ? 'suspended' : 'active'; $('ep-note').value = g.note || '';
+  openModal('m-panel');
+};
+window.epAddCredits = () => { $('ep-credits').value = (parseInt($('ep-credits').value) || 0) + (parseInt($('ep-add').value) || 0); $('ep-add').value = ''; };
+window.epExtend = days => { const cur = $('ep-exp').value ? new Date($('ep-exp').value).getTime() : 0; $('ep-exp').value = new Date(Math.max(cur, now()) + days * 86400000).toISOString().slice(0, 10); };
+window.savePanel = async () => {
+  const id = $('ep-id').value, g = panels.find(x => x.id === id), exp = $('ep-exp').value;
+  const data = { credits: Math.max(0, parseInt($('ep-credits').value) || 0), canGenerate: $('ep-gen').checked, canDownload: $('ep-dl').checked,
+    status: $('ep-status').value, note: $('ep-note').value.trim(), expiresAt: exp ? Timestamp.fromDate(new Date(exp + 'T23:59:59')) : 0 };
+  await updateDoc(doc(db, 'panelAccess', id), data);
+  Object.assign(g, data); closeModal('m-panel'); toast('Panel saved');
+  log('Panel updated', `${g.email} · ${g.productName} · ${data.credits} credits`); renderAccess();
+};
+window.delPanel = id => {
+  const g = panels.find(x => x.id === id);
+  confirmBox(`Remove ${g.email}'s panel for ${g.productName}? Keys they already made keep working.`, async () => {
+    await deleteDoc(doc(db, 'panelAccess', id)); panels = panels.filter(x => x.id !== id);
+    log('Panel removed', `${g.email} · ${g.productName}`); renderAccess();
+  });
+};

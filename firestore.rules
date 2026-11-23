@@ -10,6 +10,8 @@ service cloud.firestore {
       return signedIn() && request.auth.token.email != null
         && exists(/databases/$(database)/documents/admins/$(adminId()));
     }
+    // Accounts an admin switched to "products only" can't create apps or customer pages.
+    function fullPortal() { return get(/databases/$(database)/documents/users/$(me())).data.get('portalMode', 'full') != 'products'; }
     function changed() { return request.resource.data.diff(resource.data).affectedKeys(); }
     // A plan change is only allowed when the same batch claims a real, matching key for this user.
     function redeemingKey() {
@@ -22,9 +24,10 @@ service cloud.firestore {
       allow create: if signedIn() && me() == uid
         && request.resource.data.plan == 'free'
         && request.resource.data.get('credits', 0) == 0
-        && !request.resource.data.get('banned', false);
+        && !request.resource.data.get('banned', false)
+        && request.resource.data.get('portalMode', 'full') == 'full';
       allow update: if isAdmin() || (signedIn() && me() == uid
-        && !changed().hasAny(['banned', 'credits', 'adminNote', 'uid', 'email', 'createdAt'])
+        && !changed().hasAny(['banned', 'credits', 'adminNote', 'portalMode', 'uid', 'email', 'createdAt'])
         && (!changed().hasAny(['plan', 'licenseKey', 'expiresAt']) || redeemingKey()));
       allow delete: if isAdmin();
     }
@@ -42,7 +45,7 @@ service cloud.firestore {
 
     match /apps/{appId} {
       allow read, update, delete: if isAdmin() || (signedIn() && resource.data.ownerUid == me());
-      allow create: if signedIn() && request.resource.data.ownerUid == me();
+      allow create: if signedIn() && request.resource.data.ownerUid == me() && fullPortal();
       match /{sub=**} {
         allow read, write: if isAdmin()
           || (signedIn() && get(/databases/$(database)/documents/apps/$(appId)).data.ownerUid == me());
@@ -57,11 +60,22 @@ service cloud.firestore {
     // Public seller pages at sovyx.cc/b/<slug>. Anyone can read; only the owner of the linked app can write.
     match /brands/{slug} {
       allow read: if true;
-      allow create: if signedIn() && request.resource.data.ownerUid == me()
+      allow create: if signedIn() && request.resource.data.ownerUid == me() && fullPortal()
         && get(/databases/$(database)/documents/apps/$(request.resource.data.appId)).data.ownerUid == me();
       allow update: if isAdmin() || (signedIn() && resource.data.ownerUid == me()
         && request.resource.data.ownerUid == me() && request.resource.data.appId == resource.data.appId);
       allow delete: if isAdmin() || (signedIn() && resource.data.ownerUid == me());
+    }
+
+    // Strive products and who has a panel for them. Only admins write; the server spends credits.
+    match /products/{id} {
+      allow read: if signedIn();
+      allow write: if isAdmin();
+    }
+
+    match /panelAccess/{id} {
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == me());
+      allow write: if isAdmin();
     }
 
     match /hwid_resets/{id} {

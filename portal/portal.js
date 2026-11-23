@@ -5,6 +5,7 @@ import { doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, collection, query, w
 import { S, LIMITS, PLAN_FEATURES, loaders } from './state.js';
 import './sections.js';
 import './brand.js?v=3';
+import { loadPanels } from './panels.js?v=2';
 
 const I = {
   grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
@@ -26,6 +27,7 @@ const I = {
 const NAV = [
   { sec: 'Workspace' },
   { id: 'overview',  label: 'Overview',       icon: 'grid',  min: 'free' },
+  { id: 'panels',    label: 'My panels',      icon: 'store', min: 'free',     panels: true },
   { id: 'apps',      label: 'Applications',   icon: 'box',   min: 'free' },
   { sec: 'Application' },
   { id: 'licenses',  label: 'Licenses',       icon: 'key',   min: 'free',     needsApp: true },
@@ -46,6 +48,15 @@ const NAV = [
 ];
 
 const hasPlan = min => PLAN_RANK[S.plan] >= PLAN_RANK[min];
+
+// Accounts an admin set to "products only" see just their panels and settings.
+const productsOnly = () => S.data?.portalMode === 'products';
+const ONLY_VIEWS = new Set(['panels', 'settings']);
+const navVisible = n => n.panels ? S.panels.length > 0 : (!productsOnly() || ONLY_VIEWS.has(n.id));
+function visibleNav() {
+  const out = NAV.filter(n => n.sec || navVisible(n));
+  return out.filter((n, i) => !n.sec || (out[i + 1] && !out[i + 1].sec));
+}
 
 function effectivePlan(d) {
   const p = d.plan || 'free';
@@ -73,11 +84,11 @@ onAuthStateChanged(auth, async u => {
     const msg = s.exists() && s.data().announcement;
     if (msg) $('announce').style.display = '', $('announce').textContent = msg;
   }).catch(() => {});
-  await loadApps();
+  await Promise.all([loadApps(), loadPanels()]);
   renderChrome();
   $('loading').style.display = 'none';
   $('app').style.display = '';
-  go(location.hash.slice(1) || 'overview');
+  go(location.hash.slice(1) || (productsOnly() ? 'panels' : 'overview'));
 });
 
 window.doLogout = () => signOut(auth).then(() => location.href = '/login');
@@ -142,9 +153,10 @@ function renderChrome() {
   $('top-plan').textContent = PLAN_LABEL[S.plan];
   $('ws-name').textContent = S.app ? S.app.name : 'No application';
   $('ws-av').textContent = S.app ? initials(S.app.name) : '–';
-  $('crumb-app').textContent = S.app ? S.app.name : '—';
+  $('crumb-app').textContent = productsOnly() ? 'Account' : (S.app ? S.app.name : '—');
+  $('app-switch').style.display = productsOnly() ? 'none' : '';
 
-  $('side-nav').innerHTML = NAV.map(n => {
+  $('side-nav').innerHTML = visibleNav().map(n => {
     if (n.sec) return `<div class="side-sec">${n.sec}</div>`;
     const ok = hasPlan(n.min);
     const right = ok ? '' : `<span class="tag t-${n.min}">${PLAN_LABEL[n.min]}</span>`;
@@ -160,7 +172,8 @@ function renderChrome() {
 
 // ---------- Routing ----------
 function go(view) {
-  const n = NAV.find(x => x.id === view) || NAV[1];
+  let n = NAV.find(x => x.id === view);
+  if (!n || !navVisible(n)) n = NAV.find(x => x.id === (productsOnly() ? (S.panels.length ? 'panels' : 'settings') : 'overview'));
   S.view = n.id;
   history.replaceState(null, '', '#' + n.id);
   document.querySelectorAll('.side-item[data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === n.id));

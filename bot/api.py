@@ -139,6 +139,142 @@ async def delete_loader(request: web.Request) -> web.Response:
     return web.json_response({"ok": True})
 
 
+PANEL_DAYS = {0, 1, 7, 30, 90, 365}
+KEY_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+
+
+def _kblock() -> str:
+    return "".join(secrets.choice(KEY_ALPHABET) for _ in range(4))
+
+
+async def panel_context(request: web.Request) -> tuple[str, str, dict, str]:
+    """Verify the caller and that the panel grant (panelAccess doc) is theirs. Returns (uid, email, grant, grant_id)."""
+    header = request.headers.get("Authorization", "")
+    if not header.startswith("Bearer "):
+        raise web.HTTPUnauthorized(text="sign in required")
+    try:
+        decoded = await asyncio.to_thread(fb_auth.verify_id_token, header[7:])
+    except Exception:
+        raise web.HTTPUnauthorized(text="invalid session, sign in again")
+    grant_id = request.match_info["grant_id"]
+    if not re.fullmatch(r"[A-Za-z0-9_-]{1,160}", grant_id):
+        raise web.HTTPBadRequest(text="bad panel id")
+    snap = await asyncio.to_thread(db.collection("panelAccess").document(grant_id).get)
+    if not snap.exists or snap.get("uid") != decoded["uid"]:
+        raise web.HTTPForbidden(text="That panel isn't yours.")
+    user = (await asyncio.to_thread(db.collection("users").document(decoded["uid"]).get)).to_dict() or {}
+    if user.get("banned"):
+        raise web.HTTPForbidden(text="account suspended")
+    return decoded["uid"], user.get("email") or decoded.get("email", ""), snap.to_dict(), grant_id
+
+
+def _grant_problem(grant: dict) -> str | None:
+    if grant.get("status", "active") != "active":
+        return "This panel is suspended."
+    exp = grant.get("expiresAt")
+    if isinstance(exp, datetime) and exp < datetime.now(timezone.utc):
+        return "This panel has expired."
+    return None
+
+
+def _panel_generate(grant_id: str, uid: str, email: str, days: int, qty: int, note: str) -> dict:
+    grant_ref = db.collection("panelAccess").document(grant_id)
+
+    @firestore.transactional
+    def run(tx):
+        g = grant_ref.get(transaction=tx)
+        if not g.exists or g.get("uid") != uid:
+            return {"error": (403, "That panel isn't yours.")}
+        grant = g.to_dict()
+        if not grant.get("canGenerate", True):
+            return {"error": (403, "Your access doesn't include generating keys.")}
+        if (problem := _grant_problem(grant)):
+            return {"error": (403, problem)}
+        p = db.collection("products").document(grant["productId"]).get(transaction=tx)
+        prod = p.to_dict() if p.exists else None
+        if not prod or prod.get("active") is False:
+            return {"error": (403, "This product is switched off.")}
+        cost = (prod.get("costs") or {}).get(str(days))
+        if not isinstance(cost, (int, float)) or cost <= 0:
+            return {"error": (400, "That duration isn't available for this product.")}
+        app_id = prod.get("appId")
+        if not app_id:
+            return {"error": (503, "This product isn't set up for keys yet. Contact the owner.")}
+        total, credits = int(cost) * qty, int(grant.get("credits") or 0)
+        if credits < total:
+            return {"error": (402, f"Not enough credits: this needs {total}, you have {credits}.")}
+        prefix = re.sub(r"[^A-Z0-9]", "", str(prod.get("prefix") or "KEY").upper())[:8] or "KEY"
+        lic = db.collection("apps").document(app_id).collection("licenses")
+        keys = []
+        for _ in range(qty):
+            key = f"{prefix}-{_kblock()}-{_kblock()}-{_kblock()}"
+            keys.append(key)
+            tx.set(lic.document(), {"key": key, "days": days, "note": note, "status": "unused", "usedBy": None, "hwid": None,
+                                    "grantId": grant_id, "reseller": email, "productId": grant["productId"],
+                                    "createdAt": firestore.SERVER_TIMESTAMP})
+        tx.update(grant_ref, {"credits": credits - total, "keysMade": firestore.Increment(qty), "lastKeyAt": firestore.SERVER_TIMESTAMP})
+        tx.set(db.collection("activity").document(), {"action": "Panel keys", "details": f"{qty} x {days or 'lifetime'}{'d' if days else ''} {prod.get('name', '')} for {total} credits",
+                                                     "admin": email, "at": firestore.SERVER_TIMESTAMP})
+        return {"keys": keys, "credits": credits - total, "cost": total, "appId": app_id}
+
+    return run(db.transaction())
+
+
+async def panel_generate(request: web.Request) -> web.Response:
+    uid, email, _, grant_id = await panel_context(request)
+    try:
+        body = await request.json()
+        days, qty = int(body.get("days")), int(body.get("qty", 1))
+    except Exception:
+        return err(400, "Pick a duration and amount.")
+    note = str(body.get("note", ""))[:80]
+    if days not in PANEL_DAYS or not 1 <= qty <= 50:
+        return err(400, "Pick a valid duration and an amount from 1 to 50.")
+    result = await asyncio.to_thread(_panel_generate, grant_id, uid, email, days, qty, note)
+    if "error" in result:
+        return err(*result["error"])
+    app = await asyncio.to_thread(db.collection("apps").document(result["appId"]).get)
+    return web.json_response({"keys": result["keys"], "credits": result["credits"], "cost": result["cost"],
+                              "page": (app.to_dict() or {}).get("brandSlug") if app.exists else None})
+
+
+async def panel_keys(request: web.Request) -> web.Response:
+    _, _, grant, grant_id = await panel_context(request)
+    prod = await asyncio.to_thread(db.collection("products").document(grant["productId"]).get)
+    app_id = (prod.to_dict() or {}).get("appId") if prod.exists else None
+    if not app_id:
+        return web.json_response({"keys": [], "page": None})
+    docs = await asyncio.to_thread(db.collection("apps").document(app_id).collection("licenses").where("grantId", "==", grant_id).limit(300).get)
+    rows = []
+    for d in docs:
+        x = d.to_dict()
+        created = x.get("createdAt")
+        rows.append({"key": x.get("key"), "days": x.get("days"), "status": x.get("status"), "usedBy": x.get("usedBy"), "note": x.get("note", ""),
+                     "createdAt": created.isoformat() if isinstance(created, datetime) else None})
+    rows.sort(key=lambda r: r["createdAt"] or "", reverse=True)
+    app = await asyncio.to_thread(db.collection("apps").document(app_id).get)
+    return web.json_response({"keys": rows, "page": (app.to_dict() or {}).get("brandSlug") if app.exists else None})
+
+
+async def panel_download(request: web.Request) -> web.Response:
+    _, _, grant, _ = await panel_context(request)
+    if not grant.get("canDownload", True):
+        return err(403, "Your access doesn't include downloads.")
+    if (problem := _grant_problem(grant)):
+        return err(403, problem)
+    prod = await asyncio.to_thread(db.collection("products").document(grant["productId"]).get)
+    pd = prod.to_dict() if prod.exists else None
+    if not pd or pd.get("active") is False or not pd.get("appId"):
+        return err(503, "This product isn't available yet.")
+    folder = loader_dir(pd["appId"])
+    if not (folder / "loader.bin").exists():
+        return err(503, "No download has been uploaded for this product yet.")
+    meta = json.loads((folder / "meta.json").read_text())
+    token = secrets.token_urlsafe(24)
+    TOKENS[token] = (folder / "loader.bin", meta["name"], time.time() + TOKEN_TTL)
+    return web.json_response({"url": f"/api/dl/{token}", "filename": meta["name"], "size": meta["size"]})
+
+
 LOGO_MAX = 2 * 1024 ** 2
 
 
@@ -298,6 +434,9 @@ async def start() -> None:
         web.post("/api/apps/{app_id}/logo", upload_logo),
         web.delete("/api/apps/{app_id}/logo", delete_logo),
         web.get("/api/logo/{app_id}", serve_logo),
+        web.post("/api/panels/{grant_id}/keys", panel_generate),
+        web.get("/api/panels/{grant_id}/keys", panel_keys),
+        web.post("/api/panels/{grant_id}/download", panel_download),
         web.post("/api/b/{slug}/redeem", redeem),
         web.get("/api/dl/{token}", download),
         web.route("OPTIONS", "/{tail:.*}", health),

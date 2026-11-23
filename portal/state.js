@@ -3,6 +3,7 @@ export const S = {
   data: null,
   plan: 'free',
   apps: [],
+  panels: [],
   app: null,
   view: 'overview',
 };

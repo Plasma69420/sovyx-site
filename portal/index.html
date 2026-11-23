@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="/assets/panel.css?v=3"/>
+<link rel="stylesheet" href="/assets/panel.css?v=5"/>
 <link rel="stylesheet" href="/b/brand.css?v=1"/>
 </head>
 <body>
@@ -61,6 +61,32 @@
           <div class="card"><h3>Needs attention</h3><div class="sub">Things worth a quick look</div><div id="ov-attn"></div></div>
           <div class="card"><h3>Your plan</h3><div class="sub" id="ov-plan-sub">—</div><div id="ov-limits"></div>
             <button class="btn btn-sm" style="margin-top:14px" onclick="go('billing')">Manage plan</button></div>
+        </div>
+      </section>
+
+      <!-- MY PANELS -->
+      <section class="view" id="v-panels">
+        <div class="page-h"><div><h1>My panels</h1><p>The products you've been given access to.</p></div></div>
+        <div class="pcards" id="pn-cards"></div>
+        <div id="pn-detail" style="display:none">
+          <div class="stats">
+            <div class="stat"><div class="stat-l">Product</div><div class="stat-n" id="pn-name" style="font-size:24px;margin-top:14px">—</div><div class="stat-s" id="pn-status">—</div></div>
+            <div class="stat" id="pn-credits-stat"><div class="stat-l">Credits</div><div class="stat-n" id="pn-credits">0</div><div class="stat-s">Spent when you make keys</div></div>
+            <div class="stat"><div class="stat-l">Access ends</div><div class="stat-n" id="pn-ends" style="font-size:24px;margin-top:14px">—</div><div class="stat-s" id="pn-ends-s">—</div></div>
+            <div class="stat"><div class="stat-l">Keys made</div><div class="stat-n" id="pn-made">0</div><div class="stat-s">On this panel</div></div>
+          </div>
+          <div class="card" id="pn-dl-card"><h3>Download</h3><div class="sub">Get the latest version of this product. The link works once and expires in 5 minutes.</div>
+            <button class="btn btn-w" id="pn-dl-btn" onclick="pnDownload()">Download</button><div class="msg" id="pn-dl-msg"></div></div>
+          <div class="card" id="pn-gen-card"><h3>Make keys</h3><div class="sub" id="pn-gen-sub">Pick a length and how many. Credits are taken when you click Make keys.</div>
+            <div class="row3"><div class="field"><label>Length</label><select id="pn-days" onchange="pnCost()"></select></div>
+              <div class="field"><label>Amount</label><input type="number" id="pn-qty" value="1" min="1" max="50" oninput="pnCost()"/></div>
+              <div class="field"><label>Note (optional)</label><input id="pn-note" maxlength="80" placeholder="e.g. order #12"/></div></div>
+            <div style="display:flex;align-items:center;gap:14px"><button class="btn btn-w" id="pn-gen-btn" onclick="pnGenerate()">Make keys</button><span class="muted" id="pn-cost"></span></div>
+            <div class="msg" id="pn-gen-msg"></div>
+            <div id="pn-result" style="display:none;margin-top:14px"><div class="tbl-head" style="margin-bottom:8px"><span class="muted" id="pn-result-label"></span><button class="btn btn-sm" onclick="pnCopyAll()">Copy all</button></div>
+              <textarea id="pn-result-list" class="input mono" rows="5" readonly></textarea></div></div>
+          <div id="pn-keys-wrap"><div class="tbl-head"><div><h2>Your keys<span id="pn-count">0</span></h2><p id="pn-page"></p></div></div>
+            <div class="tbl"><table><thead><tr><th>Key</th><th>Length</th><th>Status</th><th>Used by</th><th>Made</th><th></th></tr></thead><tbody id="pn-keys"></tbody></table></div></div>
         </div>
       </section>
 
@@ -316,6 +342,6 @@
   <div class="modal-acts"><button class="btn" onclick="closeModal('m-confirm')">Cancel</button><button class="btn btn-danger" id="cf-ok">Confirm</button></div></div></div>
 
 <div id="toast"><i></i><span id="toast-txt"></span></div>
-<script type="module" src="/portal/portal.js?v=4"></script>
+<script type="module" src="/portal/portal.js?v=6"></script>
 </body>
 </html>
