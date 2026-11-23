@@ -16,7 +16,9 @@ from aiohttp import web
 from firebase_admin import auth as fb_auth
 from firebase_admin import firestore
 
+from clientapi import ROUTES as CLIENT_ROUTES
 from db import db
+from util import client_ip, err, plog as _plog
 
 log = logging.getLogger("sovyx.api")
 
@@ -34,15 +36,6 @@ def loader_dir(app_id: str) -> Path:
     if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", app_id):
         raise web.HTTPBadRequest(text="bad app id")
     return DATA_DIR / "loaders" / app_id
-
-
-def client_ip(request: web.Request) -> str:
-    fwd = request.headers.get("X-Forwarded-For", "")
-    return fwd.split(",")[0].strip() if fwd else (request.remote or "?")
-
-
-def err(status: int, message: str) -> web.Response:
-    return web.json_response({"error": message}, status=status)
 
 
 def effective_plan(user: dict) -> str:
@@ -244,10 +237,6 @@ def _iso(v) -> str | None:
     return v.isoformat() if isinstance(v, datetime) else None
 
 
-def _plog(app_id: str, text: str, by: str, kind: str = "panel") -> None:
-    db.collection("productLog").add({"appId": app_id, "type": kind, "text": text, "by": by, "at": firestore.SERVER_TIMESTAMP})
-
-
 async def panel_scope(request: web.Request, need: str, active: bool = True):
     """Verify the caller owns this panel, that it's allowed to do `need`, and the product is available.
     Returns (uid, email, grant, grant_id, app_id, product)."""
@@ -445,10 +434,7 @@ def _check_and_activate(app_id: str, key: str, ip: str) -> dict:
                       expiresAt=None if days == 0 else now + timedelta(days=days))
     ref.update(update)
     if lic.get("status", "unused") == "unused":
-        try:
-            _plog(app_id, f"Key {key} activated from the download page", "buyer", "redeem")
-        except Exception:
-            log.warning("activity log write failed", exc_info=True)
+        _plog(app_id, f"Key {key} activated from the download page", "buyer", "redeem")
     return {"ok": True}
 
 
@@ -516,6 +502,7 @@ async def start() -> None:
         DATA_DIR.mkdir(parents=True, exist_ok=True)
         log.warning("DATA_DIR not writable; using %s (files are lost on redeploy — attach a Railway volume at /data)", DATA_DIR)
     app = web.Application(middlewares=[cors], client_max_size=max(MAX_BYTES.values()) + 1024 ** 2)
+    app.add_routes(CLIENT_ROUTES)
     app.add_routes([
         web.get("/health", health),
         web.post("/api/apps/{app_id}/loader", upload_loader),

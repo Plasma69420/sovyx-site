@@ -1,4 +1,4 @@
-import { db, PLAN_LABEL, esc, $, toMs, fmtDate, ago, initials, randBlock, randHex, toast, closeModal, openModal, confirmBox, copy } from '/assets/fb.js';
+import { db, API_BASE, PLAN_LABEL, esc, $, toMs, fmtDate, ago, initials, randBlock, randHex, toast, closeModal, openModal, confirmBox, copy } from '/assets/fb.js';
 import { collection, doc, getDocs, addDoc, updateDoc, deleteDoc, writeBatch, onSnapshot, serverTimestamp, Timestamp }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { S, LIMITS, loaders } from './state.js';
@@ -201,7 +201,25 @@ window.delBlacklist = async id => { await deleteDoc(ref('blacklist', id)); loade
 
 // ---------- API keys ----------
 let secretShown = false;
+const apiExample = () => `# Sign in: first login locks the key to this PC and returns a session
+curl -X POST ${API_BASE}/api/v1/login -H "Content-Type: application/json" \\
+  -d '{"appId":"${S.app.id}","key":"BUYERS-KEY","hwid":"THIS-PCS-ID","version":"1.0.0"}'
+# -> {"session":"…","expiresAt":"…","daysLeft":30,"heartbeatSeconds":30,"variables":{…}}
+
+# Every 30 seconds while your program runs (a 401/403 means: close the program)
+curl -X POST ${API_BASE}/api/v1/heartbeat -H "Content-Type: application/json" \\
+  -d '{"appId":"${S.app.id}","session":"SESSION-FROM-LOGIN"}'
+
+# When it exits
+curl -X POST ${API_BASE}/api/v1/logout -H "Content-Type: application/json" \\
+  -d '{"appId":"${S.app.id}","session":"SESSION-FROM-LOGIN"}'
+
+# Buyer moved to a new PC (also on your customer page)
+curl -X POST ${API_BASE}/api/v1/hwid-reset -H "Content-Type: application/json" \\
+  -d '{"appId":"${S.app.id}","key":"BUYERS-KEY"}'`;
+
 loaders.api = () => {
+  $('api-example').textContent = apiExample();
   secretShown = false;
   $('api-appid').textContent = S.app.id;
   $('api-secret').textContent = '••••••••••••••••';

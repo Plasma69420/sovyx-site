@@ -3,8 +3,8 @@ import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/
 import { doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, collection, query, where, getDocs, writeBatch, serverTimestamp, Timestamp }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { S, LIMITS, PLAN_FEATURES, loaders } from './state.js';
-import './sections.js';
-import './brand.js?v=3';
+import './sections.js?v=2';
+import './brand.js?v=4';
 import { loadPanels } from './panels.js?v=3';
 
 const I = {
@@ -127,7 +127,8 @@ window.createApp = async () => {
 
 window.saveApp = async () => {
   if (!S.app) return;
-  const upd = { name: $('set-app-name').value.trim() || S.app.name, version: $('set-app-ver').value.trim(), hwidLock: $('set-app-hwid').value === '1', download: $('set-app-dl').value.trim() };
+  const upd = { name: $('set-app-name').value.trim() || S.app.name, version: $('set-app-ver').value.trim(), hwidLock: $('set-app-hwid').value === '1', download: $('set-app-dl').value.trim(),
+    hwidReset: { enabled: $('set-app-reset').value === '1', cooldownDays: Math.max(0, Math.min(365, parseInt($('set-app-cd').value) || 0)) } };
   await updateDoc(doc(db, 'apps', S.app.id), upd);
   Object.assign(S.app, upd);
   renderChrome(); toast('Application saved');
@@ -293,6 +294,8 @@ loaders.settings = () => {
     $('set-app-ver').value = S.app.version || '';
     $('set-app-hwid').value = S.app.hwidLock === false ? '0' : '1';
     $('set-app-dl').value = S.app.download || '';
+    $('set-app-reset').value = S.app.hwidReset?.enabled === false ? '0' : '1';
+    $('set-app-cd').value = S.app.hwidReset?.cooldownDays ?? 7;
   } else $('set-app-sub').textContent = 'Create an application first';
 };
 

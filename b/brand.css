@@ -18,6 +18,10 @@
 .bp-btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
 .bp-btn:disabled{opacity:.6;cursor:default;transform:none}
 .bp-msg{min-height:20px;margin-top:12px;font-size:13px;color:#fb7185}
+.bp-msg.ok{color:#3ecf8e}
+.bp-ghost{width:100%;background:transparent;border:1px solid rgba(255,255,255,.14);color:#c9c9c9;border-radius:10px;padding:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:border-color .15s,color .15s}
+.bp-ghost:hover{border-color:rgba(255,255,255,.3);color:#fff}
+.bp-ghost:disabled{opacity:.6;cursor:default}
 .bp-done{display:none;flex-direction:column;align-items:center;gap:14px;max-width:420px;width:100%}
 .bp.is-done .bp-done{display:flex}
 .bp.is-done .bp-form,.bp.is-done .bp-msg{display:none}

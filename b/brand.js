@@ -17,7 +17,7 @@ function link(href, label) {
   return a;
 }
 
-export function renderBrand(root, brand, { onSubmit, preview = false } = {}) {
+export function renderBrand(root, brand, { onSubmit, onReset, preview = false } = {}) {
   const b = brand || {};
   const name = (b.name || 'Your brand').trim();
   const page = el('div', `bp bp-theme-${['spotlight', 'gradient', 'dark'].includes(b.theme) ? b.theme : 'spotlight'}`);
@@ -40,7 +40,9 @@ export function renderBrand(root, brand, { onSubmit, preview = false } = {}) {
   input.placeholder = 'Enter your product key'; input.autocomplete = 'off'; input.spellcheck = false; input.maxLength = 80;
   const btn = el('button', 'bp-btn', b.buttonText || 'Download');
   btn.type = 'submit';
-  form.append(input, btn);
+  const resetBtn = el('button', 'bp-ghost', 'Reset my HWID');
+  resetBtn.type = 'button';
+  form.append(input, btn, resetBtn);
   const msg = el('div', 'bp-msg');
 
   const done = el('div', 'bp-done');
@@ -64,12 +66,27 @@ export function renderBrand(root, brand, { onSubmit, preview = false } = {}) {
   foot.append('Powered by ', sv);
   page.append(foot);
 
+  resetBtn.addEventListener('click', async () => {
+    msg.className = 'bp-msg';
+    if (preview) { msg.textContent = 'Preview: buyers use this to move their key to a new PC.'; return; }
+    const key = input.value.trim();
+    if (!key) { msg.textContent = 'Enter your product key first.'; return; }
+    if (!confirm('Unlock this key from your current PC so you can sign in on a new one? Resets are limited, so only do this when you need to.')) return;
+    resetBtn.disabled = true; resetBtn.textContent = 'Resetting…';
+    try {
+      await onReset(key);
+      msg.className = 'bp-msg ok'; msg.textContent = 'Done. Your key is unlocked. Sign in from your new PC.';
+    } catch (err) {
+      msg.textContent = err.message || 'Something went wrong. Try again.';
+    } finally { resetBtn.disabled = false; resetBtn.textContent = 'Reset my HWID'; }
+  });
+
   form.addEventListener('submit', async e => {
     e.preventDefault();
     if (preview) { msg.textContent = 'Preview — keys are checked on your live page.'; return; }
     const key = input.value.trim();
     if (!key) { msg.textContent = 'Enter your product key.'; return; }
-    msg.textContent = ''; btn.disabled = true; btn.textContent = 'Checking…';
+    msg.className = 'bp-msg'; msg.textContent = ''; btn.disabled = true; btn.textContent = 'Checking…';
     try {
       const r = await onSubmit(key);
       fileLine.textContent = r.filename + (r.size ? ` · ${(r.size / 1048576).toFixed(1)} MB` : '');
@@ -119,6 +136,14 @@ export async function boot(root) {
       const a = document.createElement('a');
       a.href = API_BASE + data.url; a.rel = 'noopener';
       document.body.append(a); a.click(); a.remove();
+      return data;
+    },
+    onReset: async key => {
+      const res = await fetch(`${API_BASE}/api/b/${slug}/hwid-reset`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key }),
+      }).catch(() => { throw new Error('Couldn’t reach the server. Try again in a moment.'); });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Couldn’t reset. Try again.');
       return data;
     },
   });

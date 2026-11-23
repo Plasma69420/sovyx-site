@@ -1,6 +1,6 @@
 import { auth, db, API_BASE, $, fmtDate, toast, confirmBox } from '/assets/fb.js';
 import { doc, getDoc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { renderBrand } from '/b/brand.js?v=1';
+import { renderBrand } from '/b/brand.js?v=2';
 import { S, loaders } from './state.js';
 
 const SLUG = /^[a-z0-9](?:[a-z0-9-]{0,30}[a-z0-9])?$/;

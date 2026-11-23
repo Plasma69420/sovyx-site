@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="/assets/panel.css?v=5"/>
-<link rel="stylesheet" href="/b/brand.css?v=1"/>
+<link rel="stylesheet" href="/assets/panel.css?v=6"/>
+<link rel="stylesheet" href="/b/brand.css?v=2"/>
 </head>
 <body>
 <div id="loading">Loading…</div>
@@ -203,6 +203,10 @@
           <div class="field"><label>App secret</label><div class="code"><span id="api-secret">••••••••••••••••</span><div style="display:flex;gap:6px"><button class="btn btn-sm" onclick="toggleSecret()">Reveal</button><button class="btn btn-sm" onclick="copySecret()">Copy</button></div></div></div>
           <button class="btn btn-danger btn-sm" onclick="rotateSecret()">Rotate secret</button>
         </div>
+        <div class="card"><h3>Sign buyers in from your software</h3><div class="sub">Your loader sends the buyer's key and the PC's HWID. The first login locks the key to that PC, starts a live session, and returns your variables.</div>
+          <pre class="code api-pre" id="api-example"></pre>
+          <div style="display:flex;gap:8px;margin-top:12px"><button class="btn btn-sm" onclick="copyEl('api-example')">Copy</button></div>
+          <div class="hint" style="margin-top:12px">Answers: <b>200</b> signed in · <b>401</b> key isn't valid · <b>403</b> banned, expired, blocked or locked to another PC · <b>429</b> too many tries.</div></div>
         <div class="card"><h3>Seller API key</h3><div class="sub">Lets your own backend or store create licenses automatically.</div>
           <div class="code"><span id="api-seller">—</span><button class="btn btn-sm" onclick="copyEl('api-seller')">Copy</button></div>
           <button class="btn btn-sm" style="margin-top:12px" onclick="rotateSeller()">Generate new key</button>
@@ -278,6 +282,8 @@
             <div class="field"><label>Name</label><input id="set-app-name"/></div>
             <div class="row"><div class="field"><label>Version</label><input id="set-app-ver" placeholder="1.0.0"/></div>
               <div class="field"><label>HWID lock</label><select id="set-app-hwid"><option value="1">On</option><option value="0">Off</option></select></div></div>
+            <div class="row"><div class="field"><label>Buyers can reset their own HWID</label><select id="set-app-reset"><option value="1">Yes</option><option value="0">No, only I can</option></select></div>
+              <div class="field"><label>Wait between resets (days)</label><input type="number" id="set-app-cd" min="0" max="365" value="7"/><div class="hint">0 = no wait</div></div></div>
             <div class="field"><label>Download link (optional)</label><input id="set-app-dl" placeholder="https://…"/></div>
             <div style="display:flex;gap:8px"><button class="btn btn-w btn-sm" onclick="saveApp()">Save</button><button class="btn btn-danger btn-sm" onclick="deleteApp()">Delete application</button></div>
           </div>
@@ -361,6 +367,6 @@
   <div class="modal-acts"><button class="btn" onclick="closeModal('m-confirm')">Cancel</button><button class="btn btn-danger" id="cf-ok">Confirm</button></div></div></div>
 
 <div id="toast"><i></i><span id="toast-txt"></span></div>
-<script type="module" src="/portal/portal.js?v=7"></script>
+<script type="module" src="/portal/portal.js?v=9"></script>
 </body>
 </html>
