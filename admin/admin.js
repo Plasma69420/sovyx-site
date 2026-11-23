@@ -523,6 +523,18 @@ let acFilter = '';
 const userOf = uid => users.find(u => u.id === uid);
 const panelState = g => g.status === 'suspended' ? ['Suspended', 't-warn'] : (toMs(g.expiresAt) && toMs(g.expiresAt) < now()) ? ['Expired', 't-bad'] : ['Active', 't-live'];
 
+function accessTags(g) {
+  const t = [];
+  if (g.canGenerate !== false) t.push('<span class="tag t-pro">Keys</span>');
+  if (g.canManage) t.push('<span class="tag t-basic">Manage</span>');
+  if (g.canSessions) t.push('<span class="tag t-basic">Sessions</span>');
+  if (g.canActivity) t.push('<span class="tag t-basic">Log</span>');
+  if (g.canManage && g.keyScope === 'all') t.push('<span class="tag t-ultimate">All keys</span>');
+  if (!t.length) t.push('<span class="tag t-off">Access only</span>');
+  if (g.canDownload === false) t.push('<span class="tag t-warn">No download</span>');
+  return `<div style="display:flex;gap:4px;flex-wrap:wrap">${t.join('')}</div>`;
+}
+
 function renderAccess() {
   const sel = $('ac-prod'), keep = sel.value;
   sel.innerHTML = '<option value="">All products</option>' + [...products].sort((a, b) => (a.order ?? 99) - (b.order ?? 99)).map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
@@ -543,7 +555,7 @@ function renderAccess() {
     return `<tr>
       <td><div class="u-cell"><div class="av">${esc(initials(g.username || g.email))}</div><div><div class="u-name">${esc(g.username || g.email)}</div><div class="u-sub">${esc(g.email || '')}</div></div></div>${u?.portalMode === 'products' ? '<span class="tag t-off" style="margin-top:6px">Products-only portal</span>' : ''}</td>
       <td>${esc(g.productName || g.productId)}</td>
-      <td>${g.canGenerate !== false ? '<span class="tag t-pro">Reseller</span>' : '<span class="tag t-off">Access only</span>'}${g.canDownload === false ? ' <span class="tag t-warn">No download</span>' : ''}</td>
+      <td>${accessTags(g)}</td>
       <td>${g.canGenerate !== false ? (g.credits || 0) : '<span class="dimc">—</span>'}</td><td class="muted">${g.keysMade || 0}</td>
       <td class="muted">${g.expiresAt === 0 || g.expiresAt == null ? 'Never' : fmtDate(g.expiresAt)}</td>
       <td><span class="tag ${cls}">${label}</span></td>
@@ -561,15 +573,20 @@ window.openGrant = () => {
   $('ga-products').innerHTML = [...products].sort((a, b) => (a.order ?? 99) - (b.order ?? 99)).map(p =>
     `<label class="chk"><input type="checkbox" value="${p.id}"${p.active === false ? ' disabled' : ''}/>${esc(p.name)}${p.active === false ? ' <span class="dimc">(off)</span>' : ''}</label>`).join('');
   $('ga-all').checked = false;
-  $('ga-gen').checked = true; $('ga-dl').checked = true; $('ga-credits').value = 0; $('ga-dur').value = '30'; $('ga-date').style.display = 'none'; $('ga-date').value = '';
+  $('ga-gen').checked = true; $('ga-dl').checked = true; $('ga-manage').checked = false; $('ga-sess').checked = false; $('ga-act').checked = false; $('ga-scope').value = 'own'; $('ga-credits').value = 0; $('ga-dur').value = '30'; $('ga-date').style.display = 'none'; $('ga-date').value = '';
   $('ga-portal').value = 'keep'; $('ga-note').value = '';
   openModal('m-grant');
 };
 window.toggleAllProducts = on => document.querySelectorAll('#ga-products input:not(:disabled)').forEach(i => { i.checked = on; });
 window.grantPreset = kind => {
-  $('ga-gen').checked = kind === 'reseller'; $('ga-dl').checked = true;
-  $('ga-portal').value = kind === 'reseller' ? 'keep' : 'products';
-  if (kind !== 'reseller') $('ga-credits').value = 0;
+  const P = {
+    reseller: { gen: 1, manage: 1, sess: 0, act: 0, scope: 'own', portal: 'keep' },
+    access:   { gen: 0, manage: 0, sess: 0, act: 0, scope: 'own', portal: 'products' },
+    staff:    { gen: 1, manage: 1, sess: 1, act: 1, scope: 'all', portal: 'products' },
+  }[kind];
+  $('ga-gen').checked = !!P.gen; $('ga-dl').checked = true; $('ga-manage').checked = !!P.manage;
+  $('ga-sess').checked = !!P.sess; $('ga-act').checked = !!P.act; $('ga-scope').value = P.scope; $('ga-portal').value = P.portal;
+  if (!P.gen) $('ga-credits').value = 0;
 };
 $('ga-dur').addEventListener('change', () => { $('ga-date').style.display = $('ga-dur').value === 'custom' ? '' : 'none'; });
 
@@ -588,6 +605,7 @@ window.saveGrant = async () => {
   const expiresAt = expiryFrom($('ga-dur').value, $('ga-date').value);
   if (expiresAt === null) return toast('Pick the end date', true);
   const canGenerate = $('ga-gen').checked, canDownload = $('ga-dl').checked;
+  const perms = { canManage: $('ga-manage').checked, canSessions: $('ga-sess').checked, canActivity: $('ga-act').checked, keyScope: $('ga-scope').value };
   const credits = Math.max(0, parseInt($('ga-credits').value) || 0);
   const btn = $('ga-save'); btn.disabled = true;
   try {
@@ -595,7 +613,7 @@ window.saveGrant = async () => {
     for (const productId of picks) {
       const prod = products.find(p => p.id === productId), gid = `${u.id}_${productId}`, old = panels.find(g => g.id === gid);
       await setDoc(doc(db, 'panelAccess', gid), {
-        uid: u.id, email: u.email, username: u.username || '', productId, productName: prod.name, canGenerate, canDownload,
+        uid: u.id, email: u.email, username: u.username || '', productId, productName: prod.name, canGenerate, canDownload, ...perms,
         credits: (old?.credits || 0) + (canGenerate ? credits : 0), expiresAt, status: 'active', note: $('ga-note').value.trim(),
         keysMade: old?.keysMade || 0, createdAt: old?.createdAt || serverTimestamp(), createdBy: auth.currentUser.email,
       });
@@ -617,6 +635,7 @@ window.editPanel = id => {
   $('ep-credits').value = g.credits || 0; $('ep-add').value = '';
   $('ep-exp').value = m ? new Date(m).toISOString().slice(0, 10) : '';
   $('ep-gen').checked = g.canGenerate !== false; $('ep-dl').checked = g.canDownload !== false;
+  $('ep-manage').checked = !!g.canManage; $('ep-sess').checked = !!g.canSessions; $('ep-act').checked = !!g.canActivity; $('ep-scope').value = g.keyScope === 'all' ? 'all' : 'own';
   $('ep-status').value = g.status === 'suspended' ? 'suspended' : 'active'; $('ep-note').value = g.note || '';
   openModal('m-panel');
 };
@@ -625,6 +644,7 @@ window.epExtend = days => { const cur = $('ep-exp').value ? new Date($('ep-exp')
 window.savePanel = async () => {
   const id = $('ep-id').value, g = panels.find(x => x.id === id), exp = $('ep-exp').value;
   const data = { credits: Math.max(0, parseInt($('ep-credits').value) || 0), canGenerate: $('ep-gen').checked, canDownload: $('ep-dl').checked,
+    canManage: $('ep-manage').checked, canSessions: $('ep-sess').checked, canActivity: $('ep-act').checked, keyScope: $('ep-scope').value,
     status: $('ep-status').value, note: $('ep-note').value.trim(), expiresAt: exp ? Timestamp.fromDate(new Date(exp + 'T23:59:59')) : 0 };
   await updateDoc(doc(db, 'panelAccess', id), data);
   Object.assign(g, data); closeModal('m-panel'); toast('Panel saved');

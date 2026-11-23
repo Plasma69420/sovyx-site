@@ -212,6 +212,8 @@ def _panel_generate(grant_id: str, uid: str, email: str, days: int, qty: int, no
             tx.set(lic.document(), {"key": key, "days": days, "note": note, "status": "unused", "usedBy": None, "hwid": None,
                                     "grantId": grant_id, "reseller": email, "productId": grant["productId"],
                                     "createdAt": firestore.SERVER_TIMESTAMP})
+        tx.set(db.collection("productLog").document(), {"appId": app_id, "type": "keys", "by": email, "at": firestore.SERVER_TIMESTAMP,
+                                                         "text": f"Made {qty} x {days or 'lifetime'}{'d' if days else ''} key{'s' if qty > 1 else ''} ({total} credits)"})
         tx.update(grant_ref, {"credits": credits - total, "keysMade": firestore.Increment(qty), "lastKeyAt": firestore.SERVER_TIMESTAMP})
         tx.set(db.collection("activity").document(), {"action": "Panel keys", "details": f"{qty} x {days or 'lifetime'}{'d' if days else ''} {prod.get('name', '')} for {total} credits",
                                                      "admin": email, "at": firestore.SERVER_TIMESTAMP})
@@ -238,22 +240,104 @@ async def panel_generate(request: web.Request) -> web.Response:
                               "page": (app.to_dict() or {}).get("brandSlug") if app.exists else None})
 
 
+def _iso(v) -> str | None:
+    return v.isoformat() if isinstance(v, datetime) else None
+
+
+def _plog(app_id: str, text: str, by: str, kind: str = "panel") -> None:
+    db.collection("productLog").add({"appId": app_id, "type": kind, "text": text, "by": by, "at": firestore.SERVER_TIMESTAMP})
+
+
+async def panel_scope(request: web.Request, need: str, active: bool = True):
+    """Verify the caller owns this panel, that it's allowed to do `need`, and the product is available.
+    Returns (uid, email, grant, grant_id, app_id, product)."""
+    uid, email, grant, grant_id = await panel_context(request)
+    if active and (problem := _grant_problem(grant)):
+        raise web.HTTPForbidden(text=problem)
+    allowed = {
+        "generate": grant.get("canGenerate", True),
+        "manage": grant.get("canManage", False),
+        "sessions": grant.get("canSessions", False),
+        "activity": grant.get("canActivity", False),
+        "keys": grant.get("canGenerate", True) or grant.get("canManage", False),
+    }[need]
+    if not allowed:
+        raise web.HTTPForbidden(text="Your access doesn't include this.")
+    snap = await asyncio.to_thread(db.collection("products").document(grant["productId"]).get)
+    pd = snap.to_dict() if snap.exists else None
+    if not pd or pd.get("active") is False or not pd.get("appId"):
+        raise web.HTTPServiceUnavailable(text="This product isn't available yet.")
+    return uid, email, grant, grant_id, pd["appId"], pd
+
+
 async def panel_keys(request: web.Request) -> web.Response:
-    _, _, grant, grant_id = await panel_context(request)
-    prod = await asyncio.to_thread(db.collection("products").document(grant["productId"]).get)
-    app_id = (prod.to_dict() or {}).get("appId") if prod.exists else None
-    if not app_id:
-        return web.json_response({"keys": [], "page": None})
-    docs = await asyncio.to_thread(db.collection("apps").document(app_id).collection("licenses").where("grantId", "==", grant_id).limit(300).get)
+    _, _, grant, grant_id, app_id, _ = await panel_scope(request, "keys", active=False)
+    col = db.collection("apps").document(app_id).collection("licenses")
+    query = col.limit(500) if grant.get("keyScope") == "all" else col.where("grantId", "==", grant_id).limit(300)
+    docs = await asyncio.to_thread(query.get)
     rows = []
     for d in docs:
         x = d.to_dict()
-        created = x.get("createdAt")
-        rows.append({"key": x.get("key"), "days": x.get("days"), "status": x.get("status"), "usedBy": x.get("usedBy"), "note": x.get("note", ""),
-                     "createdAt": created.isoformat() if isinstance(created, datetime) else None})
+        hw = x.get("hwid")
+        rows.append({"id": d.id, "key": x.get("key"), "days": x.get("days"), "status": x.get("status"), "usedBy": x.get("usedBy"), "note": x.get("note", ""),
+                     "hwid": (hw[:18] + "…") if hw else None, "reseller": x.get("reseller"), "mine": x.get("grantId") == grant_id, "createdAt": _iso(x.get("createdAt"))})
     rows.sort(key=lambda r: r["createdAt"] or "", reverse=True)
     app = await asyncio.to_thread(db.collection("apps").document(app_id).get)
     return web.json_response({"keys": rows, "page": (app.to_dict() or {}).get("brandSlug") if app.exists else None})
+
+
+async def panel_key_action(request: web.Request) -> web.Response:
+    _, email, grant, grant_id, app_id, _ = await panel_scope(request, "manage")
+    lic_id, action = request.match_info["lic_id"], request.match_info["action"]
+    if action not in ("reset-hwid", "ban", "unban") or not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", lic_id):
+        raise web.HTTPNotFound(text="Unknown action.")
+    ref = db.collection("apps").document(app_id).collection("licenses").document(lic_id)
+    snap = await asyncio.to_thread(ref.get)
+    if not snap.exists:
+        return err(404, "That key doesn't exist.")
+    lic = snap.to_dict()
+    if grant.get("keyScope") != "all" and lic.get("grantId") != grant_id:
+        return err(403, "That key isn't yours.")
+    if action == "reset-hwid":
+        update, text = {"hwid": None}, f"Reset HWID of {lic['key']}"
+    elif action == "ban":
+        update, text = {"status": "banned"}, f"Banned {lic['key']}"
+    else:
+        update, text = {"status": "used" if lic.get("usedBy") else "unused"}, f"Unbanned {lic['key']}"
+    await asyncio.to_thread(ref.update, update)
+    await asyncio.to_thread(_plog, app_id, text, email, "key")
+    return web.json_response({"ok": True, **update})
+
+
+async def panel_sessions(request: web.Request) -> web.Response:
+    _, _, _, _, app_id, _ = await panel_scope(request, "sessions")
+    docs = await asyncio.to_thread(db.collection("apps").document(app_id).collection("sessions").limit(200).get)
+    rows = []
+    for d in docs:
+        x = d.to_dict()
+        hw = x.get("hwid")
+        rows.append({"id": d.id, "username": x.get("username"), "ip": x.get("ip"), "hwid": (hw[:22] + "…") if hw else None,
+                     "lastSeen": _iso(x.get("lastSeen")), "startedAt": _iso(x.get("startedAt"))})
+    rows.sort(key=lambda r: r["lastSeen"] or "", reverse=True)
+    return web.json_response({"sessions": rows})
+
+
+async def panel_session_end(request: web.Request) -> web.Response:
+    _, email, _, _, app_id, _ = await panel_scope(request, "manage")
+    sid = request.match_info["sid"]
+    if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", sid):
+        raise web.HTTPNotFound(text="Unknown session.")
+    await asyncio.to_thread(db.collection("apps").document(app_id).collection("sessions").document(sid).delete)
+    await asyncio.to_thread(_plog, app_id, f"Ended session {sid[:8]}", email, "session")
+    return web.json_response({"ok": True})
+
+
+async def panel_activity(request: web.Request) -> web.Response:
+    _, _, _, _, app_id, _ = await panel_scope(request, "activity")
+    docs = await asyncio.to_thread(db.collection("productLog").where("appId", "==", app_id).limit(300).get)
+    rows = [{"type": d.get("type"), "text": d.get("text"), "by": d.get("by"), "at": _iso(d.get("at"))} for d in docs]
+    rows.sort(key=lambda r: r["at"] or "", reverse=True)
+    return web.json_response({"events": rows[:150]})
 
 
 async def panel_download(request: web.Request) -> web.Response:
@@ -360,6 +444,11 @@ def _check_and_activate(app_id: str, key: str, ip: str) -> dict:
         update.update(status="used", usedBy=lic.get("usedBy") or "web download", activatedAt=firestore.SERVER_TIMESTAMP,
                       expiresAt=None if days == 0 else now + timedelta(days=days))
     ref.update(update)
+    if lic.get("status", "unused") == "unused":
+        try:
+            _plog(app_id, f"Key {key} activated from the download page", "buyer", "redeem")
+        except Exception:
+            log.warning("activity log write failed", exc_info=True)
     return {"ok": True}
 
 
@@ -437,6 +526,10 @@ async def start() -> None:
         web.post("/api/panels/{grant_id}/keys", panel_generate),
         web.get("/api/panels/{grant_id}/keys", panel_keys),
         web.post("/api/panels/{grant_id}/download", panel_download),
+        web.post("/api/panels/{grant_id}/keys/{lic_id}/{action}", panel_key_action),
+        web.get("/api/panels/{grant_id}/sessions", panel_sessions),
+        web.post("/api/panels/{grant_id}/sessions/{sid}/end", panel_session_end),
+        web.get("/api/panels/{grant_id}/activity", panel_activity),
         web.post("/api/b/{slug}/redeem", redeem),
         web.get("/api/dl/{token}", download),
         web.route("OPTIONS", "/{tail:.*}", health),

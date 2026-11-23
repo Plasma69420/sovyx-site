@@ -75,18 +75,37 @@
             <div class="stat"><div class="stat-l">Access ends</div><div class="stat-n" id="pn-ends" style="font-size:24px;margin-top:14px">—</div><div class="stat-s" id="pn-ends-s">—</div></div>
             <div class="stat"><div class="stat-l">Keys made</div><div class="stat-n" id="pn-made">0</div><div class="stat-s">On this panel</div></div>
           </div>
-          <div class="card" id="pn-dl-card"><h3>Download</h3><div class="sub">Get the latest version of this product. The link works once and expires in 5 minutes.</div>
-            <button class="btn btn-w" id="pn-dl-btn" onclick="pnDownload()">Download</button><div class="msg" id="pn-dl-msg"></div></div>
-          <div class="card" id="pn-gen-card"><h3>Make keys</h3><div class="sub" id="pn-gen-sub">Pick a length and how many. Credits are taken when you click Make keys.</div>
-            <div class="row3"><div class="field"><label>Length</label><select id="pn-days" onchange="pnCost()"></select></div>
-              <div class="field"><label>Amount</label><input type="number" id="pn-qty" value="1" min="1" max="50" oninput="pnCost()"/></div>
-              <div class="field"><label>Note (optional)</label><input id="pn-note" maxlength="80" placeholder="e.g. order #12"/></div></div>
-            <div style="display:flex;align-items:center;gap:14px"><button class="btn btn-w" id="pn-gen-btn" onclick="pnGenerate()">Make keys</button><span class="muted" id="pn-cost"></span></div>
-            <div class="msg" id="pn-gen-msg"></div>
-            <div id="pn-result" style="display:none;margin-top:14px"><div class="tbl-head" style="margin-bottom:8px"><span class="muted" id="pn-result-label"></span><button class="btn btn-sm" onclick="pnCopyAll()">Copy all</button></div>
-              <textarea id="pn-result-list" class="input mono" rows="5" readonly></textarea></div></div>
-          <div id="pn-keys-wrap"><div class="tbl-head"><div><h2>Your keys<span id="pn-count">0</span></h2><p id="pn-page"></p></div></div>
-            <div class="tbl"><table><thead><tr><th>Key</th><th>Length</th><th>Status</th><th>Used by</th><th>Made</th><th></th></tr></thead><tbody id="pn-keys"></tbody></table></div></div>
+          <div class="seg" id="pn-tabs" style="margin-bottom:18px"></div>
+
+          <div id="pn-t-overview">
+            <div class="card" id="pn-dl-card"><h3>Download</h3><div class="sub">Get the latest version of this product. The link works once and expires in 5 minutes.</div>
+              <button class="btn btn-w" id="pn-dl-btn" onclick="pnDownload()">Download</button><div class="msg" id="pn-dl-msg"></div></div>
+            <div class="card" id="pn-gen-card"><h3>Make keys</h3><div class="sub" id="pn-gen-sub">Pick a length and how many. Credits are taken when you click Make keys.</div>
+              <div class="row3"><div class="field"><label>Length</label><select id="pn-days" onchange="pnCost()"></select></div>
+                <div class="field"><label>Amount</label><input type="number" id="pn-qty" value="1" min="1" max="50" oninput="pnCost()"/></div>
+                <div class="field"><label>Note (optional)</label><input id="pn-note" maxlength="80" placeholder="e.g. order #12"/></div></div>
+              <div style="display:flex;align-items:center;gap:14px"><button class="btn btn-w" id="pn-gen-btn" onclick="pnGenerate()">Make keys</button><span class="muted" id="pn-cost"></span></div>
+              <div class="msg" id="pn-gen-msg"></div>
+              <div id="pn-result" style="display:none;margin-top:14px"><div class="tbl-head" style="margin-bottom:8px"><span class="muted" id="pn-result-label"></span><button class="btn btn-sm" onclick="pnCopyAll()">Copy all</button></div>
+                <textarea id="pn-result-list" class="input mono" rows="5" readonly></textarea></div></div>
+            <div class="empty" id="pn-overview-empty" style="display:none">Use the tabs above.</div>
+          </div>
+
+          <div id="pn-t-keys" style="display:none">
+            <div class="tbl-head"><div><h2>Keys<span id="pn-count">0</span></h2><p id="pn-page"></p></div>
+              <div class="search"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input id="pn-q" placeholder="Search key, buyer or note" oninput="pnRenderKeys()"/></div></div>
+            <div class="tbl"><table><thead><tr><th>Key</th><th>Length</th><th>Status</th><th>Used by</th><th>HWID</th><th>Made by</th><th></th></tr></thead><tbody id="pn-keys"></tbody></table></div>
+          </div>
+
+          <div id="pn-t-sessions" style="display:none">
+            <div class="tbl-head"><div><h2>Live sessions<span id="pn-sess-count">0</span></h2><p>Everyone running this product right now. Updates every few seconds.</p></div></div>
+            <div class="tbl"><table><thead><tr><th>User</th><th>IP address</th><th>HWID</th><th>Heartbeat</th><th>Status</th><th></th></tr></thead><tbody id="pn-sess"></tbody></table></div>
+          </div>
+
+          <div id="pn-t-activity" style="display:none">
+            <div class="tbl-head"><div><h2>Activity<span id="pn-act-count">0</span></h2><p>Keys made, HWID resets, bans and activations for this product.</p></div></div>
+            <div class="tbl"><table><thead><tr><th>What happened</th><th>Who</th><th>When</th></tr></thead><tbody id="pn-act"></tbody></table></div>
+          </div>
         </div>
       </section>
 
@@ -342,6 +361,6 @@
   <div class="modal-acts"><button class="btn" onclick="closeModal('m-confirm')">Cancel</button><button class="btn btn-danger" id="cf-ok">Confirm</button></div></div></div>
 
 <div id="toast"><i></i><span id="toast-txt"></span></div>
-<script type="module" src="/portal/portal.js?v=6"></script>
+<script type="module" src="/portal/portal.js?v=7"></script>
 </body>
 </html>

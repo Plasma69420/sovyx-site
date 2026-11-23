@@ -5,7 +5,7 @@ import { doc, getDoc, setDoc, updateDoc, deleteDoc, addDoc, collection, query, w
 import { S, LIMITS, PLAN_FEATURES, loaders } from './state.js';
 import './sections.js';
 import './brand.js?v=3';
-import { loadPanels } from './panels.js?v=2';
+import { loadPanels } from './panels.js?v=3';
 
 const I = {
   grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',

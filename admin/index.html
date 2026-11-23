@@ -231,9 +231,14 @@
     <div class="chk-grid" id="ga-products"></div></div>
   <div class="field"><label>Quick setup</label><div style="display:flex;gap:8px;flex-wrap:wrap">
     <button class="btn btn-sm" type="button" onclick="grantPreset('reseller')">Reseller (makes keys with credits)</button>
-    <button class="btn btn-sm" type="button" onclick="grantPreset('access')">Products only (no reseller tools)</button></div></div>
+    <button class="btn btn-sm" type="button" onclick="grantPreset('access')">Products only (no reseller tools)</button>
+    <button class="btn btn-sm" type="button" onclick="grantPreset('staff')">Staff (everything for the product)</button></div></div>
   <div class="field"><label class="chk"><input type="checkbox" id="ga-gen" checked/>Can generate keys with credits (reseller panel)</label>
-    <label class="chk" style="margin-top:8px"><input type="checkbox" id="ga-dl" checked/>Can download the product</label></div>
+    <label class="chk" style="margin-top:8px"><input type="checkbox" id="ga-dl" checked/>Can download the product</label>
+    <label class="chk" style="margin-top:8px"><input type="checkbox" id="ga-manage"/>Can reset HWIDs, ban or unban keys, and end sessions</label>
+    <label class="chk" style="margin-top:8px"><input type="checkbox" id="ga-sess"/>Can see live sessions</label>
+    <label class="chk" style="margin-top:8px"><input type="checkbox" id="ga-act"/>Can see the activity log</label>
+    <div style="margin-top:10px"><div class="hint" style="margin:0 0 4px">Keys they can see and manage</div><select id="ga-scope"><option value="own">Only keys they made</option><option value="all">All keys for the product</option></select></div></div>
   <div class="row"><div class="field"><label>Credits to add</label><input type="number" id="ga-credits" min="0" value="0"/></div>
     <div class="field"><label>Access lasts</label><select id="ga-dur"><option value="7">7 days</option><option value="30" selected>30 days</option><option value="90">90 days</option><option value="365">1 year</option><option value="0">Lifetime</option><option value="custom">Until a date…</option></select>
       <input type="date" id="ga-date" style="display:none;margin-top:8px;color-scheme:dark"/></div></div>
@@ -248,7 +253,11 @@
   <div class="field"><label>Access ends</label><input type="date" id="ep-exp" style="color-scheme:dark"/><div class="hint">Empty = never</div>
     <div style="display:flex;gap:6px;margin-top:8px"><button class="btn btn-sm" type="button" onclick="epExtend(7)">+7d</button><button class="btn btn-sm" type="button" onclick="epExtend(30)">+30d</button><button class="btn btn-sm" type="button" onclick="epExtend(365)">+1y</button></div></div>
   <div class="field"><label class="chk"><input type="checkbox" id="ep-gen"/>Can generate keys with credits</label>
-    <label class="chk" style="margin-top:8px"><input type="checkbox" id="ep-dl"/>Can download the product</label></div>
+    <label class="chk" style="margin-top:8px"><input type="checkbox" id="ep-dl"/>Can download the product</label>
+    <label class="chk" style="margin-top:8px"><input type="checkbox" id="ep-manage"/>Can reset HWIDs, ban or unban keys, and end sessions</label>
+    <label class="chk" style="margin-top:8px"><input type="checkbox" id="ep-sess"/>Can see live sessions</label>
+    <label class="chk" style="margin-top:8px"><input type="checkbox" id="ep-act"/>Can see the activity log</label>
+    <div style="margin-top:10px"><div class="hint" style="margin:0 0 4px">Keys they can see and manage</div><select id="ep-scope"><option value="own">Only keys they made</option><option value="all">All keys for the product</option></select></div></div>
   <div class="row"><div class="field"><label>Status</label><select id="ep-status"><option value="active">Active</option><option value="suspended">Suspended</option></select></div>
     <div class="field"><label>Note</label><input id="ep-note"/></div></div>
   <div class="modal-acts"><button class="btn" onclick="closeModal('m-panel')">Cancel</button><button class="btn btn-w" onclick="savePanel()">Save</button></div></div></div>
@@ -257,6 +266,6 @@
   <div class="modal-acts"><button class="btn" onclick="closeModal('m-confirm')">Cancel</button><button class="btn btn-danger" id="cf-ok">Confirm</button></div></div></div>
 
 <div id="toast"><i></i><span id="toast-txt"></span></div>
-<script type="module" src="/admin/admin.js?v=2"></script>
+<script type="module" src="/admin/admin.js?v=3"></script>
 </body>
 </html>
