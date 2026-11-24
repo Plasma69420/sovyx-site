@@ -1,5 +1,6 @@
 import asyncio
 import io
+import logging
 import re
 
 import discord
@@ -10,7 +11,9 @@ import config
 import db
 from cogs.common import deny, duration_label, embed, is_staff, log_to_channel
 
-# Ticket metadata lives in the channel topic: svx|<kind>|<user_id>|<plan>|<days>|<status>
+log = logging.getLogger("sovyx.tickets")
+
+# Ticket metadata lives in the channel topic: svx|<kind>|<user_id>|<plan>|<days>|<status>|<affiliate code>
 
 
 def parse_topic(channel: discord.abc.GuildChannel) -> dict | None:
@@ -20,8 +23,12 @@ def parse_topic(channel: discord.abc.GuildChannel) -> dict | None:
         return None
     t = {"kind": parts[1], "user_id": int(parts[2])}
     if t["kind"] == "buy" and len(parts) >= 6:
-        t.update(plan=parts[3], days=int(parts[4]), status=parts[5])
+        t.update(plan=parts[3], days=int(parts[4]), status=parts[5], ref=parts[6] if len(parts) > 6 else "")
     return t
+
+
+def topic_for(t: dict) -> str:
+    return f"svx|buy|{t['user_id']}|{t['plan']}|{t['days']}|{t['status']}|{t.get('ref', '')}"
 
 
 def find_open(guild: discord.Guild, kind: str, user_id: int) -> discord.TextChannel | None:
@@ -84,10 +91,25 @@ async def close_ticket(interaction: discord.Interaction):
     await channel.delete(reason=f"Ticket closed by {interaction.user}")
 
 
+class ReferralModal(discord.ui.Modal, title="Referral code"):
+    code = discord.ui.TextInput(label="Affiliate code", max_length=20, placeholder="e.g. NATE")
+
+    def __init__(self, picker: "PlanPicker"):
+        super().__init__()
+        self.picker = picker
+
+    async def on_submit(self, interaction: discord.Interaction):
+        a = await asyncio.to_thread(db.get_affiliate, self.code.value)
+        if not a or a.get("active") is False:
+            return await interaction.response.send_message(embed=embed("Code not found", "Check the spelling, or leave it blank.", 0x555555), ephemeral=True)
+        self.picker.ref = a["code"]
+        await interaction.response.send_message(embed=embed("Code applied", f"Your purchase will be credited to `{a['code']}`."), ephemeral=True)
+
+
 class PlanPicker(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=300)
-        self.plan, self.days = "pro", 30
+        self.plan, self.days, self.ref = "pro", 30, ""
         self.plan_select.options = [discord.SelectOption(label=v, value=k, default=k == self.plan) for k, v in config.PLANS.items()]
         self.days_select.options = [discord.SelectOption(label=v, value=str(k), default=k == self.days) for k, v in config.DURATIONS.items()]
 
@@ -101,6 +123,10 @@ class PlanPicker(discord.ui.View):
         self.days = int(select.values[0])
         await interaction.response.defer()
 
+    @discord.ui.button(label="Have a code?", style=discord.ButtonStyle.secondary, row=2)
+    async def referral(self, interaction: discord.Interaction, _):
+        await interaction.response.send_modal(ReferralModal(self))
+
     @discord.ui.button(label="Open ticket", style=discord.ButtonStyle.success, row=2)
     async def go(self, interaction: discord.Interaction, _):
         await interaction.response.defer(ephemeral=True, thinking=True)
@@ -110,7 +136,9 @@ class PlanPicker(discord.ui.View):
         e.add_field(name="Duration", value=duration_label(self.days))
         e.add_field(name="Price", value=prices.get(self.plan) or "Staff will confirm")
         e.add_field(name="Buyer", value=interaction.user.mention, inline=False)
-        topic = f"svx|buy|{interaction.user.id}|{self.plan}|{self.days}|open"
+        if self.ref:
+            e.add_field(name="Referral code", value=f"`{self.ref}`")
+        topic = topic_for({"user_id": interaction.user.id, "plan": self.plan, "days": self.days, "status": "open", "ref": self.ref})
         await open_ticket(interaction, "buy", topic, e, BuyTicketView())
         self.stop()
 
@@ -157,7 +185,7 @@ class BuyTicketView(discord.ui.View):
         buyer = interaction.guild.get_member(t["user_id"]) or await interaction.client.fetch_user(t["user_id"])
         note = f"Discord ticket #{interaction.channel.name} for {buyer}"
         key = (await asyncio.to_thread(db.create_keys, t["plan"], t["days"], 1, note, f"discord:{interaction.user}"))[0]
-        await interaction.channel.edit(topic=f"svx|buy|{t['user_id']}|{t['plan']}|{t['days']}|paid")
+        await interaction.channel.edit(topic=topic_for({**t, "status": "paid"}))
         button.disabled, button.label = True, "Paid"
         await interaction.message.edit(view=self)
 
@@ -171,6 +199,15 @@ class BuyTicketView(discord.ui.View):
             sent = "Your DMs are closed, so copy it from here."
         await interaction.followup.send(embed=embed("Payment confirmed", f"<@{t['user_id']}> your key: ||`{key}`||\n{sent}\n{how}", 0x3ECF8E))
         await log_to_channel(interaction.guild, embed=embed("Key sold", f"{config.PLANS[t['plan']]} · {duration_label(t['days'])} → <@{t['user_id']}> · confirmed by {interaction.user.mention}"))
+        if t.get("ref"):                                   # never let affiliate bookkeeping get in the way of delivering the key
+            try:
+                prices = await asyncio.to_thread(db.plan_prices)
+                sale = await asyncio.to_thread(db.record_sale, t["ref"], interaction.channel.id, t["user_id"], t["plan"], t["days"], prices.get(t["plan"]))
+                if sale:
+                    pay = f"commission {sale['commission']:.2f}" if sale["commission"] is not None else "price unreadable: use /affiliate-adjust to add the commission"
+                    await log_to_channel(interaction.guild, embed=embed("Affiliate sale", f"`{sale['code']}` · {config.PLANS[t['plan']]} · {pay}"))
+            except Exception:  # noqa: BLE001
+                log.warning("affiliate sale failed for %s", t.get("ref"), exc_info=True)
 
     @discord.ui.button(label="Close", style=discord.ButtonStyle.danger, custom_id="svx:buy:close")
     async def close(self, interaction: discord.Interaction, _):

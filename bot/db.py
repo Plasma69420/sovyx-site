@@ -1,6 +1,7 @@
 """Firestore access, using the same collections as sovyx.cc. All functions are blocking;
 call them through asyncio.to_thread from the bot."""
 import json
+import re
 import secrets
 from datetime import datetime, timedelta, timezone
 
@@ -111,3 +112,122 @@ def request_hwid_reset(discord_id: int) -> str:
         "status": "pending", "source": "discord", "requestedAt": firestore.SERVER_TIMESTAMP,
     })
     return user.get("email", "")
+
+
+# ---------- affiliates ----------
+class AffiliateError(Exception):
+    pass
+
+
+def clean_code(raw: str) -> str:
+    return re.sub(r"[^A-Z0-9]", "", (raw or "").upper())[:20]
+
+
+def parse_amount(price) -> float | None:
+    """Pulls the first number out of a price string such as '$15' or '15 USD'."""
+    m = re.search(r"\d+(?:[.,]\d+)?", str(price or ""))
+    return float(m.group(0).replace(",", ".")) if m else None
+
+
+def get_affiliate(code: str) -> dict | None:
+    code = clean_code(code)
+    if not code:
+        return None
+    snap = db.collection("affiliates").document(code).get()
+    return snap.to_dict() if snap.exists else None
+
+
+def affiliate_by_discord(discord_id: int) -> dict | None:
+    docs = db.collection("affiliates").where("discordId", "==", str(discord_id)).limit(1).get()
+    return docs[0].to_dict() if docs else None
+
+
+def create_affiliate(discord_id: int, name: str, rate: int | None = None, code: str | None = None) -> dict:
+    if affiliate_by_discord(discord_id):
+        raise AffiliateError("You are already an affiliate.")
+    base = clean_code(code or name) or "SVX"
+    candidate = base
+    for _ in range(8):
+        if not db.collection("affiliates").document(candidate).get().exists:
+            break
+        candidate = f"{base[:16]}{_block()}"[:20]
+    else:
+        raise AffiliateError("Couldn't find a free code. Try again.")
+    aff = {"code": candidate, "name": name[:60], "discordId": str(discord_id), "rate": rate if rate is not None else config.AFFILIATE_RATE,
+           "active": True, "sales": 0, "earned": 0.0, "paid": 0.0, "createdAt": firestore.SERVER_TIMESTAMP}
+    db.collection("affiliates").document(candidate).set(aff)
+    log("Affiliate joined", f"{candidate} ({name})", f"discord:{discord_id}")
+    return aff
+
+
+def record_sale(code: str, ticket_id: int, buyer_id: int, plan: str, days: int, price) -> dict | None:
+    """Credits an affiliate for a confirmed purchase. Returns None when nothing is credited
+    (unknown or paused code, the buyer is the affiliate, or this ticket was already credited)."""
+    aff = get_affiliate(code)
+    if not aff or aff.get("active") is False or aff.get("discordId") == str(buyer_id):
+        return None
+    sale_ref = db.collection("affiliateSales").document(f"ticket-{ticket_id}")
+    if sale_ref.get().exists:
+        return None
+    amount = parse_amount(price)
+    rate = aff.get("rate", config.AFFILIATE_RATE)
+    commission = round(amount * rate / 100, 2) if amount is not None else None
+    sale_ref.set({"code": aff["code"], "ticket": str(ticket_id), "buyerId": str(buyer_id), "plan": plan, "days": days,
+                  "amount": amount, "rate": rate, "commission": commission, "at": firestore.SERVER_TIMESTAMP})
+    update = {"sales": firestore.Increment(1)}
+    if commission is not None:
+        update["earned"] = firestore.Increment(commission)
+    db.collection("affiliates").document(aff["code"]).update(update)
+    return {"code": aff["code"], "commission": commission, "amount": amount, "rate": rate}
+
+
+def set_affiliate(code: str, rate: int | None, active: bool | None) -> dict:
+    aff = get_affiliate(code)
+    if not aff:
+        raise AffiliateError("No affiliate has that code.")
+    update = {}
+    if rate is not None:
+        update["rate"] = rate
+    if active is not None:
+        update["active"] = active
+    if update:
+        db.collection("affiliates").document(aff["code"]).update(update)
+    return {**aff, **update}
+
+
+def adjust_earned(code: str, amount: float, note: str, by: str) -> dict:
+    """Staff correction, e.g. a sale whose price couldn't be read. Negative amounts reduce what is owed."""
+    aff = get_affiliate(code)
+    if not aff:
+        raise AffiliateError("No affiliate has that code.")
+    db.collection("affiliates").document(aff["code"]).update({"earned": firestore.Increment(round(amount, 2))})
+    log("Affiliate adjusted", f"{aff['code']} {amount:+.2f} ({note})", by)
+    return affiliate_stats(aff["code"])
+
+
+def payout(code: str, amount: float, by: str) -> dict:
+    aff = get_affiliate(code)
+    if not aff:
+        raise AffiliateError("No affiliate has that code.")
+    amount = round(amount, 2)
+    owed = round(aff.get("earned", 0) - aff.get("paid", 0), 2)
+    if amount <= 0:
+        raise AffiliateError("Enter an amount above zero.")
+    if amount > owed + 0.005:
+        raise AffiliateError(f"They are only owed {owed:.2f}.")
+    db.collection("affiliates").document(aff["code"]).update({"paid": firestore.Increment(amount)})
+    db.collection("affiliatePayouts").add({"code": aff["code"], "amount": amount, "by": by, "at": firestore.SERVER_TIMESTAMP})
+    log("Affiliate payout", f"{aff['code']} {amount:.2f}", by)
+    return affiliate_stats(aff["code"])
+
+
+def affiliate_stats(code: str) -> dict:
+    aff = get_affiliate(code) or {}
+    aff["owed"] = round(aff.get("earned", 0) - aff.get("paid", 0), 2)
+    return aff
+
+
+def top_affiliates(limit: int = 10) -> list[dict]:
+    rows = [d.to_dict() for d in db.collection("affiliates").limit(500).get()]
+    rows.sort(key=lambda a: (a.get("sales", 0), a.get("earned", 0)), reverse=True)
+    return rows[:limit]

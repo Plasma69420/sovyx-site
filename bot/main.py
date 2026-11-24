@@ -20,6 +20,7 @@ class SovyxBot(commands.Bot):
         await api.start()
         await self.load_extension("cogs.tickets")
         await self.load_extension("cogs.keys")
+        await self.load_extension("cogs.affiliates")
         if config.GUILD_ID:
             guild = discord.Object(id=config.GUILD_ID)
             self.tree.copy_global_to(guild=guild)

@@ -19,6 +19,7 @@ PAYMENT_INFO = os.getenv(
     "PAYMENT_INFO",
     "A staff member will post payment details here shortly. Once your payment is confirmed, your key is sent to your DMs.",
 )
+AFFILIATE_RATE = _int("AFFILIATE_RATE") or 20      # percent of each confirmed sale
 SITE_URL = os.getenv("SITE_URL", "https://sovyx.cc")
 BRAND_COLOR = 0xE11D48
 
