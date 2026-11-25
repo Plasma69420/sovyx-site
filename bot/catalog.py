@@ -15,19 +15,19 @@ PRODUCTS = [
         "tiers": [{"days": 30, "price": 150, "credits": 150}, {"days": 0, "price": 450, "credits": 750}],
     },
     {
-        "key": "roblox", "name": "Roblox", "prefix": "RBX", "emoji": "🧱", "color": 0x60A5FA,
-        "blurb": "A Roblox product for resellers who want a steady line to sell.",
+        "key": "rob-run", "name": "Rob Run", "prefix": "ROB", "emoji": "🏃", "color": 0x60A5FA,
+        "blurb": "A Rob Run (Steam) product. Resell it to your own customers from your own panel.",
         "tiers": [{"days": 30, "price": 120, "credits": 120}, {"days": 0, "price": 360, "credits": 600}],
     },
     {
         "key": "temp-spoofer", "name": "Temp Spoofer", "prefix": "TSP", "emoji": "🕶️", "color": 0xFBBF24,
         "blurb": "A temporary HWID spoofer. Easy to sell, with regular repeat buyers.",
-        "tiers": [{"days": 30, "price": 100, "credits": 100}, {"days": 0, "price": 300, "credits": 500}],
+        "tiers": [{"days": 30, "price": 150, "credits": 150}, {"days": 0, "price": 450, "credits": 750}],
     },
     {
         "key": "perm-spoofer", "name": "Perm Spoofer", "prefix": "PSP", "emoji": "🔒", "color": 0x3ECF8E,
         "blurb": "A permanent HWID spoofer. Higher price, higher margin for resellers.",
-        "tiers": [{"days": 30, "price": 150, "credits": 150}, {"days": 0, "price": 450, "credits": 750}],
+        "tiers": [{"days": 30, "price": 175, "credits": 175}, {"days": 0, "price": 525, "credits": 875}],
     },
 ]
 
