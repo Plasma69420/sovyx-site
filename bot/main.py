@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 import discord
@@ -5,6 +6,7 @@ from discord.ext import commands
 
 import api
 import config
+import db
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 log = logging.getLogger("sovyx")
@@ -18,9 +20,15 @@ class SovyxBot(commands.Bot):
 
     async def setup_hook(self):
         await api.start()
+        try:
+            config.apply_saved(await asyncio.to_thread(db.load_discord_settings))
+        except Exception:  # noqa: BLE001
+            log.warning("couldn't load saved Discord settings", exc_info=True)
         await self.load_extension("cogs.tickets")
         await self.load_extension("cogs.keys")
         await self.load_extension("cogs.affiliates")
+        await self.load_extension("cogs.shop")
+        await self.load_extension("cogs.server")
         if config.GUILD_ID:
             guild = discord.Object(id=config.GUILD_ID)
             self.tree.copy_global_to(guild=guild)

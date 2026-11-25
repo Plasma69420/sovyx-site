@@ -22,13 +22,13 @@ def parse_topic(channel: discord.abc.GuildChannel) -> dict | None:
     if len(parts) < 3 or parts[0] != "svx":
         return None
     t = {"kind": parts[1], "user_id": int(parts[2])}
-    if t["kind"] == "buy" and len(parts) >= 6:
+    if t["kind"] in ("buy", "panel") and len(parts) >= 6:
         t.update(plan=parts[3], days=int(parts[4]), status=parts[5], ref=parts[6] if len(parts) > 6 else "")
     return t
 
 
 def topic_for(t: dict) -> str:
-    return f"svx|buy|{t['user_id']}|{t['plan']}|{t['days']}|{t['status']}|{t.get('ref', '')}"
+    return f"svx|{t.get('kind', 'buy')}|{t['user_id']}|{t['plan']}|{t['days']}|{t['status']}|{t.get('ref', '')}"
 
 
 def find_open(guild: discord.Guild, kind: str, user_id: int) -> discord.TextChannel | None:
@@ -155,6 +155,22 @@ class SupportModal(discord.ui.Modal, title="Get support"):
         await open_ticket(interaction, "support", f"svx|support|{interaction.user.id}", e, SupportTicketView())
 
 
+async def plans_embed() -> discord.Embed:
+    prices = await asyncio.to_thread(db.plan_prices)
+    lines = [f"**{name}** — {prices.get(key) or 'ask staff'}" for key, name in config.PLANS.items()]
+    return embed("Sovyx plans", "Licensing, HWID locks and live sessions for your software.\n\n" + "\n".join(lines) +
+                 f"\n\nClick **Buy a plan** to open a purchase ticket, or **Get support** if you need help.\nDashboard: {config.SITE_URL}")
+
+
+class SupportView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @discord.ui.button(label="Get support", style=discord.ButtonStyle.primary, custom_id="svx:support:open", emoji="💬")
+    async def support(self, interaction: discord.Interaction, _):
+        await interaction.response.send_modal(SupportModal())
+
+
 class PanelView(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
@@ -245,11 +261,7 @@ class Tickets(commands.Cog):
     async def panel(self, interaction: discord.Interaction):
         if not is_staff(interaction.user):
             return await deny(interaction, "Only staff can post the panel.")
-        prices = await asyncio.to_thread(db.plan_prices)
-        lines = [f"**{name}** — {prices.get(key) or 'ask staff'}" for key, name in config.PLANS.items()]
-        e = embed("Sovyx", "Licensing, HWID locks and live sessions for your software.\n\n" + "\n".join(lines) +
-                  f"\n\nClick **Buy a plan** to open a purchase ticket, or **Get support** if you need help.\nDashboard: {config.SITE_URL}")
-        await interaction.channel.send(embed=e, view=PanelView())
+        await interaction.channel.send(embed=await plans_embed(), view=PanelView())
         await interaction.response.send_message("Panel posted.", ephemeral=True)
 
     @app_commands.command(name="close", description="Close this ticket")
@@ -260,6 +272,7 @@ class Tickets(commands.Cog):
 
 async def setup(bot: commands.Bot):
     bot.add_view(PanelView())
+    bot.add_view(SupportView())
     bot.add_view(BuyTicketView())
     bot.add_view(SupportTicketView())
     await bot.add_cog(Tickets(bot))

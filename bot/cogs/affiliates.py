@@ -37,6 +37,12 @@ class JoinView(discord.ui.View):
             a = await asyncio.to_thread(db.create_affiliate, interaction.user.id, interaction.user.display_name)
         except db.AffiliateError as e:
             return await interaction.followup.send(embed=embed("Couldn't join", str(e), 0x555555), ephemeral=True)
+        role = interaction.guild.get_role(config.AFFILIATE_ROLE_ID) if interaction.guild and config.AFFILIATE_ROLE_ID else None
+        if role and isinstance(interaction.user, discord.Member):
+            try:
+                await interaction.user.add_roles(role, reason="Joined the affiliate program")
+            except discord.HTTPException:
+                pass
         await interaction.followup.send(embed=stats_embed(a, "You're in"), ephemeral=True)
         await log_to_channel(interaction.guild, embed=embed("New affiliate", f"{interaction.user.mention} · code `{a['code']}` · {a['rate']}%"))
         self.stop()
