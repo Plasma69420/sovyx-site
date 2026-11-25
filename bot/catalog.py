@@ -12,22 +12,22 @@ PRODUCTS = [
     {
         "key": "fortnite-private", "name": "Fortnite Private", "prefix": "FNP", "emoji": "🎯", "color": 0xE11D48,
         "blurb": "Our flagship Fortnite product. Resell it to your own customers from your own panel.",
-        "tiers": [{"days": 30, "price": 100, "credits": 100}, {"days": 0, "price": 300, "credits": 500}],
+        "tiers": [{"days": 30, "price": 150, "credits": 150}, {"days": 0, "price": 450, "credits": 750}],
     },
     {
         "key": "roblox", "name": "Roblox", "prefix": "RBX", "emoji": "🧱", "color": 0x60A5FA,
         "blurb": "A Roblox product for resellers who want a steady line to sell.",
-        "tiers": [{"days": 30, "price": 90, "credits": 100}, {"days": 0, "price": 270, "credits": 450}],
+        "tiers": [{"days": 30, "price": 120, "credits": 120}, {"days": 0, "price": 360, "credits": 600}],
     },
     {
         "key": "temp-spoofer", "name": "Temp Spoofer", "prefix": "TSP", "emoji": "🕶️", "color": 0xFBBF24,
         "blurb": "A temporary HWID spoofer. Easy to sell, with regular repeat buyers.",
-        "tiers": [{"days": 30, "price": 70, "credits": 80}, {"days": 0, "price": 210, "credits": 350}],
+        "tiers": [{"days": 30, "price": 100, "credits": 100}, {"days": 0, "price": 300, "credits": 500}],
     },
     {
         "key": "perm-spoofer", "name": "Perm Spoofer", "prefix": "PSP", "emoji": "🔒", "color": 0x3ECF8E,
         "blurb": "A permanent HWID spoofer. Higher price, higher margin for resellers.",
-        "tiers": [{"days": 30, "price": 110, "credits": 120}, {"days": 0, "price": 330, "credits": 600}],
+        "tiers": [{"days": 30, "price": 150, "credits": 150}, {"days": 0, "price": 450, "credits": 750}],
     },
 ]
 
