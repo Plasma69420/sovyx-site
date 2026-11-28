@@ -16,6 +16,15 @@ log = logging.getLogger("sovyx.tickets")
 # Ticket metadata lives in the channel topic: svx|<kind>|<user_id>|<plan>|<days>|<status>|<affiliate code>
 
 
+async def orders_paused(interaction: discord.Interaction) -> bool:
+    """If orders are paused, tells the person and returns True."""
+    if not config.ORDERS_PAUSED:
+        return False
+    send = interaction.followup.send if interaction.response.is_done() else interaction.response.send_message
+    await send(embed=embed("Orders are paused", "We're temporarily closing, so all orders are paused. Check the announcements in this server for more info.", 0xF59E0B), ephemeral=True)
+    return True
+
+
 def parse_topic(channel: discord.abc.GuildChannel) -> dict | None:
     topic = getattr(channel, "topic", None) or ""
     parts = topic.split("|")
@@ -129,6 +138,8 @@ class PlanPicker(discord.ui.View):
 
     @discord.ui.button(label="Open ticket", style=discord.ButtonStyle.success, row=2)
     async def go(self, interaction: discord.Interaction, _):
+        if await orders_paused(interaction):          # a picker opened before the pause
+            return
         await interaction.response.defer(ephemeral=True, thinking=True)
         prices = await asyncio.to_thread(db.plan_prices)
         e = embed(f"Purchase · {config.PLANS[self.plan]}", config.PAYMENT_INFO)
@@ -177,6 +188,8 @@ class PanelView(discord.ui.View):
 
     @discord.ui.button(label="Buy a plan", style=discord.ButtonStyle.success, custom_id="svx:panel:buy", emoji="🛒")
     async def buy(self, interaction: discord.Interaction, _):
+        if await orders_paused(interaction):
+            return
         await interaction.response.send_message(embed=embed("Choose a plan", "Pick a plan and duration, then open your ticket."), view=PlanPicker(), ephemeral=True)
 
     @discord.ui.button(label="Get support", style=discord.ButtonStyle.secondary, custom_id="svx:panel:support", emoji="💬")
@@ -263,6 +276,27 @@ class Tickets(commands.Cog):
             return await deny(interaction, "Only staff can post the panel.")
         await interaction.channel.send(embed=await plans_embed(), view=PanelView())
         await interaction.response.send_message("Panel posted.", ephemeral=True)
+
+    @app_commands.command(name="orders", description="Staff: pause or resume purchases")
+    @app_commands.describe(action="What to do")
+    @app_commands.choices(action=[app_commands.Choice(name=n, value=n) for n in ("pause", "resume", "status")])
+    @app_commands.default_permissions(manage_guild=True)
+    @app_commands.guild_only()
+    async def orders(self, interaction: discord.Interaction, action: app_commands.Choice[str]):
+        if not is_staff(interaction.user):
+            return await deny(interaction, "Staff only.")
+        await interaction.response.defer(ephemeral=True)
+        if action.value != "status":
+            paused = action.value == "pause"
+            try:
+                await asyncio.to_thread(db.save_discord_settings, {"ordersPaused": paused})
+            except Exception:  # noqa: BLE001
+                log.warning("couldn't save the order pause", exc_info=True)
+                return await interaction.followup.send(embed=embed("Couldn't save that", "Nothing changed. Try again in a moment.", 0x555555), ephemeral=True)
+            config.ORDERS_PAUSED = paused
+            await log_to_channel(interaction.guild, embed=embed("Orders paused" if paused else "Orders resumed", f"By {interaction.user.mention}"))
+        state = "**paused**. Buy buttons tell people orders are paused." if config.ORDERS_PAUSED else "**open**. Buy buttons work normally."
+        await interaction.followup.send(embed=embed("Orders", f"Orders are {state}"), ephemeral=True)
 
     @app_commands.command(name="close", description="Close this ticket")
     @app_commands.guild_only()

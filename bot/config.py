@@ -22,6 +22,8 @@ PAYMENT_INFO = os.getenv(
     "A staff member will post payment details here shortly. Once your payment is confirmed, your key is sent to your DMs.",
 )
 AFFILIATE_RATE = _int("AFFILIATE_RATE") or 20      # percent of each confirmed sale
+# Orders are paused while we're temporarily closed. Staff change this with /orders; the choice is saved and survives restarts.
+ORDERS_PAUSED = True
 SITE_URL = os.getenv("SITE_URL", "https://sovyx.cc")
 BRAND_COLOR = 0xE11D48
 
@@ -37,6 +39,8 @@ _SAVED = (("STAFF_ROLE_ID", "staffRoleId"), ("CUSTOMER_ROLE_ID", "customerRoleId
 def apply_saved(saved: dict, override: bool = False) -> None:
     """Use the role and channel IDs that /setup-server created. Environment variables win unless override is set."""
     g = globals()
+    if isinstance(saved.get("ordersPaused"), bool):
+        g["ORDERS_PAUSED"] = saved["ordersPaused"]
     for attr, key in _SAVED:
         if isinstance(saved.get(key), int) and (override or g.get(attr) is None):
             g[attr] = saved[key]

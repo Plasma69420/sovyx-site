@@ -10,7 +10,7 @@ import catalog
 import config
 import db
 from cogs.common import deny, embed, is_staff, log_to_channel
-from cogs.tickets import close_ticket, open_ticket, parse_topic, topic_for
+from cogs.tickets import close_ticket, open_ticket, orders_paused, parse_topic, topic_for
 
 log = logging.getLogger("sovyx.shop")
 
@@ -49,6 +49,8 @@ class ShopView(discord.ui.View):
 
 
 async def open_panel_ticket(interaction: discord.Interaction, product: dict, days: int):
+    if await orders_paused(interaction):
+        return
     t = catalog.tier(product, days)
     if not t:
         return await deny(interaction, "That option isn't available any more.")
